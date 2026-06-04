@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResumeVersion",
+  "type": "object",
+  "required": ["id", "title", "createdAt", "target", "sections"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "target": {
+      "type": "object",
+      "properties": {
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "postingId": { "type": "string" }
+      }
+    },
+    "sections": { "type": "object" },
+    "claimEvidenceMap": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "status"],
+        "properties": {
+          "claim": { "type": "string" },
+          "evidenceIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": { "enum": ["verified", "partial", "needs-source", "unsupported"] }
+        }
+      }
+    }
+  }
+}

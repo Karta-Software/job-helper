@@ -1,0 +1,30 @@
+# Private local workspace
+.career-toolkit/
+career-toolkit.config.json
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Generated private outputs
+outputs/
+generated/
+*.pdf
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.vite/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python scratch if users enable scraper plugins
+.venv/
+__pycache__/
+*.pyc

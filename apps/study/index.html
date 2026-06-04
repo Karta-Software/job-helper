@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Job Helper Study</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-2: #334155;
+    --border: #475569;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --good: #22c55e;
+    --warn: #eab308;
+    --bad: #ef4444;
+    --unknown: #818cf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+  .app { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+  header.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 16px 0 0;
+    margin-bottom: 18px;
+  }
+  .header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+  .brand h1 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .brand .subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .header-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .ctrl-select {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ctrl-select:hover { background: var(--card-2); }
+  .ctrl-icon {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ctrl-icon:hover { background: var(--card-2); }
+
+  .more-menu { position: relative; }
+  .menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 180px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: none;
+    z-index: 30;
+  }
+  .menu-dropdown.show { display: block; }
+  .menu-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: var(--text);
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+  .menu-dropdown button:hover { background: var(--card-2); }
+
+  .btn-submit {
+    background: var(--accent);
+    color: #0f172a;
+    font-weight: 700;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+  }
+  .btn-submit:hover { filter: brightness(1.1); }
+  .btn-submit:active { transform: translateY(1px); }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+  .btn-submit .submit-count {
+    background: rgba(15, 23, 42, 0.25);
+    color: #0f172a;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .stats-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stats-line .dot {
+    color: var(--border);
+    user-select: none;
+  }
+  .stats-line .stat-confident { color: var(--good); }
+  .stats-line .stat-review { color: var(--warn); }
+  .stats-line .stat-stumbled { color: var(--bad); }
+  .stats-line .stat-unfamiliar { color: var(--unknown); }
+  .stats-line .stat-card-count { color: var(--text); font-weight: 500; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .card-head .card-num {
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .card-head .status {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .status-confident { background: rgba(34, 197, 94, 0.2); color: var(--good); }
+  .status-review { background: rgba(234, 179, 8, 0.2); color: var(--warn); }
+  .status-stumbled { background: rgba(239, 68, 68, 0.2); color: var(--bad); }
+  .status-unfamiliar { background: rgba(129, 140, 248, 0.2); color: var(--unknown); }
+  .status-none { color: var(--muted); }
+
+  .question {
+    font-size: 15px;
+    margin-bottom: 12px;
+    line-height: 1.55;
+  }
+  .code-block {
+    background: #0b1120;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .code-block code {
+    font-family: inherit;
+    white-space: pre;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  /* JS/TS syntax tokens (Material Palenight-ish) */
+  .code-block .tk-kw  { color: #c792ea; }            /* keywords */
+  .code-block .tk-str { color: #c3e88d; }            /* strings */
+  .code-block .tk-num { color: #f78c6c; }            /* numbers */
+  .code-block .tk-lit { color: #ff9cac; }            /* true/false/null */
+  .code-block .tk-fn  { color: #82aaff; }            /* function names / calls */
+  .code-block .tk-com { color: #5c6b80; font-style: italic; } /* comments */
+  .code-block .tk-pun { color: #89ddff; }            /* punctuation/operators */
+  .code-block .tk-id  { color: #cbd5e1; }            /* identifiers */
+  code.inline-code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, 'Courier New', monospace;
+    font-size: 12.5px;
+    color: #93c5fd;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 11px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.55;
+    resize: vertical;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  textarea.has-content {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .card-actions .label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 4px;
+  }
+  .status-btn {
+    background: var(--card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .status-btn:hover { background: var(--border); }
+  .status-btn.active.confident { background: var(--good); color: #052e16; border-color: var(--good); font-weight: 600; }
+  .status-btn.active.review { background: var(--warn); color: #422006; border-color: var(--warn); font-weight: 600; }
+  .status-btn.active.stumbled { background: var(--bad); color: #450a0a; border-color: var(--bad); font-weight: 600; }
+  .status-btn.active.unfamiliar { background: var(--unknown); color: #1e1b4b; border-color: var(--unknown); font-weight: 600; }
+  .clear-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .clear-btn:hover { color: var(--text); border-color: var(--text); }
+
+  details.reveal {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  details.reveal summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    user-select: none;
+  }
+  details.reveal summary:hover { color: var(--text); }
+  details.reveal[open] summary {
+    margin-bottom: 6px;
+    color: var(--warn);
+  }
+  details.reveal p { color: var(--muted); }
+
+  .progress {
+    margin: 24px 0 16px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .progress h3 {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+    gap: 4px;
+  }
+  .progress-cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: var(--card-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.1s;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .progress-cell:hover { transform: scale(1.15); }
+  .progress-cell.confident { background: var(--good); color: #052e16; font-weight: 600; }
+  .progress-cell.review { background: var(--warn); color: #422006; font-weight: 600; }
+  .progress-cell.stumbled { background: var(--bad); color: #450a0a; font-weight: 600; }
+  .progress-cell.unfamiliar { background: var(--unknown); color: #1e1b4b; font-weight: 600; }
+  .progress-cell.has-draft::after {
+    content: "•";
+    position: relative;
+    margin-left: 2px;
+    color: var(--accent);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  /* MCQ-specific styles */
+  .badge-mcq {
+    background: #a855f7;
+    color: #1e0b3a;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .variant-indicator {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    padding: 1px 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .mcq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .mcq-option {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .mcq-option:hover:not(:disabled) {
+    background: var(--card-2);
+    border-color: var(--accent);
+  }
+  .mcq-option:disabled { cursor: default; }
+  .mcq-option .opt-letter {
+    color: var(--muted);
+    font-weight: 700;
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .mcq-option.picked-correct {
+    background: rgba(34, 197, 94, 0.18);
+    border-color: var(--good);
+  }
+  .mcq-option.picked-correct .opt-letter { color: var(--good); }
+  .mcq-option.picked-wrong {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: var(--bad);
+  }
+  .mcq-option.picked-wrong .opt-letter { color: var(--bad); }
+  .mcq-option.reveal-correct {
+    border-color: var(--good);
+    background: rgba(34, 197, 94, 0.08);
+  }
+  .mcq-option.reveal-correct .opt-letter { color: var(--good); }
+  .mcq-option.dimmed { opacity: 0.5; }
+
+  .mcq-feedback {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .mcq-feedback.correct {
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid var(--good);
+    color: var(--text);
+  }
+  .mcq-feedback.wrong {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid var(--bad);
+    color: var(--text);
+  }
+  .mcq-feedback .verdict {
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .mcq-feedback.correct .verdict { color: var(--good); }
+  .mcq-feedback.wrong .verdict { color: var(--bad); }
+  .mcq-feedback .explanation { color: var(--muted); }
+
+  .floating-submit { display: none; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--good);
+    color: #052e16;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 30;
+    transition: transform 0.3s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .session-banner {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05));
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .session-banner b { color: var(--accent); }
+
+  .tab-bar {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  .tab {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab .tab-icon { font-size: 14px; }
+  .tab .tab-count {
+    background: var(--card-2);
+    color: var(--muted);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+  }
+  .tab.active .tab-count {
+    background: var(--accent);
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="header-main">
+      <div class="brand">
+        <h1>Job Helper Study</h1>
+        <span class="subtitle" id="subtitle"></span>
+      </div>
+      <div class="header-controls">
+        <select id="filter" class="ctrl-select">
+          <option value="all">All categories</option>
+          <option value="Arrays / Hashing">Arrays / Hashing</option>
+          <option value="Trees">Trees</option>
+          <option value="Graphs">Graphs</option>
+          <option value="Binary Search">Binary Search</option>
+          <option value="Sliding Window">Sliding Window</option>
+          <option value="System Design">System Design</option>
+          <option value="Behavioral">Behavioral</option>
+          <option value="not-drilled">Not yet drilled</option>
+          <option value="needs-work">Needs review or stumbled</option>
+          <option value="unfamiliar">Unfamiliar — need foundation</option>
+        </select>
+        <div class="more-menu">
+          <button class="ctrl-icon" id="more-btn" type="button" aria-label="More actions" title="More actions">⋯</button>
+          <div class="menu-dropdown" id="menu-dropdown">
+            <button onclick="shuffle()" type="button">🔀 Shuffle deck</button>
+            <button onclick="clearAllDrafts()" type="button">🗑 Clear drafts</button>
+            <button onclick="resetProgress()" type="button">↺ Reset everything</button>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="submitTest()" type="button">
+          <span>📤 Submit</span>
+          <span class="submit-count" id="submit-count">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="stats-line" id="stats"></div>
+    <div class="tab-bar">
+      <button class="tab" data-tab="open" id="tab-open">
+        <span class="tab-icon">📝</span>
+        <span>Open-Answer</span>
+        <span class="tab-count" id="tab-count-open">0</span>
+      </button>
+      <button class="tab" data-tab="mcq" id="tab-mcq">
+        <span class="tab-icon">🎯</span>
+        <span>MCQ Drills</span>
+        <span class="tab-count" id="tab-count-mcq">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="session-banner" id="banner"></div>
+
+  <div id="cards"></div>
+
+  <div class="progress">
+    <h3>Progress map (click a cell to scroll to that card)</h3>
+    <div class="progress-grid" id="progress-grid"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CARDS = [
+  { code: "A1", category: "Arrays / Hashing", q: "Given an array of integers and a target, return the indices of two numbers that sum to the target. Walk me through your approach + complexity.",
+    a: "Single pass with a hash map of value → index. For each element, FIRST check if (target - element) is already in the map (return immediately if yes), THEN insert current element. ORDER MATTERS: checking after inserting lets an element match itself when target = 2*element (returns [i, i] which is a bug). O(n) time, O(n) space. Beats nested loops at O(n²). KEY INSIGHT 1: input being an array doesn't constrain you to only use arrays inside your function — build any data structure you want, that's where the optimization lives. KEY INSIGHT 2: when iterating + maintaining state, always ask 'what if I encounter myself?' — that's the question that catches the check-before-insert ordering bug." },
+  { code: "A2", category: "Arrays / Hashing", q: "Given an array of positive integers, find the length of the longest contiguous subarray whose sum is ≤ K.",
+    a: "Sliding window. Expand right, accumulate sum. When sum > K, shrink from left. Track max window length. Works because all positive (sum monotonic). O(n) time, O(1) space. Doesn't work for negatives — use prefix-sum trick instead." },
+  { code: "A3", category: "Arrays / Hashing", q: "Given two strings, determine if they're anagrams of each other. Two approaches + tradeoffs.",
+    a: "(1) Hash map of char→count for both, compare. O(n+m) time, O(k) space. (2) Sort both and compare. O(n log n) time, O(1) extra. Hash is faster, sort is simpler. Edge cases: case sensitivity, whitespace, unicode." },
+  { code: "A4", category: "Arrays / Hashing", q: "Given an array of integers (positive AND negative) and a target K, count the number of contiguous subarrays whose sum equals K.",
+    a: "Prefix sum + hash map. Maintain running prefix sum and a map prefix_sum→count seen. For each running sum, number of subarrays ending here that sum to K is map[running - K]. Add to answer, increment map[running]. O(n) time, O(n) space. Sliding window FAILS here because sum isn't monotonic with negatives." },
+  { code: "A5", category: "Arrays / Hashing", q: "Given a string, return the first character that doesn't repeat. Approach + complexity.",
+    a: "Two passes. Pass 1: hash map of char→count. Pass 2: walk string, return first char with count == 1. O(n) time, O(k) space (k = alphabet). Edge: empty string, all chars repeat → return null/sentinel." },
+  { code: "A6", category: "Arrays / Hashing", q: "Given a SORTED array of integers and a target, return indices of two numbers that sum to the target. What approach does the sortedness enable, and what's the complexity?",
+    a: "Two-pointer. Left at index 0, right at the end. Compute sum. If sum < target, left++. If sum > target, right--. If equal, return [left, right]. O(n) time, O(1) space. Same time as the hash map version on unsorted data, but no extra memory — sortedness gives you ordering signal that lets you eliminate half the search space at each step. Reach for two-pointer whenever a problem says 'sorted' and you need to find a pair/triplet/window with a target property." },
+  { code: "T1", category: "Trees", q: "How do you check if a binary tree is a valid binary search tree? Two approaches.",
+    a: "(1) Recursive with bounds: pass (node, lo, hi). Each node must satisfy lo < node.val < hi. Recurse left with hi=node.val, right with lo=node.val. (2) Inorder traversal — should yield strictly increasing sequence. Both O(n) time, O(h) space. Common bug: using <= instead of < (BSTs typically don't allow duplicates)." },
+  { code: "T2", category: "Trees", q: "Find the lowest common ancestor of two nodes in a binary tree (not necessarily a BST).",
+    a: "Recursive: if root is null or equals one of the targets, return root. Recurse left and right. If both return non-null, current node is LCA. Else return whichever side is non-null. O(n) time, O(h) space. For BST specifically: walk down, compare values to decide which subtree contains both." },
+  { code: "T3", category: "Trees", q: "Print a binary tree level by level. What data structure, what complexity?",
+    a: "BFS with queue. Enqueue root. While queue isn't empty: get current level size, dequeue that many nodes (this level), enqueue their children, print as you go. O(n) time, O(w) space (w = max width). Recursive DFS variant: pass level param, append to result[level]." },
+  { code: "G1", category: "Graphs", q: "Given a directed graph, detect whether it has a cycle. Approach + complexity.",
+    a: "DFS with three colors: white (unvisited), gray (currently on DFS path), black (fully processed). If during DFS you hit a gray node, you've found a back-edge → cycle. O(V+E) time, O(V) space. For undirected graphs use parent tracking instead." },
+  { code: "G2", category: "Graphs", q: "Given an undirected graph, determine whether it's bipartite (two-colorable).",
+    a: "BFS or DFS, color nodes alternating colors as you traverse. If you ever try to color a node a color different from one already assigned (i.e. same color as a neighbor), graph is not bipartite. O(V+E) time. Equivalent: bipartite iff no odd-length cycle." },
+  { code: "G3", category: "Graphs", q: "Count the number of connected components in an undirected graph. Two approaches.",
+    a: "(1) DFS/BFS: iterate nodes; for each unvisited, traverse all reachable, increment count. O(V+E) time. (2) Union-Find: union each edge, count distinct roots at end. O(E·α(V)) effectively linear. Use UF when edges arrive in stream/online; BFS/DFS for static graphs." },
+  { code: "B1", category: "Binary Search", q: "Given a sorted array that's been rotated at an unknown pivot (e.g. [4,5,6,7,0,1,2]), find a target value. Complexity?",
+    a: "Modified binary search. At each step, one half (left or right of mid) is sorted — check via nums[lo] <= nums[mid]. If target falls in the sorted half's range, search there; else search the other half. O(log n) time. Edge: duplicates degrade to O(n) worst case." },
+  { code: "B2", category: "Binary Search", q: "Explain 'binary search on the answer.' When do you reach for it? Give an example.",
+    a: "Pattern: when the answer itself lives in a monotonic search space (e.g. 'min capacity such that we can ship in D days'). Binary-search over candidate answers; for each candidate, run a feasibility check (often O(n)). Total O(n log range). Reach for it when 'find min/max value such that some predicate holds' and predicate is monotonic. Examples: koko bananas, ship-within-D-days, split-array-largest-sum." },
+  { code: "W1", category: "Sliding Window", q: "Given a string, find the length of the longest substring without repeating characters. Approach + complexity.",
+    a: "Sliding window with hash set (or char→last_index map). Expand right; if char already in window, shrink left until removed. Track max length. O(n) time, O(k) space (k = alphabet). Map version is faster — jump left pointer to last_index+1 instead of shrinking one at a time." },
+  { code: "W2", category: "Sliding Window", q: "Given an array and a fixed window size k, find the maximum sum of any contiguous k-length window. Trick to avoid O(n*k)?",
+    a: "Fixed-size sliding window. Compute sum of first k elements. For each subsequent position, add the entering element and subtract the leaving element. Track max. O(n) time, O(1) space. Avoids the naive O(n·k) of recomputing each window from scratch." },
+  { code: "S1", category: "System Design", q: "Design the data layer for a system that ingests GPS pings from 2M vehicles every 10s, supports 'where is vehicle X right now' lookups, and 'show me the path of vehicle X over the last 24h' queries. What storage tiers?",
+    a: "Three tiers. Hot path: Redis/in-memory keyed by vehicle_id for current location, sub-ms reads, accepts loss (next ping refills). Warm path: time-series DB (TimescaleDB / InfluxDB / partitioned Postgres) for 24h trail queries. Partition by time + vehicle. Cold path: S3, queryable via Athena for analytics. Ingest layer: Kafka or Kinesis fans out to all three. Discuss: write throughput (~200k pings/s), partitioning by vehicle_id, late/out-of-order pings, schema evolution." },
+  { code: "S2", category: "System Design", q: "Why would you put Kafka (or similar) between IoT devices and your storage layer instead of writing directly to Postgres?",
+    a: "Decoupling — producer doesn't need to know consumers; add new consumers without changing firmware. Durability + replay — persisted; consumers can rewind. Fan-out — multiple downstream systems consume independently. Throughput — handles much higher write rates than RDBMS. Backpressure — DB outage doesn't drop pings. Schema evolution — buffer between producer and storage." },
+  { code: "S3", category: "System Design", q: "15 internal product teams want to query the same telemetry firehose, each with different transformations and SLAs. How do you avoid each team building their own pipeline?",
+    a: "Shared platform layer, not 15 pipelines. Components: (1) canonical schema + schema registry (one source of truth); (2) shared ingest (Kafka topics, well-defined contracts); (3) materialized derived tables/streams for common access patterns; (4) self-service query interface (SQL on warehouse + streaming subscription for real-time); (5) per-team isolation via IAM and quotas. Tradeoff: invest upfront in schema discipline; payoff is no parallel infra. Watch: over-fitting to loudest team, schema breaking changes." },
+  { code: "S4", category: "System Design", q: "Design a rate limiter for a public API. Algorithms, where it lives, what fails when.",
+    a: "Algorithms: token bucket (smooth, bursty), sliding window log (precise, expensive), fixed window counter (simple, boundary spikes), sliding window counter (good compromise). Where it lives: edge / API gateway / Redis-backed central counter. Distributed: Redis with atomic INCR + TTL; for higher scale, local counters that sync periodically. Failure modes: Redis down — fail open or closed? Closed = 429s during your outage. Open = DDoS risk. Most APIs fail open with strict ceilings." },
+  { code: "S5", category: "System Design", q: "Design a system that delivers push/email/SMS notifications to millions of users with delivery guarantees and per-user preferences.",
+    a: "Components: (1) Producer API (apps that send); (2) Notification service that queues, dedupes, applies preferences; (3) Per-channel workers (push, email, SMS) with provider fallbacks; (4) Delivery tracking/receipts. Concerns: idempotency (dedup key per logical notification), per-user rate limits, preference management, retry with backoff for transients, dead letter queue for permanent fails. Stack: Kafka or SQS for queue, Redis for dedup, third-party providers (SendGrid, Twilio, FCM/APNS)." },
+  { code: "BH1", category: "Behavioral", q: "Tell me about a time you made a technical decision that turned out to be wrong. What did you do?",
+    a: "Looking for: specific decision, why you believed it, what evidence changed your mind, what you did to recover, what you learned. Avoid: 'wrong but worked out anyway' (no actual error), or blaming externals. Strong: stakes were real, recovery was clean, lesson is now part of how you operate." },
+  { code: "BH2", category: "Behavioral", q: "Walk me through a difficult architectural decision with real tradeoffs. How did you decide?",
+    a: "Looking for: real tradeoffs (not 'we picked the obviously better option'), how you weighed them, who you consulted, what you'd do differently. Specific tech detail. Outcome with measurement. Strong: shows you can sit with ambiguity and decide on incomplete info." },
+  { code: "BH3", category: "Behavioral", q: "Tell me about a time you disagreed with a teammate on a technical approach. How did you resolve it?",
+    a: "Looking for: technical disagreement (not personality), how you understood the other view, what data resolved it, the actual outcome. Avoid: 'I convinced them I was right.' Strong: shows you can be wrong and update, OR shows you can hold a hard line on real principle." },
+  { code: "BH4", category: "Behavioral", q: "Tell me about an engineer you mentored. What was the concrete outcome of that mentoring?",
+    a: "Looking for: specific person, specific gap, what you did, what changed. Concrete: 'Junior eng struggling with X; we did Y; six months later they shipped Z and got promoted.' Avoid: 'I mentor lots of people and they all grew.' Strong: cause and effect with measurement." },
+  { code: "BH5", category: "Behavioral", q: "You're a CTO. Why are you applying for a senior IC role? Will you actually take direction from a manager?",
+    a: "Looking for: clean narrative, no defensiveness, no bitterness about previous role. Theme: 'I code daily and want to keep coding. Org-building was a phase; engineering is the constant.' Anticipate the followup before asked: 'I've spent 5 years giving direction; I know what makes good direction; I'll be a great teammate to a strong manager.' Strong: confident, brief, forward-looking." },
+
+  // ─── MCQ cards (Mistake drill) ─────────────────────────────────────
+  // Each card has a `variants` array. On wrong answer, click "Try another variant"
+  // to rotate to a different version of the same lesson — defeats memorization.
+
+  { code: "M1", category: "Complexity", type: "mcq",
+    variants: [
+      {
+        q: "What's the time complexity of this function?\n\n```\nfunction findFirstDup(arr) {\n  const seen = new Set();\n  for (const x of arr) {\n    if (seen.has(x)) return x;\n    seen.add(x);\n  }\n  return null;\n}\n```",
+        options: [
+          "O(1) — early return when a duplicate is found",
+          "O(N) — single pass with constant-time set ops",
+          "O(N log N) — set ops are log N (tree-backed)",
+          "O(N²) — `set.has` scans the entire set each call"
+        ],
+        correctIdx: 1,
+        a: "Set's `has` and `add` are O(1) average. Loop is N iterations × O(1) work = O(N). Early return doesn't change asymptotic — worst case still walks the full array. (A) confuses best-case with asymptotic. (C) confuses Set with TreeMap/SortedSet. (D) is the linear-search trap — assuming `has` is implemented as a scan."
+      },
+      {
+        q: "Function A: `for (const x of arr) if (arr.includes(target - x)) return true;` — uses Array.includes inside the loop.\n\nFunction B: `const seen = new Set(arr); for (const x of arr) if (seen.has(target - x)) return true;` — builds a Set once, then loops.\n\nWhat are A and B's time complexities?",
+        options: [
+          "A: O(N), B: O(N²) — Set ops are slower than Array ops",
+          "A: O(N²), B: O(N) — `includes` is linear, `Set.has` is constant",
+          "Both are O(N) — only the data structure name differs",
+          "A: O(N log N), B: O(N) — `includes` does binary search"
+        ],
+        correctIdx: 1,
+        a: "`Array.includes` is a linear scan (O(N) per call). Wrapping it in a loop = N × N = O(N²). `Set.has` is O(1) average. Wrapping it in a loop = N × O(1) = O(N). At N=10,000, that's 100,000,000 ops vs 10,000. (A) inverts which is faster. (C) ignores that the data structure determines lookup cost. (D) confuses Array with sorted array."
+      }
+    ]
+  },
+
+  { code: "M2", category: "Arrays / Hashing", type: "mcq",
+    variants: [
+      {
+        q: "What does `twoSum([3, 6, 4], 6)` return for this code?\n\n```\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    map.set(nums[i], i);\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n  }\n  return null;\n}\n```",
+        options: [
+          "[1, 0] — finds 6 at index 1, complement 0",
+          "[0, 0] — at i=0, inserts 3, then checks for (6-3)=3, finds the entry it just made",
+          "null — no two distinct elements sum to 6",
+          "[0, 2] — finds 3 at index 0 and 4 at index 2"
+        ],
+        correctIdx: 1,
+        a: "At i=0, the code inserts 3→0 BEFORE checking. Then complement = 6-3 = 3, which is now in the map (the entry it just created). Returns [0, 0] — same index twice. Fix: check for complement FIRST, insert SECOND. Then a number can only match against entries from previous iterations."
+      },
+      {
+        q: "Two implementations of Two Sum. Which one is correct for ALL valid inputs?\n\nVersion A:\n```\nfor (let i = 0; i < nums.length; i++) {\n  const c = target - nums[i];\n  if (map.has(c)) return [map.get(c), i];\n  map.set(nums[i], i);\n}\n```\n\nVersion B:\n```\nfor (let i = 0; i < nums.length; i++) {\n  map.set(nums[i], i);\n  const c = target - nums[i];\n  if (map.has(c)) return [map.get(c), i];\n}\n```",
+        options: [
+          "Version A — checks complement before inserting, so matches only come from prior iterations",
+          "Version B — inserts first ensures the value is present in the map for matching",
+          "Both correct — they produce identical output for all inputs",
+          "Both buggy — Two Sum requires a sorted array first"
+        ],
+        correctIdx: 0,
+        a: "Version A is correct. Checking before inserting means a number can only match an entry from a PREVIOUS iteration. Version B inserts first, then checks — this lets a number match itself when target = 2x (e.g., [3,5] target=6 → returns [0,0]). (B)'s reasoning sounds plausible but is exactly backward. (C) is wrong: A and B differ on inputs like [3,5] target=6. (D) is wrong: Two Sum doesn't require sorting."
+      }
+    ]
+  },
+
+  { code: "M3", category: "Data Structures", type: "mcq",
+    variants: [
+      {
+        q: "You're implementing BFS to find the shortest path in an unweighted graph. Which structure should you use to track which nodes to visit next?",
+        options: [
+          "Stack — LIFO ensures depth-first exploration",
+          "Queue — FIFO ensures level-by-level exploration",
+          "Hash set — order doesn't matter for graph traversal",
+          "Min-heap — to prioritize closer nodes"
+        ],
+        correctIdx: 1,
+        a: "BFS = breadth-first = level by level. You need to process nodes in the order they were discovered, which is FIFO = queue. Stack (LIFO) gives DFS instead. Hash set is for tracking *visited* nodes — it's about who you've seen, not what to visit next. Min-heap is for weighted shortest path (Dijkstra), not unweighted BFS."
+      },
+      {
+        q: "What's the order of output?\n\n```\nconst items = [];\nitems.push('A');\nitems.push('B');\nitems.push('C');\nwhile (items.length) {\n  console.log(items.pop());\n}\n```",
+        options: [
+          "A, B, C — `push` and `pop` preserve insertion order",
+          "C, B, A — `push` adds to end, `pop` removes from end (stack)",
+          "A, C, B — output order is non-deterministic",
+          "Throws — `pop` requires an index argument"
+        ],
+        correctIdx: 1,
+        a: "`push` + `pop` together = stack (LIFO): last in, first out. To get FIFO order you'd use `push` + `shift` (or a real queue/deque). This is the JS gotcha that makes Arrays serve as either stack or queue depending which methods you pair. The user's A2 stumble (`stack = [] // FIFO`) was exactly this confusion."
+      }
+    ]
+  },
+
+  { code: "M4", category: "Sliding Window", type: "mcq",
+    variants: [
+      {
+        q: "Find the longest subarray with sum ≤ K. This implementation has a bug. Which input reveals it?\n\n```\nfunction longest(arr, K) {\n  let left = 0, sum = 0, best = 0;\n  for (let right = 0; right < arr.length; right++) {\n    sum += arr[right];\n    if (sum > K) {\n      sum -= arr[left];\n      left++;\n    }\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}\n```",
+        options: [
+          "[1, 2, 3] with K=10 — array sum is below K",
+          "[5, 1, 1, 1] with K=2 — adding 5 needs to shrink past multiple elements",
+          "[] with K=5 — empty array",
+          "[1, 1, 1] with K=3 — sum exactly equals K"
+        ],
+        correctIdx: 1,
+        a: "With [5, 1, 1, 1] and K=2: after adding 5, sum=5>2. The `if` shrinks ONCE (removes 5, sum=0, left=1). Loop continues; we then add 1, 1, 1 and never re-shrink — so we return a window length of 3 even though sum is 3 > K. The fix is `while`, not `if` — keep shrinking until sum ≤ K. Single-element-too-large inputs catch this every time. (A) doesn't trigger the shrink path. (C) and (D) don't violate the invariant."
+      },
+      {
+        q: "Same buggy `if`-based shrink as before. Which fix is correct?",
+        options: [
+          "Change `if (sum > K)` to `while (sum > K)`",
+          "Move `best = Math.max(...)` outside the for-loop",
+          "Change `sum -= arr[left]; left++` to `sum -= arr[right]; right--`",
+          "Sort the array before running the algorithm"
+        ],
+        correctIdx: 0,
+        a: "The shrink needs to repeat until the window invariant (sum ≤ K) holds. (B) breaks correctness — best needs updating on each iteration as the window grows. (C) shrinks the wrong end and reverses iteration direction. (D) destroys the contiguous-subarray semantics — sorting changes which elements are adjacent. The whole sliding-window pattern depends on `while` for the constraint check."
+      }
+    ]
+  },
+
+  { code: "M5", category: "Arrays / Hashing", type: "mcq",
+    variants: [
+      {
+        q: "Which 'anagram check' has the WORST asymptotic complexity?",
+        options: [
+          "Sort both strings, compare: `s.split('').sort().join('') === t.split('').sort().join('')`",
+          "Build count map for each, compare maps",
+          "Single map: increment for s, decrement for t, check all zeros",
+          "For each char in s, check if t contains it: `[...s].every(c => t.includes(c))`"
+        ],
+        correctIdx: 3,
+        a: "(D) is O(N·M). Each `includes` is a linear scan, run N times. Also incorrect: 'aaa' vs 'abc' would return true (every char in s is in t) even though they're not anagrams — counts differ. (A) is O(N log N) due to sort. (B) and (C) are both O(N+M). The brute-force `every + includes` looks innocent (one line!) but explodes on long strings AND fails on duplicates."
+      },
+      {
+        q: "Which approach gives the WRONG answer for 'aab' vs 'abb'?",
+        options: [
+          "Sort both and compare",
+          "Count map for each string, compare maps",
+          "Single map increment/decrement, check all zeros",
+          "Convert both to Sets and compare: `setA.size === setB.size && [...setA].every(c => setB.has(c))`"
+        ],
+        correctIdx: 3,
+        a: "'aab' and 'abb' both produce the Set {a, b} — same set. But they're NOT anagrams: 'aab' has 2 a's and 1 b, while 'abb' has 1 a and 2 b's. Set-based comparison ignores frequency. The other three correctly track counts. This is the classic duplicates trap — engineers reach for Set thinking 'I just need unique chars,' but anagram is a *frequency* property, not a presence property."
+      }
+    ]
+  },
+
+  { code: "M6", category: "Complexity", type: "mcq",
+    variants: [
+      {
+        q: "Which two complexities are equivalent in Big-O notation?",
+        options: [
+          "O(N) and O(2N)",
+          "O(N²) and O(N log N)",
+          "O(N!) and O(2^N)",
+          "O(1) and O(log N)"
+        ],
+        correctIdx: 0,
+        a: "Constants drop in Big-O — O(2N), O(100N), O(N/2) are all O(N). They describe the same growth rate. (B) Quadratic and log-linear are different rates. (C) Factorial grows much faster than exponential at N>4 (5! = 120, 2^5 = 32). (D) Constant beats logarithmic for any growing N. The whole point of Big-O is asymptotic behavior — only the dominant growth term matters."
+      },
+      {
+        q: "Order from FASTEST asymptotic growth (smallest) to SLOWEST: O(N²), O(log N), O(N log N), O(N).",
+        options: [
+          "O(log N) < O(N) < O(N log N) < O(N²)",
+          "O(N) < O(log N) < O(N log N) < O(N²)",
+          "O(log N) < O(N log N) < O(N) < O(N²)",
+          "O(N²) < O(N log N) < O(N) < O(log N)"
+        ],
+        correctIdx: 0,
+        a: "For increasing N: log N (sublinear) < N (linear) < N log N (log-linear, e.g. mergesort) < N² (quadratic). (B) swaps log N and N — log is always smaller for N>1. (C) puts N log N before N — wrong, multiplying N by log N makes it bigger than N alone. (D) is reversed entirely. This ordering is the foundation of 'is my algorithm fast enough?' intuition."
+      }
+    ]
+  },
+
+  { code: "M7", category: "Arrays / Hashing", type: "mcq",
+    variants: [
+      {
+        q: "A coding problem says 'given an array of integers, return X.' Inside your solution function, what data structures may you use?",
+        options: [
+          "Only arrays — the input shape constrains the implementation",
+          "Anything you want — input type and internal data structures are independent",
+          "Only structures the problem mentions explicitly",
+          "The same kind of structure as the input, plus primitives"
+        ],
+        correctIdx: 1,
+        a: "Input being an array tells you what you receive, not how you process it. Build hash maps, sets, queues, heaps, trees — whatever serves the algorithm. Most array-problem optimizations live exactly here: array scan + hash for O(1) lookups (Two Sum), array scan + heap for top-K (median maintenance), array scan + stack for monotonic patterns (next greater element). The 'stick with arrays' instinct blocks the entire optimization toolkit."
+      },
+      {
+        q: "You have `findCommon(arr1, arr2)` that returns elements present in both arrays. Naive version uses two nested loops — O(N×M). Which internal change makes it O(N+M)?",
+        options: [
+          "Sort both arrays first, then nested-loop with break-early",
+          "Build a hash set from arr1, then scan arr2 checking the set",
+          "Keep both as arrays — nested loops are unavoidable for intersection",
+          "Convert both to strings and use string equality"
+        ],
+        correctIdx: 1,
+        a: "Build the set from arr1 in O(N), then scan arr2 in O(M) doing O(1) lookups each = O(N+M) total. (A) sorts add O(N log N) which dominates — better than O(N×M) but not as good as O(N+M). (C) is the trap of 'stick with arrays' — exactly the misconception that blocks optimization. (D) is nonsense — string equality on entire arrays doesn't return common elements."
+      }
+    ]
+  }
+];
+
+// State
+const STORAGE_KEY = "drill-cards-state-v2";
+let state = loadState();
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      // If the saved order doesn't include newly-added cards, append them
+      const savedOrder = parsed.order || [];
+      const allIndices = CARDS.map((_, i) => i);
+      const missing = allIndices.filter(i => !savedOrder.includes(i));
+      const order = savedOrder.concat(missing).filter(i => i < CARDS.length);
+      // Migrate: old "mcq" filter is now the MCQ tab
+      let filter = parsed.filter || "all";
+      let activeTab = parsed.activeTab || "open";
+      if (filter === "mcq") {
+        activeTab = "mcq";
+        filter = "all";
+      }
+      return {
+        statuses: parsed.statuses || {},
+        draftAnswers: parsed.draftAnswers || {},
+        mcqAnswers: parsed.mcqAnswers || {},
+        mcqVariantIdx: parsed.mcqVariantIdx || {},
+        filter: filter,
+        activeTab: activeTab,
+        order: order.length > 0 ? order : allIndices,
+      };
+    } catch (e) {}
+  }
+  return {
+    statuses: {},
+    draftAnswers: {},
+    mcqAnswers: {},
+    mcqVariantIdx: {},
+    filter: "all",
+    activeTab: "open",
+    order: CARDS.map((_, i) => i),
+  };
+}
+
+function cardMatchesActiveTab(c) {
+  const isMcq = c.type === "mcq";
+  if (state.activeTab === "mcq") return isMcq;
+  return !isMcq; // "open" tab
+}
+
+// Returns the currently-active variant for an MCQ card. Backward-compatible
+// with old single-variant cards that have q/options/correctIdx/a inline.
+function getCurrentVariant(card) {
+  if (!card.variants) {
+    // Legacy inline card — treat as a single variant
+    return { q: card.q, options: card.options, correctIdx: card.correctIdx, a: card.a };
+  }
+  const idx = (state.mcqVariantIdx || {})[card.code] || 0;
+  return card.variants[idx % card.variants.length];
+}
+
+function getVariantCount(card) {
+  return card.variants ? card.variants.length : 1;
+}
+
+function getCurrentVariantIdx(card) {
+  if (!card.variants) return 0;
+  return ((state.mcqVariantIdx || {})[card.code] || 0) % card.variants.length;
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getFilteredCards() {
+  return state.order
+    .map(i => CARDS[i])
+    .filter(c => {
+      // Tab is the primary filter — only show cards matching active tab
+      if (!cardMatchesActiveTab(c)) return false;
+      // Then apply the user's selected filter within the tab
+      const status = state.statuses[c.code];
+      if (state.filter === "all") return true;
+      if (state.filter === "not-drilled") return !status;
+      if (state.filter === "needs-work") return status === "review" || status === "stumbled";
+      if (state.filter === "unfamiliar") return status === "unfamiliar";
+      return c.category === state.filter;
+    });
+}
+
+function getDraftCount() {
+  // Tab-scoped: count drafts/picks in active tab only
+  const drafts = state.draftAnswers || {};
+  const mcqs = state.mcqAnswers || {};
+  return CARDS.filter(cardMatchesActiveTab).filter(c => {
+    if (c.type === "mcq") return mcqs[c.code] !== undefined;
+    return (drafts[c.code] || "").trim().length > 0;
+  }).length;
+}
+
+function getGlobalCounts() {
+  // For tab badges — count drafts/picks across the WHOLE deck, per type
+  const drafts = state.draftAnswers || {};
+  const mcqs = state.mcqAnswers || {};
+  let openDrafts = 0, mcqPicks = 0;
+  for (const c of CARDS) {
+    if (c.type === "mcq") {
+      if (mcqs[c.code] !== undefined) mcqPicks++;
+    } else {
+      if ((drafts[c.code] || "").trim().length > 0) openDrafts++;
+    }
+  }
+  return { openDrafts, mcqPicks };
+}
+
+function render() {
+  renderStats();
+  renderCards();
+  renderProgress();
+  updateCounts();
+}
+
+function renderStats() {
+  // Tab-scoped status counts so the bar reflects what the user is seeing
+  const tabCards = CARDS.filter(cardMatchesActiveTab);
+  const total = tabCards.length;
+  const statusOf = c => state.statuses[c.code];
+  const confident = tabCards.filter(c => statusOf(c) === "confident").length;
+  const review = tabCards.filter(c => statusOf(c) === "review").length;
+  const stumbled = tabCards.filter(c => statusOf(c) === "stumbled").length;
+  const unfamiliar = tabCards.filter(c => statusOf(c) === "unfamiliar").length;
+  const drilled = confident + review + stumbled + unfamiliar;
+  const filteredCount = getFilteredCards().length;
+  const draftCount = getDraftCount();
+
+  document.getElementById("subtitle").textContent =
+    `${filteredCount} of ${total} shown`;
+
+  document.getElementById("stats").innerHTML = `
+    <span class="stat-card-count">${total} card${total === 1 ? "" : "s"}</span>
+    <span class="dot">·</span>
+    <span class="stat-confident">✓ ${confident}</span>
+    <span class="dot">·</span>
+    <span class="stat-review">⟳ ${review}</span>
+    <span class="dot">·</span>
+    <span class="stat-stumbled">✗ ${stumbled}</span>
+    <span class="dot">·</span>
+    <span class="stat-unfamiliar">? ${unfamiliar}</span>
+    <span class="dot">·</span>
+    <span>◯ ${total - drilled} not drilled</span>
+  `;
+
+  // Submit count + tab counts + banner
+  document.getElementById("submit-count").textContent = draftCount;
+  const counts = getGlobalCounts();
+  document.getElementById("tab-count-open").textContent = counts.openDrafts;
+  document.getElementById("tab-count-mcq").textContent = counts.mcqPicks;
+  document.getElementById("tab-open").classList.toggle("active", state.activeTab === "open");
+  document.getElementById("tab-mcq").classList.toggle("active", state.activeTab === "mcq");
+
+  const banner = document.getElementById("banner");
+  if (state.activeTab === "mcq") {
+    banner.innerHTML = `<b>MCQ Mistake Drills:</b> Click an option to commit your first answer. Correct → status auto-set to confident. Wrong → auto-set to stumbled and the explanation reveals inline. Hit <b>Try a different variant</b> after a wrong pick to rotate to a fresh version of the same lesson.`;
+  } else {
+    banner.innerHTML = `<b>Open-Answer Drills:</b> Type your answer in plain English (approach + complexity + edge cases). Auto-saves as you type. When done, hit <b>📤 Submit</b> to copy the batch to clipboard, then paste into your AI reviewer chat.`;
+  }
+}
+
+function renderCards() {
+  const cards = getFilteredCards();
+  const container = document.getElementById("cards");
+
+  if (cards.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <p>No cards match the current filter.</p>
+        <p style="margin-top:10px"><button class="status-btn" onclick="setFilter('all')">Show all</button></p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = cards.map((card, idx) => {
+    if (card.type === "mcq") return renderMCQCard(card, idx, cards.length);
+    return renderOpenCard(card, idx, cards.length);
+  }).join("");
+
+  // Wire up MCQ option buttons
+  container.querySelectorAll(".mcq-option:not(:disabled)").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const code = btn.dataset.code;
+      const idx = parseInt(btn.dataset.idx, 10);
+      const card = CARDS.find(c => c.code === code);
+      if (!card) return;
+      const variant = getCurrentVariant(card);
+      // Save answer
+      if (!state.mcqAnswers) state.mcqAnswers = {};
+      // Only set status on FIRST answer (so re-clicking doesn't lie about your first try)
+      const firstTry = state.mcqAnswers[code] === undefined;
+      state.mcqAnswers[code] = idx;
+      if (firstTry) {
+        state.statuses[code] = (idx === variant.correctIdx) ? "confident" : "stumbled";
+      }
+      saveState();
+      render();
+    });
+  });
+
+  // Wire up textareas
+  container.querySelectorAll("textarea").forEach(ta => {
+    ta.addEventListener("input", (e) => {
+      const code = e.target.dataset.code;
+      if (!state.draftAnswers) state.draftAnswers = {};
+      state.draftAnswers[code] = e.target.value;
+      saveState();
+      // Update visual indicator
+      if (e.target.value.trim().length > 0) e.target.classList.add("has-content");
+      else e.target.classList.remove("has-content");
+      updateCounts();
+    });
+  });
+
+  // Wire up status buttons
+  container.querySelectorAll(".status-btn[data-status]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const code = btn.dataset.code;
+      const newStatus = btn.dataset.status;
+      // Toggle off if already that status
+      if (state.statuses[code] === newStatus) {
+        delete state.statuses[code];
+      } else {
+        state.statuses[code] = newStatus;
+      }
+      saveState();
+      render();
+    });
+  });
+
+  // Wire up clear-this-card / rotate-variant buttons
+  container.querySelectorAll(".clear-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const code = btn.dataset.code;
+      const shouldRotate = btn.dataset.rotate === "1";
+      if (state.draftAnswers) delete state.draftAnswers[code];
+      if (state.mcqAnswers) delete state.mcqAnswers[code];
+      if (shouldRotate) {
+        if (!state.mcqVariantIdx) state.mcqVariantIdx = {};
+        state.mcqVariantIdx[code] = (state.mcqVariantIdx[code] || 0) + 1;
+      }
+      saveState();
+      render();
+    });
+  });
+}
+
+function renderOpenCard(card, idx, totalCount) {
+  const status = state.statuses[card.code];
+  const statusLabel = status ? status : "not drilled";
+  const statusClass = status ? `status-${status}` : "status-none";
+  const draft = (state.draftAnswers || {})[card.code] || "";
+  const hasContent = draft.trim().length > 0;
+  return `
+    <div class="card" id="card-${card.code}">
+      <div class="card-head">
+        <span class="card-num">Card ${idx + 1} of ${totalCount}</span>
+        <span class="status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="question">${formatRich(card.q)}</div>
+      <textarea
+        class="${hasContent ? 'has-content' : ''}"
+        data-code="${card.code}"
+        placeholder="Plain English. Approach, complexity, edge cases. Auto-saves as you type.">${escapeHtml(draft)}</textarea>
+      <div class="card-actions">
+        <span class="label">Mark:</span>
+        <button class="status-btn confident ${status === 'confident' ? 'active' : ''}" data-code="${card.code}" data-status="confident">✓ Confident</button>
+        <button class="status-btn review ${status === 'review' ? 'active' : ''}" data-code="${card.code}" data-status="review">⟳ Review</button>
+        <button class="status-btn stumbled ${status === 'stumbled' ? 'active' : ''}" data-code="${card.code}" data-status="stumbled">✗ Stumbled</button>
+        <button class="status-btn unfamiliar ${status === 'unfamiliar' ? 'active' : ''}" data-code="${card.code}" data-status="unfamiliar" title="I don't have the foundation for this — teach me, don't just give the answer">? Unfamiliar</button>
+        <button class="clear-btn" data-code="${card.code}" data-action="clear">Clear answer</button>
+      </div>
+      <details class="reveal">
+        <summary>Reveal category (mild hint)</summary>
+        <p>${escapeHtml(card.category)}</p>
+      </details>
+      <details class="reveal">
+        <summary>Reveal reference answer (don't peek before answering)</summary>
+        <div class="answer-body">${formatRich(card.a)}</div>
+      </details>
+    </div>
+  `;
+}
+
+function renderMCQCard(card, idx, totalCount) {
+  const status = state.statuses[card.code];
+  const statusLabel = status ? status : "not drilled";
+  const statusClass = status ? `status-${status}` : "status-none";
+  const picked = (state.mcqAnswers || {})[card.code];
+  const hasAnswered = picked !== undefined;
+  const variant = getCurrentVariant(card);
+  const variantCount = getVariantCount(card);
+  const variantIdx = getCurrentVariantIdx(card);
+  const isCorrect = hasAnswered && picked === variant.correctIdx;
+
+  const optionsHtml = variant.options.map((opt, optIdx) => {
+    let optClass = "mcq-option";
+    let disabled = "";
+    if (hasAnswered) {
+      disabled = "disabled";
+      if (optIdx === picked && isCorrect) optClass += " picked-correct";
+      else if (optIdx === picked && !isCorrect) optClass += " picked-wrong";
+      else if (optIdx === variant.correctIdx) optClass += " reveal-correct";
+      else optClass += " dimmed";
+    }
+    const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+    return `
+      <button class="${optClass}" ${disabled} data-code="${card.code}" data-idx="${optIdx}">
+        <span class="opt-letter">${letter}.</span>
+        <span>${escapeHtml(opt)}</span>
+      </button>
+    `;
+  }).join("");
+
+  const feedbackHtml = hasAnswered ? `
+    <div class="mcq-feedback ${isCorrect ? 'correct' : 'wrong'}">
+      <div class="verdict">${isCorrect ? '✓ Correct' : `✗ Not quite — correct answer is ${String.fromCharCode(65 + variant.correctIdx)}`}</div>
+      <div class="explanation">${formatRich(variant.a)}</div>
+    </div>
+  ` : "";
+
+  const rotateBtnLabel = variantCount > 1
+    ? (hasAnswered && !isCorrect ? "Try a different variant" : "Reset & rotate variant")
+    : "Reset to retry";
+  const variantBadge = variantCount > 1
+    ? `<span class="variant-indicator" title="Variants rotate when you click rotate; defeats memorization">v${variantIdx + 1}/${variantCount}</span>`
+    : "";
+
+  return `
+    <div class="card mcq-card" id="card-${card.code}">
+      <div class="card-head">
+        <span class="card-num">Card ${idx + 1} of ${totalCount}</span>
+        <span class="badge-mcq">MCQ</span>
+        ${variantBadge}
+        <span class="status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="question">${formatRich(variant.q)}</div>
+      <div class="mcq-options">
+        ${optionsHtml}
+      </div>
+      ${feedbackHtml}
+      <div class="card-actions">
+        <span class="label">Override:</span>
+        <button class="status-btn confident ${status === 'confident' ? 'active' : ''}" data-code="${card.code}" data-status="confident">✓ Confident</button>
+        <button class="status-btn review ${status === 'review' ? 'active' : ''}" data-code="${card.code}" data-status="review">⟳ Review</button>
+        <button class="status-btn stumbled ${status === 'stumbled' ? 'active' : ''}" data-code="${card.code}" data-status="stumbled">✗ Stumbled</button>
+        <button class="status-btn unfamiliar ${status === 'unfamiliar' ? 'active' : ''}" data-code="${card.code}" data-status="unfamiliar" title="I don't have the foundation for this — teach me, don't just give the answer">? Unfamiliar</button>
+        <button class="clear-btn rotate-variant" data-code="${card.code}" data-rotate="${variantCount > 1 ? '1' : '0'}">${rotateBtnLabel}</button>
+      </div>
+      <details class="reveal">
+        <summary>Reveal category (after answering)</summary>
+        <p>${escapeHtml(card.category)}</p>
+      </details>
+    </div>
+  `;
+}
+
+function renderProgress() {
+  const grid = document.getElementById("progress-grid");
+  const drafts = state.draftAnswers || {};
+  grid.innerHTML = state.order.map((i, position) => {
+    const c = CARDS[i];
+    const status = state.statuses[c.code] || "";
+    const hasDraft = (drafts[c.code] || "").trim().length > 0;
+    const statusBit = status ? ` (${status})` : "";
+    const draftBit = hasDraft ? " [draft]" : "";
+    return `<a href="#card-${c.code}" class="progress-cell ${status} ${hasDraft ? 'has-draft' : ''}"
+              title="Card ${position + 1}${statusBit}${draftBit}">${position + 1}</a>`;
+  }).join("");
+}
+
+function updateCounts() {
+  const draftCount = getDraftCount();
+  document.getElementById("floating-count").textContent = draftCount;
+  const fab = document.getElementById("floating-submit");
+  fab.style.display = draftCount > 0 ? "" : "none";
+}
+
+function submitTest() {
+  const drafts = state.draftAnswers || {};
+  const mcqs = state.mcqAnswers || {};
+
+  // Gather: open-answer drafts, MCQ picks, and cards explicitly marked "unfamiliar"
+  // (unfamiliar cards may have no answer typed — that's the point)
+  // Submit is tab-scoped — only includes cards from the active tab.
+  const submitted = state.order.map(i => CARDS[i]).filter(c => {
+    if (!cardMatchesActiveTab(c)) return false;
+    if (state.statuses[c.code] === "unfamiliar") return true;
+    if (c.type === "mcq") return mcqs[c.code] !== undefined;
+    return (drafts[c.code] || "").trim().length > 0;
+  });
+
+  if (submitted.length === 0) {
+    showToast("No drafts yet. Answer some cards first.", true);
+    return;
+  }
+
+  const unfamiliarSet = new Set(submitted.filter(c => state.statuses[c.code] === "unfamiliar").map(c => c.code));
+  const openCount = submitted.filter(c => c.type !== "mcq" && !unfamiliarSet.has(c.code)).length;
+  const mcqCount = submitted.filter(c => c.type === "mcq" && !unfamiliarSet.has(c.code)).length;
+  const unfamiliarCount = unfamiliarSet.size;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const totalCards = CARDS.length;
+  const lines = [];
+  lines.push(`# Drill Test Submission — ${today}`);
+  lines.push("");
+  const breakdown = [];
+  if (openCount > 0) breakdown.push(`${openCount} open-answer`);
+  if (mcqCount > 0) breakdown.push(`${mcqCount} MCQ`);
+  if (unfamiliarCount > 0) breakdown.push(`${unfamiliarCount} flagged unfamiliar`);
+  lines.push(`I drilled **${submitted.length} of ${totalCards}** cards (${breakdown.join(", ")}).`);
+  lines.push("");
+  lines.push(`For each open-answer card I attempted: grade what I got, what I missed, what an interviewer would push on, recommended status, sharper version of the answer.`);
+  lines.push("");
+  lines.push(`For each MCQ I got wrong: confirm the lesson, point out which underlying open-answer card it relates to, and consider whether I need MORE MCQs on that gap.`);
+  lines.push("");
+  if (unfamiliarCount > 0) {
+    lines.push(`**For each card I flagged UNFAMILIAR**: I don't have the foundation — don't just give me the sharper answer. Teach me the concept from scratch, name 2-3 prerequisite ideas I should know, and suggest a learning sequence (where to start, what to read, what to drill next). Then update the deck to include foundation-level cards on these topics if appropriate.`);
+    lines.push("");
+  }
+  lines.push(`Then **evolve the deck**: edit \`drill.html\` to add new open-answer or MCQ cards targeting patterns of weakness, sharpen ambiguous questions, retire ones I've nailed twice. Tell me what changed so I know what to expect on reload.`);
+  lines.push("");
+  lines.push("---");
+  lines.push("");
+
+  for (const c of submitted) {
+    const status = state.statuses[c.code];
+
+    // Unfamiliar cards: don't include answer/options, just flag for teaching
+    if (status === "unfamiliar") {
+      lines.push(`## ${c.code} — ${c.category} *(UNFAMILIAR — I don't have the foundation here)*`);
+      lines.push("");
+      if (c.type === "mcq") {
+        const variant = getCurrentVariant(c);
+        lines.push(`**Q**: ${variant.q}`);
+      } else {
+        lines.push(`**Q**: ${c.q}`);
+      }
+      lines.push("");
+      lines.push(`Teach me, don't grade me — I need foundation, not the sharper version.`);
+      lines.push("");
+      lines.push("---");
+      lines.push("");
+      continue;
+    }
+
+    if (c.type === "mcq") {
+      const picked = mcqs[c.code];
+      const variant = getCurrentVariant(c);
+      const variantIdx = getCurrentVariantIdx(c);
+      const variantCount = getVariantCount(c);
+      const correct = picked === variant.correctIdx;
+      const pickedLetter = String.fromCharCode(65 + picked);
+      const correctLetter = String.fromCharCode(65 + variant.correctIdx);
+      const verdict = correct ? `✓ correct (${pickedLetter})` : `✗ wrong — picked ${pickedLetter}, correct was ${correctLetter}`;
+      const variantTag = variantCount > 1 ? ` v${variantIdx + 1}/${variantCount}` : "";
+      lines.push(`## ${c.code}${variantTag} — ${c.category} *(MCQ — ${verdict})*`);
+      lines.push("");
+      lines.push(`**Q**: ${variant.q}`);
+      lines.push("");
+      if (!correct) {
+        lines.push(`**Options**:`);
+        variant.options.forEach((opt, i) => {
+          const marks = [];
+          if (i === picked) marks.push("← I picked");
+          if (i === variant.correctIdx) marks.push("← correct");
+          const marksStr = marks.length ? ` ${marks.join(" / ")}` : "";
+          lines.push(`- ${String.fromCharCode(65 + i)}. ${opt}${marksStr}`);
+        });
+        lines.push("");
+      }
+    } else {
+      const statusStr = status ? ` *(I marked: ${status})*` : "";
+      lines.push(`## ${c.code} — ${c.category}${statusStr}`);
+      lines.push("");
+      lines.push(`**Q**: ${c.q}`);
+      lines.push("");
+      lines.push(`**My answer**:`);
+      const answer = (drafts[c.code] || "").trim();
+      for (const line of answer.split("\n")) {
+        lines.push(`> ${line}`);
+      }
+      lines.push("");
+    }
+    lines.push("---");
+    lines.push("");
+  }
+
+  const formatted = lines.join("\n");
+  navigator.clipboard.writeText(formatted).then(() => {
+    showToast(`Copied ${submitted.length} cards. Paste into your AI reviewer chat.`);
+  }).catch(err => {
+    showToast("Clipboard blocked. Use the textarea below to copy manually.", true);
+    showFallback(formatted);
+  });
+}
+
+function showFallback(text) {
+  // Render a textarea fallback for browsers that block clipboard
+  const existing = document.getElementById("fallback-area");
+  if (existing) existing.remove();
+  const wrap = document.createElement("div");
+  wrap.id = "fallback-area";
+  wrap.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;background:var(--card);padding:20px;border-radius:8px;border:1px solid var(--border);max-width:90vw;max-height:80vh;display:flex;flex-direction:column;gap:10px;";
+  wrap.innerHTML = `
+    <div style="display:flex;justify-content:space-between"><b>Copy manually:</b><button onclick="document.getElementById('fallback-area').remove()" style="background:transparent;color:var(--muted);border:none;cursor:pointer">✕</button></div>
+    <textarea readonly style="width:80vw;height:60vh;font-family:monospace;font-size:12px">${escapeHtml(text)}</textarea>
+  `;
+  document.body.appendChild(wrap);
+  wrap.querySelector("textarea").select();
+}
+
+function showToast(msg, isError = false) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.style.background = isError ? "var(--bad)" : "var(--good)";
+  toast.style.color = isError ? "#450a0a" : "#052e16";
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+function clearAllDrafts() {
+  if (!confirm("Wipe all typed answers? Status marks stay. This can't be undone.")) return;
+  state.draftAnswers = {};
+  saveState();
+  render();
+  showToast("Drafts cleared");
+}
+
+function shuffle() {
+  state.order = CARDS.map((_, i) => i).sort(() => Math.random() - 0.5);
+  saveState();
+  render();
+  showToast("Shuffled");
+}
+
+function setFilter(value) {
+  state.filter = value;
+  document.getElementById("filter").value = value;
+  saveState();
+  render();
+}
+
+function resetProgress() {
+  if (!confirm("Reset everything — statuses AND drafts? This can't be undone.")) return;
+  state = {
+    statuses: {},
+    draftAnswers: {},
+    filter: "all",
+    order: CARDS.map((_, i) => i),
+  };
+  saveState();
+  render();
+  showToast("Reset complete");
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// Tiny JS/TS syntax highlighter — no dependencies, good enough for drill snippets.
+function highlightJS(code) {
+  const KEYWORDS = new Set([
+    "const","let","var","function","return","if","else","for","while","do",
+    "break","continue","new","class","extends","super","this","typeof",
+    "instanceof","in","of","switch","case","default","try","catch","finally",
+    "throw","await","async","delete","void","import","export"
+  ]);
+  const LITERALS = new Set(["true","false","null","undefined","NaN","Infinity"]);
+  // Order matters: comments, strings, numbers, identifiers, whitespace, punctuation.
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`)|(\b\d[\d_]*(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)|(\s+)|([^\w\s])/g;
+  let out = "", m;
+  while ((m = re.exec(code)) !== null) {
+    const [, comment, str, num, ident, ws, punct] = m;
+    if (comment !== undefined) {
+      out += `<span class="tk-com">${escapeHtml(comment)}</span>`;
+    } else if (str !== undefined) {
+      out += `<span class="tk-str">${escapeHtml(str)}</span>`;
+    } else if (num !== undefined) {
+      out += `<span class="tk-num">${num}</span>`;
+    } else if (ident !== undefined) {
+      if (KEYWORDS.has(ident)) out += `<span class="tk-kw">${ident}</span>`;
+      else if (LITERALS.has(ident)) out += `<span class="tk-lit">${ident}</span>`;
+      else if (/^\s*\(/.test(code.slice(re.lastIndex))) out += `<span class="tk-fn">${ident}</span>`;
+      else out += `<span class="tk-id">${ident}</span>`;
+    } else if (ws !== undefined) {
+      out += ws;
+    } else if (punct !== undefined) {
+      out += `<span class="tk-pun">${escapeHtml(punct)}</span>`;
+    }
+  }
+  return out;
+}
+
+// Renders text with ```fenced code blocks```, `inline code`, and newlines.
+// Prose stays readable; code becomes a syntax-highlighted monospace block.
+function formatRich(text) {
+  const segments = String(text).split("```");
+  let html = "";
+  segments.forEach((seg, i) => {
+    if (i % 2 === 1) {
+      // Code block. Strip an optional language hint on the first line, trim blank edges.
+      let code = seg.replace(/^[a-zA-Z0-9]*[ \t]*\n/, "");
+      code = code.replace(/^\n+/, "").replace(/\s+$/, "");
+      html += `<pre class="code-block"><code>${highlightJS(code)}</code></pre>`;
+    } else {
+      if (seg === "") return;
+      let prose = escapeHtml(seg);
+      prose = prose.replace(/`([^`]+?)`/g, '<code class="inline-code">$1</code>');
+      prose = prose.replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>");
+      html += prose;
+    }
+  });
+  return html;
+}
+
+// Wire up filter
+document.getElementById("filter").addEventListener("change", (e) => setFilter(e.target.value));
+document.getElementById("filter").value = state.filter;
+
+// Wire up tabs
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    const newTab = t.dataset.tab;
+    if (state.activeTab === newTab) return;
+    state.activeTab = newTab;
+    saveState();
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+
+// More menu (⋯) — toggle on click, close on outside click or Esc
+const moreBtn = document.getElementById("more-btn");
+const menuDropdown = document.getElementById("menu-dropdown");
+if (moreBtn && menuDropdown) {
+  moreBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menuDropdown.classList.toggle("show");
+  });
+  // Close menu on any click inside the dropdown (after the action runs)
+  menuDropdown.addEventListener("click", () => {
+    setTimeout(() => menuDropdown.classList.remove("show"), 0);
+  });
+  document.addEventListener("click", (e) => {
+    if (!menuDropdown.contains(e.target) && !moreBtn.contains(e.target)) {
+      menuDropdown.classList.remove("show");
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") menuDropdown.classList.remove("show");
+  });
+}
+
+// Keyboard: Ctrl/Cmd+Enter from anywhere submits
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    e.preventDefault();
+    submitTest();
+  }
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>

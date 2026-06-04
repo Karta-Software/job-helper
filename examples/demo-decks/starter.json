@@ -1,0 +1,27 @@
+[
+  {
+    "id": "demo-open-001",
+    "domain": "behavioral",
+    "type": "open-answer",
+    "prompt": "Tell me about a time you made a decision with incomplete information. What did you do?",
+    "answerGuide": "Use STAR. Name the uncertainty, decision, action, result, and what changed afterward.",
+    "source": "starter",
+    "tags": ["behavioral", "decision-making"]
+  },
+  {
+    "id": "demo-mcq-001",
+    "domain": "application-strategy",
+    "type": "mcq",
+    "prompt": "A job matches your target role but has one dealbreaker. What should the tracker recommend by default?",
+    "variants": [
+      {
+        "prompt": "A job matches your target role but has one dealbreaker. What should the tracker recommend by default?",
+        "options": ["Apply immediately", "Archive or mark pass unless the user explicitly overrides", "Auto-apply with a note", "Delete it without recording why"],
+        "correctIndex": 1,
+        "explanation": "Dealbreakers should block by default, but the reason should be recorded."
+      }
+    ],
+    "source": "starter",
+    "tags": ["job-tracking"]
+  }
+]

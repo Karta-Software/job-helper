@@ -1,0 +1,23 @@
+{
+  "graph": {
+    "adapter": "obsidian",
+    "root": "C:/Users/example/Documents/Obsidian/Career",
+    "entrypoint": "Index.md"
+  },
+  "workspace": {
+    "root": ".career-toolkit"
+  },
+  "privacy": {
+    "redactPersonalContactInfo": true,
+    "neverCommitGraph": true
+  },
+  "profile": {
+    "targetRoles": ["Example Target Role"],
+    "locationPreference": "remote-or-local",
+    "dealbreakers": []
+  },
+  "jobs": {
+    "sources": ["manual", "csv", "pasted-posting"],
+    "autoApply": false
+  }
+}

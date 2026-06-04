@@ -1,0 +1,21 @@
+{
+  "id": "resume-demo-001",
+  "title": "Demo Candidate - Program Lead",
+  "createdAt": "2026-06-04T00:00:00Z",
+  "target": {
+    "role": "Operations Program Lead",
+    "company": "Example Logistics",
+    "postingId": "job-001"
+  },
+  "sections": {
+    "summary": "Demo candidate with experience leading cross-functional process improvements.",
+    "experience": []
+  },
+  "claimEvidenceMap": [
+    {
+      "claim": "Reduced customer response time by 30%.",
+      "evidenceIds": ["evidence-001"],
+      "status": "verified"
+    }
+  ]
+}

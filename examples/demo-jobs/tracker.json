@@ -1,0 +1,13 @@
+{
+  "applications": [
+    {
+      "id": "app-001",
+      "jobPostingId": "job-001",
+      "status": "interested",
+      "fitScore": 8.2,
+      "nextAction": "Tailor resume and research company",
+      "resumeVersionId": null,
+      "notes": "Demo application record."
+    }
+  ]
+}

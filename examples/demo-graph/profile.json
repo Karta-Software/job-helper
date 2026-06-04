@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "name": "Demo Candidate",
+    "targetRoles": ["Operations Manager", "Program Lead"],
+    "locationPreference": "remote-or-local",
+    "dealbreakers": ["relocation"]
+  },
+  "experiences": [
+    {
+      "id": "exp-001",
+      "title": "Program Lead",
+      "organization": "ExampleCo",
+      "summary": "Led cross-functional process improvements for a customer operations team."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence-001",
+      "claim": "Reduced customer response time by 30%.",
+      "status": "verified",
+      "source": "demo"
+    }
+  ],
+  "skills": [
+    { "id": "skill-001", "name": "Process Improvement", "evidenceIds": ["evidence-001"] }
+  ]
+}

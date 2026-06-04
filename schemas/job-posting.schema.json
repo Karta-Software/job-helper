@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JobPosting",
+  "type": "object",
+  "required": ["id", "company", "role", "source"],
+  "properties": {
+    "id": { "type": "string" },
+    "company": { "type": "string" },
+    "role": { "type": "string" },
+    "location": { "type": "string" },
+    "remote": { "type": "boolean" },
+    "source": { "type": "string" },
+    "url": { "type": "string" },
+    "description": { "type": "string" },
+    "importedAt": { "type": "string", "format": "date-time" }
+  }
+}

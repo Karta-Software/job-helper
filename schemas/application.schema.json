@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Application",
+  "type": "object",
+  "required": ["id", "jobPostingId", "status", "nextAction"],
+  "properties": {
+    "id": { "type": "string" },
+    "jobPostingId": { "type": "string" },
+    "status": {
+      "enum": ["discovered", "interested", "applied", "recruiter-screen", "technical-screen", "onsite", "offer", "rejected", "passed", "archived"]
+    },
+    "fitScore": { "type": "number" },
+    "nextAction": { "type": "string" },
+    "followUpDate": { "type": "string", "format": "date" },
+    "resumeVersionId": { "type": "string" },
+    "notes": { "type": "string" }
+  }
+}

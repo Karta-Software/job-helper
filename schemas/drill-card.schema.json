@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DrillCard",
+  "type": "object",
+  "required": ["id", "domain", "prompt", "type"],
+  "properties": {
+    "id": { "type": "string" },
+    "domain": { "type": "string" },
+    "type": { "enum": ["open-answer", "mcq"] },
+    "prompt": { "type": "string" },
+    "answerGuide": { "type": "string" },
+    "variants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/variant" }
+    },
+    "status": {
+      "enum": ["new", "confident", "review", "stumbled", "unfamiliar"]
+    },
+    "source": {
+      "enum": ["starter", "agent-generated", "user-mistake"]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "variant": {
+      "type": "object",
+      "required": ["prompt"],
+      "properties": {
+        "prompt": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "correctIndex": { "type": "integer" },
+        "explanation": { "type": "string" }
+      }
+    }
+  }
+}

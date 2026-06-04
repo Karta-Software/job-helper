@@ -1,0 +1,13 @@
+[
+  {
+    "id": "job-001",
+    "company": "Example Logistics",
+    "role": "Operations Program Lead",
+    "location": "Remote",
+    "remote": true,
+    "source": "demo",
+    "url": "https://example.com/jobs/operations-program-lead",
+    "description": "Demo posting for testing fit scoring and resume tailoring.",
+    "importedAt": "2026-06-04T00:00:00Z"
+  }
+]
