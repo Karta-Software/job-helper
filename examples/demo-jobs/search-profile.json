@@ -4,7 +4,7 @@
   "targetRoles": ["Product Manager", "Business Development Manager", "Marketing Director"],
   "locationPreferences": {
     "acceptableWorkModes": ["onsite", "hybrid", "remote"],
-    "preferredMarkets": ["Anchorage, AK", "Palmer, AK", "Wasilla, AK"],
+    "preferredMarkets": ["Primary City", "Nearby City", "Regional Hub"],
     "excludedMarkets": [],
     "maxCommuteMinutes": 45,
     "relocation": "no"
