@@ -1,6 +1,6 @@
 # Private local workspace
 .career-toolkit/
-career-toolkit.config.json
+/career-toolkit.config.json
 
 # Secrets
 .env

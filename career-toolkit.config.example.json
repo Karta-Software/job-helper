@@ -7,6 +7,23 @@
   "workspace": {
     "root": ".career-toolkit"
   },
+  "outputs": {
+    "resumeVersions": "resumes/versions",
+    "renderedResumes": "resumes/rendered",
+    "completedResumes": "resumes/completed",
+    "resumeStandards": "resumes/standards/resume-standards.json",
+    "resumeQualityGates": "resumes/standards/resume-quality-gates.json",
+    "opportunities": "jobs/opportunities.json",
+    "portfolio": {
+      "enabled": false,
+      "repoRoot": "C:/Users/example/Documents/Work/portfolio",
+      "indexFile": "index.html",
+      "currentResumeFilename": "Resume.pdf",
+      "publicBaseUrl": "https://example.github.io/portfolio/",
+      "publishMode": "copy-current-and-update-link",
+      "requireCleanWorkingTree": true
+    }
+  },
   "privacy": {
     "redactPersonalContactInfo": true,
     "neverCommitGraph": true

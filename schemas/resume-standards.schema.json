@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResumeStandards",
+  "type": "object",
+  "required": ["id", "researchedAt", "scope", "targets", "sections", "styleRules", "sources"],
+  "properties": {
+    "id": { "type": "string" },
+    "researchedAt": { "type": "string", "format": "date-time" },
+    "scope": { "type": "string" },
+    "targets": {
+      "type": "object",
+      "properties": {
+        "pages": {
+          "type": "object",
+          "properties": {
+            "default": { "type": "number" },
+            "minimum": { "type": "number" },
+            "maximum": { "type": "number" },
+            "notes": { "type": "string" }
+          }
+        },
+        "words": {
+          "type": "object",
+          "properties": {
+            "minimum": { "type": "number" },
+            "idealLow": { "type": "number" },
+            "idealHigh": { "type": "number" },
+            "maximum": { "type": "number" }
+          }
+        },
+        "charactersIncludingSpaces": {
+          "type": "object",
+          "properties": {
+            "idealLow": { "type": "number" },
+            "idealHigh": { "type": "number" }
+          }
+        },
+        "renderedTextLines": {
+          "type": "object",
+          "properties": {
+            "idealLow": { "type": "number" },
+            "idealHigh": { "type": "number" }
+          }
+        },
+        "bulletCharacters": {
+          "type": "object",
+          "properties": {
+            "idealLow": { "type": "number" },
+            "idealHigh": { "type": "number" },
+            "maximum": { "type": "number" }
+          }
+        },
+        "achievementBullets": {
+          "type": "object",
+          "properties": {
+            "idealLow": { "type": "number" },
+            "idealHigh": { "type": "number" }
+          }
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "required"],
+        "properties": {
+          "name": { "type": "string" },
+          "required": { "type": "boolean" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "styleRules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule", "rationale"],
+        "properties": {
+          "rule": { "type": "string" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "url", "evidenceLevel", "finding"],
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "evidenceLevel": { "enum": ["current-data", "current-guidance", "survey", "institutional-policy", "older-data", "weak"] },
+          "finding": { "type": "string" }
+        }
+      }
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

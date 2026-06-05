@@ -1,0 +1,40 @@
+{
+  "graph": {
+    "adapter": "json",
+    "root": "examples/demo-graph",
+    "entrypoint": "profile.json"
+  },
+  "workspace": {
+    "root": ".career-toolkit"
+  },
+  "outputs": {
+    "resumeVersions": "resumes/versions",
+    "renderedResumes": "resumes/rendered",
+    "completedResumes": "resumes/completed",
+    "resumeStandards": "resumes/standards/resume-standards.json",
+    "resumeQualityGates": "resumes/standards/resume-quality-gates.json",
+    "opportunities": "jobs/opportunities.json",
+    "portfolio": {
+      "enabled": false,
+      "repoRoot": "examples/demo-portfolio",
+      "indexFile": "index.html",
+      "currentResumeFilename": "Demo_Resume.pdf",
+      "publicBaseUrl": "https://example.github.io/demo-portfolio/",
+      "publishMode": "copy-current-and-update-link",
+      "requireCleanWorkingTree": true
+    }
+  },
+  "privacy": {
+    "redactPersonalContactInfo": true,
+    "neverCommitGraph": true
+  },
+  "profile": {
+    "targetRoles": ["Operations Program Lead"],
+    "locationPreference": "remote",
+    "dealbreakers": ["relocation"]
+  },
+  "jobs": {
+    "sources": ["manual", "csv", "pasted-posting"],
+    "autoApply": false
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CareerToolkitConfig",
+  "type": "object",
+  "required": ["graph", "workspace", "privacy", "profile", "jobs"],
+  "properties": {
+    "graph": {
+      "type": "object",
+      "required": ["adapter", "root", "entrypoint"],
+      "properties": {
+        "adapter": { "enum": ["obsidian", "json"] },
+        "root": { "type": "string" },
+        "entrypoint": { "type": "string" }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "required": ["root"],
+      "properties": {
+        "root": { "type": "string" }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "resumeVersions": { "type": "string" },
+        "renderedResumes": { "type": "string" },
+        "completedResumes": { "type": "string" },
+        "resumeStandards": { "type": "string" },
+        "resumeQualityGates": { "type": "string" },
+        "opportunities": { "type": "string" },
+        "portfolio": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "repoRoot": { "type": "string" },
+            "indexFile": { "type": "string" },
+            "currentResumeFilename": { "type": "string" },
+            "publicBaseUrl": { "type": "string" },
+            "publishMode": {
+              "enum": ["copy-current", "copy-current-and-update-link", "manual"]
+            },
+            "requireCleanWorkingTree": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "properties": {
+        "redactPersonalContactInfo": { "type": "boolean" },
+        "neverCommitGraph": { "type": "boolean" }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "targetRoles": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "locationPreference": { "type": "string" },
+        "dealbreakers": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "jobs": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "autoApply": { "type": "boolean" }
+      }
+    }
+  }
+}

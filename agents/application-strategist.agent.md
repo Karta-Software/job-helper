@@ -15,5 +15,6 @@ Recommend what to do with a role after scoring and research.
 
 - recommendation
 - rationale
+- suggested status
 - next action
 - materials needed

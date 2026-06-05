@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Opportunity",
+  "type": "object",
+  "required": ["id", "company", "status", "nextAction", "createdAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "company": { "type": "string" },
+    "role": { "type": "string" },
+    "location": { "type": "string" },
+    "remote": { "type": "boolean" },
+    "locationFit": {
+      "enum": ["match", "workable", "unknown", "mismatch"]
+    },
+    "locationNotes": { "type": "string" },
+    "locationExceptionReason": { "type": "string" },
+    "source": {
+      "enum": ["referral", "job-board", "company-careers", "recruiter", "network", "manual", "other"]
+    },
+    "status": {
+      "enum": [
+        "target",
+        "researching",
+        "referral-identified",
+        "referral-requested",
+        "resume-draft",
+        "ready-to-apply",
+        "applied",
+        "recruiter-screen",
+        "technical-screen",
+        "onsite-final",
+        "offer",
+        "rejected",
+        "passed",
+        "archived"
+      ]
+    },
+    "priority": { "enum": ["high", "medium", "low"] },
+    "fitScore": { "type": "number" },
+    "postingUrl": { "type": "string" },
+    "jobPostingId": { "type": "string" },
+    "applicationDeadline": { "type": "string", "format": "date-time" },
+    "applicationDeadlineText": { "type": "string" },
+    "applicationDeadlineTimezone": { "type": "string" },
+    "resumeVersionId": { "type": "string" },
+    "referral": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": ["none", "identified", "requested", "submitted", "needs-follow-up", "not-available"]
+        },
+        "contactName": { "type": "string" },
+        "relationship": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "evidenceGaps": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "dealbreakers": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "nextAction": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" }
+  }
+}

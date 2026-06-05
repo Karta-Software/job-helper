@@ -7,8 +7,9 @@
     "id": { "type": "string" },
     "jobPostingId": { "type": "string" },
     "status": {
-      "enum": ["discovered", "interested", "applied", "recruiter-screen", "technical-screen", "onsite", "offer", "rejected", "passed", "archived"]
+      "enum": ["applied", "recruiter-screen", "technical-screen", "onsite-final", "offer", "rejected", "passed", "archived"]
     },
+    "opportunityId": { "type": "string" },
     "fitScore": { "type": "number" },
     "fitBucket": { "enum": ["strong", "possible", "stretch", "blocked", "unknown"] },
     "nextAction": { "type": "string" },

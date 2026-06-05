@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResumeQualityGates",
+  "type": "object",
+  "required": ["id", "version", "gates", "agentRouting"],
+  "properties": {
+    "id": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "pages": { "$ref": "#/$defs/rangeGate" },
+        "words": { "$ref": "#/$defs/rangeGate" },
+        "charactersIncludingSpaces": { "$ref": "#/$defs/rangeGate" },
+        "renderedTextLines": { "$ref": "#/$defs/rangeGate" },
+        "pageUtilizationPercent": { "$ref": "#/$defs/rangeGate" },
+        "bulletCharacters": { "$ref": "#/$defs/rangeGate" },
+        "achievementBullets": { "$ref": "#/$defs/rangeGate" },
+        "requiredSections": {
+          "type": "object",
+          "required": ["enabled", "sections", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "sections": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        },
+        "keywordMatch": {
+          "type": "object",
+          "required": ["enabled", "minimumPercent", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minimumPercent": { "type": "number" },
+            "requiredKeywords": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "ignoredKeywords": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        },
+        "privateLeak": {
+          "type": "object",
+          "required": ["enabled", "patterns", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "patterns": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        },
+        "unsupportedTerms": {
+          "type": "object",
+          "required": ["enabled", "terms", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "terms": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "allowedContexts": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        }
+      }
+    },
+    "agentRouting": {
+      "type": "object",
+      "required": ["maxIterations", "defaultReworkSkill", "notifyAgents"],
+      "properties": {
+        "maxIterations": { "type": "integer" },
+        "defaultReworkSkill": { "type": "string" },
+        "notifyAgents": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "severity": {
+      "enum": ["error", "warning"]
+    },
+    "rangeGate": {
+      "type": "object",
+      "required": ["enabled", "severity", "reworkAgent"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minimum": { "type": "number" },
+        "idealLow": { "type": "number" },
+        "idealHigh": { "type": "number" },
+        "maximum": { "type": "number" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
+      }
+    }
+  }
+}
