@@ -1,0 +1,23 @@
+{
+  "id": "demo-resume-constraints",
+  "createdAt": "2026-06-05T00:00:00Z",
+  "targetRole": "Product Manager",
+  "targetPostingId": "job-001",
+  "constraints": {
+    "maxPages": 1,
+    "atsSafe": true,
+    "outputFormats": ["markdown", "docx", "pdf"],
+    "mustIncludeSections": ["Professional Summary", "Core Skills", "Experience", "Education"],
+    "forbiddenApplicantFacingText": ["Best Target Fit", "Use this version", "Targeting", "First-pass opportunities"],
+    "noFourthWallSections": true,
+    "maxBulletsPerRole": 7,
+    "claimEvidenceRequirement": "verified-or-partial",
+    "fitNotesOutsideResume": true,
+    "renderVerification": {
+      "requirePdfPageCount": true,
+      "requireDocxRenderQa": true,
+      "allowRendererFallback": true
+    }
+  },
+  "notes": "Keep targeting notes in a separate README or application plan, not in the applicant-facing resume."
+}

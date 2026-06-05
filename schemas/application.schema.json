@@ -10,9 +10,25 @@
       "enum": ["discovered", "interested", "applied", "recruiter-screen", "technical-screen", "onsite", "offer", "rejected", "passed", "archived"]
     },
     "fitScore": { "type": "number" },
+    "fitBucket": { "enum": ["strong", "possible", "stretch", "blocked", "unknown"] },
     "nextAction": { "type": "string" },
     "followUpDate": { "type": "string", "format": "date" },
     "resumeVersionId": { "type": "string" },
+    "linkReviewStatus": {
+      "enum": [
+        "live",
+        "broken",
+        "unavailable",
+        "expired",
+        "confusing",
+        "generic-search",
+        "redirected",
+        "login-required",
+        "paywalled",
+        "duplicate",
+        "unknown"
+      ]
+    },
     "notes": { "type": "string" }
   }
 }

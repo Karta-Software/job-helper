@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResumeConstraints",
+  "type": "object",
+  "required": ["id", "createdAt", "constraints"],
+  "properties": {
+    "id": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "targetRole": { "type": "string" },
+    "targetPostingId": { "type": "string" },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "maxPages": { "type": "integer", "minimum": 1 },
+        "atsSafe": { "type": "boolean" },
+        "outputFormats": {
+          "type": "array",
+          "items": { "enum": ["markdown", "docx", "pdf", "html", "google-doc"] }
+        },
+        "mustIncludeSections": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbiddenApplicantFacingText": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "noFourthWallSections": { "type": "boolean" },
+        "maxBulletsPerRole": { "type": "integer", "minimum": 1 },
+        "claimEvidenceRequirement": {
+          "enum": ["verified-only", "verified-or-partial", "allow-unsupported-draft"]
+        },
+        "fitNotesOutsideResume": { "type": "boolean" },
+        "renderVerification": {
+          "type": "object",
+          "properties": {
+            "requirePdfPageCount": { "type": "boolean" },
+            "requireDocxRenderQa": { "type": "boolean" },
+            "allowRendererFallback": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}

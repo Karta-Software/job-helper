@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JobSearchProfile",
+  "type": "object",
+  "required": ["id", "createdAt", "sliders"],
+  "properties": {
+    "id": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "targetRoles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "locationPreferences": {
+      "type": "object",
+      "properties": {
+        "acceptableWorkModes": {
+          "type": "array",
+          "items": { "enum": ["onsite", "hybrid", "remote", "field", "travel"] }
+        },
+        "preferredMarkets": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "excludedMarkets": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "maxCommuteMinutes": { "type": "number", "minimum": 0 },
+        "relocation": { "enum": ["yes", "no", "consider"] }
+      }
+    },
+    "compensation": {
+      "type": "object",
+      "properties": {
+        "minBaseSalary": { "type": "number", "minimum": 0 },
+        "minTotalComp": { "type": "number", "minimum": 0 },
+        "desiredTotalComp": { "type": "number", "minimum": 0 },
+        "requiresPostedRange": { "type": "boolean" },
+        "commissionTolerance": { "enum": ["none", "low", "medium", "high"] }
+      }
+    },
+    "experience": {
+      "type": "object",
+      "properties": {
+        "candidateYears": { "type": "number", "minimum": 0 },
+        "maxRequiredYears": { "type": "number", "minimum": 0 },
+        "acceptableGapYears": { "type": "number", "minimum": 0 },
+        "seniorityTargets": {
+          "type": "array",
+          "items": { "enum": ["associate", "mid", "senior", "lead", "manager", "director", "executive"] }
+        },
+        "excludeIfRequiresUnownedDomainYears": { "type": "boolean" }
+      }
+    },
+    "sliders": {
+      "type": "object",
+      "description": "0 means avoid or low priority; 100 means strongly prefer or high priority.",
+      "properties": {
+        "onsite": { "$ref": "#/$defs/slider" },
+        "hybrid": { "$ref": "#/$defs/slider" },
+        "remote": { "$ref": "#/$defs/slider" },
+        "localMarket": { "$ref": "#/$defs/slider" },
+        "salaryPriority": { "$ref": "#/$defs/slider" },
+        "experienceStretch": { "$ref": "#/$defs/slider" },
+        "domainFlexibility": { "$ref": "#/$defs/slider" },
+        "titleFlexibility": { "$ref": "#/$defs/slider" },
+        "technicalDepth": { "$ref": "#/$defs/slider" },
+        "managementLoad": { "$ref": "#/$defs/slider" },
+        "travelTolerance": { "$ref": "#/$defs/slider" }
+      },
+      "additionalProperties": false
+    },
+    "dealbreakers": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "positiveSignals": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "negativeSignals": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "slider": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JobLinkReview",
+  "type": "object",
+  "required": ["postingId", "checkedAt", "originalUrl", "status"],
+  "properties": {
+    "postingId": { "type": "string" },
+    "checkedAt": { "type": "string", "format": "date-time" },
+    "checkedBy": { "type": "string" },
+    "originalUrl": { "type": "string" },
+    "finalUrl": { "type": "string" },
+    "status": {
+      "enum": [
+        "live",
+        "broken",
+        "unavailable",
+        "expired",
+        "confusing",
+        "generic-search",
+        "redirected",
+        "login-required",
+        "paywalled",
+        "duplicate",
+        "unknown"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "recommendedAction": {
+      "enum": [
+        "keep",
+        "replace-link",
+        "find-employer-source",
+        "move-down",
+        "archive",
+        "manual-review"
+      ]
+    },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "demo-skill-inventory",
+  "createdAt": "2026-06-05T00:00:00Z",
+  "jobPostingId": "job-001",
+  "candidateGraphId": "demo-graph",
+  "skills": [
+    {
+      "name": "Requirements gathering",
+      "category": "product",
+      "listedInPosting": true,
+      "source": "posting",
+      "candidateStatus": "direct",
+      "claimPolicy": "claim-directly",
+      "priority": "must-have",
+      "evidenceIds": ["evidence-001"],
+      "examples": ["Turned customer feedback into implementation priorities."]
+    },
+    {
+      "name": "Budget ownership",
+      "category": "commercial",
+      "listedInPosting": true,
+      "source": "posting",
+      "candidateStatus": "adjacent",
+      "claimPolicy": "frame-carefully",
+      "priority": "nice-to-have",
+      "notes": "Use business-case or pricing exposure unless direct budget ownership is confirmed."
+    },
+    {
+      "name": "Regulated industry certification",
+      "category": "domain",
+      "listedInPosting": true,
+      "source": "posting",
+      "candidateStatus": "unknown",
+      "claimPolicy": "needs-clarification",
+      "priority": "must-have"
+    }
+  ],
+  "questionsForCandidate": [
+    "Have you owned a formal department budget, or only pricing and business-case work?",
+    "Do you have any regulated-industry certifications relevant to this posting?"
+  ]
+}

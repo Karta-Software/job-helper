@@ -1,0 +1,11 @@
+{
+  "postingId": "job-001",
+  "checkedAt": "2026-06-05T00:00:00Z",
+  "checkedBy": "manual-review",
+  "originalUrl": "https://example.com/jobs/operations-program-lead",
+  "finalUrl": "https://example.com/jobs/operations-program-lead",
+  "status": "live",
+  "evidence": ["Employer-hosted page loaded and role title matched the tracker."],
+  "recommendedAction": "keep",
+  "notes": "Demo review record. For real searches, keep this in the private workspace."
+}

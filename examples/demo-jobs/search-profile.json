@@ -1,0 +1,42 @@
+{
+  "id": "demo-search-profile",
+  "createdAt": "2026-06-05T00:00:00Z",
+  "targetRoles": ["Product Manager", "Business Development Manager", "Marketing Director"],
+  "locationPreferences": {
+    "acceptableWorkModes": ["onsite", "hybrid", "remote"],
+    "preferredMarkets": ["Anchorage, AK", "Palmer, AK", "Wasilla, AK"],
+    "excludedMarkets": [],
+    "maxCommuteMinutes": 45,
+    "relocation": "no"
+  },
+  "compensation": {
+    "minBaseSalary": 100000,
+    "minTotalComp": 100000,
+    "desiredTotalComp": 125000,
+    "requiresPostedRange": false,
+    "commissionTolerance": "medium"
+  },
+  "experience": {
+    "candidateYears": 5,
+    "maxRequiredYears": 7,
+    "acceptableGapYears": 1,
+    "seniorityTargets": ["mid", "senior", "manager"],
+    "excludeIfRequiresUnownedDomainYears": true
+  },
+  "sliders": {
+    "onsite": 80,
+    "hybrid": 90,
+    "remote": 60,
+    "localMarket": 90,
+    "salaryPriority": 85,
+    "experienceStretch": 35,
+    "domainFlexibility": 55,
+    "titleFlexibility": 70,
+    "technicalDepth": 65,
+    "managementLoad": 40,
+    "travelTolerance": 35
+  },
+  "dealbreakers": ["part-time", "commission-only", "requires 10+ years in an unrelated domain"],
+  "positiveSignals": ["customer discovery", "roadmap", "partner management", "pricing", "pipeline"],
+  "negativeSignals": ["generic job-board link", "unclear salary", "expired posting"]
+}

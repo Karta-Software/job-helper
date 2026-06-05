@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SkillInventory",
+  "type": "object",
+  "required": ["id", "createdAt", "skills"],
+  "properties": {
+    "id": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "jobPostingId": { "type": "string" },
+    "candidateGraphId": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "claimPolicy"],
+        "properties": {
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "listedInPosting": { "type": "boolean" },
+          "source": {
+            "enum": ["posting", "candidate", "inferred", "research", "user"]
+          },
+          "candidateStatus": {
+            "enum": ["direct", "adjacent", "do-not-claim", "unknown"]
+          },
+          "claimPolicy": {
+            "enum": ["claim-directly", "frame-carefully", "do-not-claim", "needs-clarification"]
+          },
+          "priority": {
+            "enum": ["must-have", "nice-to-have", "differentiator", "avoid"]
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "questionsForCandidate": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

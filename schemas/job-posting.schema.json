@@ -9,8 +9,52 @@
     "role": { "type": "string" },
     "location": { "type": "string" },
     "remote": { "type": "boolean" },
+    "workMode": { "enum": ["onsite", "hybrid", "remote", "field", "travel", "unknown"] },
     "source": { "type": "string" },
     "url": { "type": "string" },
+    "employmentType": { "type": "string" },
+    "compensation": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "currency": { "type": "string" },
+        "period": { "enum": ["hourly", "annual", "monthly", "contract", "unknown"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "experienceRequirements": {
+      "type": "object",
+      "properties": {
+        "minYears": { "type": "number", "minimum": 0 },
+        "preferredYears": { "type": "number", "minimum": 0 },
+        "domainYears": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string" }
+      }
+    },
+    "linkReview": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "live",
+            "broken",
+            "unavailable",
+            "expired",
+            "confusing",
+            "generic-search",
+            "redirected",
+            "login-required",
+            "paywalled",
+            "duplicate",
+            "unknown"
+          ]
+        },
+        "checkedAt": { "type": "string", "format": "date-time" },
+        "recommendedAction": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
     "description": { "type": "string" },
     "importedAt": { "type": "string", "format": "date-time" }
   }
