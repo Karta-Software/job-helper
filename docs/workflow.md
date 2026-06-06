@@ -170,10 +170,12 @@ Use when the user wants to uncover skills that are missing from the graph or res
 
 1. Read the current resume, skill inventory, evidence notes, and target role criteria.
 2. Ask grouped 3/2/1 questions: `3` means defensible, `2` means partial or adjacent, and `1` means do not claim.
-3. Save answers to the private career graph before generating resume copy.
-4. Treat `3` as self-confirmed but still needing sourceable examples for strong resume claims.
-5. Treat `2` as interview/story material or light positioning unless stronger evidence is added.
-6. Treat `1` as an unsupported/do-not-claim guardrail.
+3. Include enough plain-language context for unfamiliar tools, standards, and domains so the user can judge adjacency instead of guessing.
+4. When the user chooses `2`, capture the reason it is adjacent: similar tool, transferable pattern, light exposure, domain cousin, or concrete project/story.
+5. Save answers and adjacency rationale to the private career graph before generating resume copy.
+6. Treat `3` as self-confirmed but still needing sourceable examples for strong resume claims.
+7. Treat `2` as interview/story material or light positioning unless stronger evidence is added.
+8. Treat `1` as an unsupported/do-not-claim guardrail.
 
 ### Critique The Workflow
 
@@ -202,6 +204,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
+- `2` skill ratings should include an adjacency rationale before being used for resume positioning.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.
 - Keyword match percentages must disclose their keyword source.
 - Bullet character gates measure achievement bullets separately from skill-list bullets; hard limits and ideal ranges are reported separately.
