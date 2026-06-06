@@ -181,6 +181,23 @@ Use when the user wants to uncover skills that are missing from the graph or res
 8. Treat `2` as interview/story material or light positioning unless stronger evidence is added.
 9. Treat `1` as an unsupported/do-not-claim guardrail.
 
+### Rank Claim Significance
+
+Use when the resume has too many true skills, anecdotes, proof points, domains, or tools competing for limited space.
+
+1. Load confirmed skills, partial skills, major proof points, target roles, and recent resume drafts.
+2. Ask the user to rank items by significance, not truth:
+   - Headliner: should shape most technical resumes.
+   - Strong support: often worth a bullet or skills-line slot.
+   - Role-specific: include when the posting asks for it.
+   - Interview only: useful stories, not default resume space.
+   - De-emphasize: true or adjacent, but usually not strategic.
+3. Preserve order within each tier; order is a signal.
+4. Capture optional notes explaining why an item matters or when to use it.
+5. Save the ranking to the private career graph or private workspace.
+6. During resume tailoring, use significance ranking after claim confidence and target-role relevance to decide what earns space.
+7. Re-run ranking when the candidate changes target roles, adds major new evidence, or notices that resumes are overweighting weak anecdotes.
+
 ### Critique The Workflow
 
 Use when the user says the process, data model, agent behavior, or handoff feels wrong.
@@ -208,6 +225,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
+- Claim confidence and claim significance are different signals. A `3` skill may still be low significance, and a niche proof point may be high significance for one target role only.
 - Technical resumes should usually include an evidence-backed AI-native development signal when the candidate graph supports it; in 2026 this is a capability signal, not just a tooling footnote.
 - `2` skill ratings should include an adjacency rationale before being used for resume positioning.
 - Interactive skill-gap forms should favor toggleable adjacency reasons over requiring the user to copy or retype suggested rationale.
