@@ -23,6 +23,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - required sections
 - keyword match against the posting
 - unsupported technology or experience terms
+- missing AI-native development signal for technical roles when configured as required
 - private/internal note leakage
 - browser print header/footer leakage
 
@@ -60,6 +61,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Bullet character gates apply to achievement bullets, not compact skill-list bullets.
 - Hard bullet limits and ideal bullet ranges are separate: hard failures can block; ideal misses should notify the resume writer as warnings.
 - Treat unsupported technology terms as a denylist guardrail, not a complete evidence audit. The evidence audit still needs graph-backed claim review.
+- If an AI-native development signal is configured as required for a technical role, route omissions to `resume-writer` and unsupported AI claims to `evidence-auditor`.
 - Prefer contrast from typographic hierarchy: section anchors, leading, role-block rules, bold proof points, and bullet rhythm.
 - Avoid visual contrast that hurts parsing: tables, text boxes, icons, skill bars, or decorative graphics.
 - Do not publish or submit a resume with failing `error` gates.

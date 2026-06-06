@@ -8,6 +8,7 @@ Use before publishing or sending a resume.
 - all public claims have evidence status
 - no unsupported metrics
 - anecdotes support target-relevant claims rather than crowding out stronger skills, scope, outcomes, or repeatable experience
+- technical resumes include a graph-backed AI-native development signal when available, unless omitted intentionally for target-fit reasons
 - no role mismatch
 - no voice-rule violations
 - no private paths or notes leaked

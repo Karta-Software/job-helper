@@ -115,15 +115,18 @@ Use when there is a target role, company, or posting.
 3. Read target criteria or posting.
 4. Find graph-backed experience and evidence.
 5. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
-6. Draft against section and length constraints.
-7. Audit evidence and voice.
-8. Render privately from HTML to PDF with the helper's PDF renderer.
+6. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
+   Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
+   Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
+7. Draft against section and length constraints.
+8. Audit evidence and voice.
+9. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-9. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-10. Run resume quality gates.
-11. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-12. Save completed artifact only after approval.
-13. Publish only through the configured portfolio handoff.
+10. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+11. Run resume quality gates.
+12. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+13. Save completed artifact only after approval.
+14. Publish only through the configured portfolio handoff.
 
 ### Run Resume Quality Gates
 
@@ -205,6 +208,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
+- Technical resumes should usually include an evidence-backed AI-native development signal when the candidate graph supports it; in 2026 this is a capability signal, not just a tooling footnote.
 - `2` skill ratings should include an adjacency rationale before being used for resume positioning.
 - Interactive skill-gap forms should favor toggleable adjacency reasons over requiring the user to copy or retype suggested rationale.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.
