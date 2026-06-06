@@ -12,6 +12,7 @@ The repo contains reusable code, schemas, agent templates, skills, starter decks
 - Use a knowledge graph to connect experience, skills, claims, evidence, jobs, and interview prep.
 - Track resume versions instead of overwriting one resume forever.
 - Track jobs separately from resume drafts.
+- Synthesize a proxy role profile when a relationship-driven or internal opportunity has no exact public posting.
 - Use agents for research, evidence finding, resume writing, job scoring, and drill generation.
 - Practice interviews with both open-answer drills and multiple-choice mistake drills.
 - Use explicit search controls for location, work mode, salary, experience stretch, and dealbreakers.

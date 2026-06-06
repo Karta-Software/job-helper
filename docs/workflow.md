@@ -84,6 +84,18 @@ Use when the user mentions a company, role, referral, recruiter lead, or possibl
 6. Set the earliest accurate status.
 7. Run referral, fit, and strategy agents when enough context exists.
 
+### Synthesize A Proxy Role Profile
+
+Use when the real role is unposted, confidential, internal, acquisition-related, referral-driven, or otherwise under-specified, but similar public postings or company/team pages are available.
+
+1. Collect public proxy sources and save source URLs in the private workspace.
+2. Cluster requirements across sources by recurring skills, responsibilities, domain signals, seniority, delivery practices, and company language.
+3. Separate common signals from one-off requirements in a single posting.
+4. Build a proxy target profile instead of treating any one posting as authoritative.
+5. Draft a first-pass resume using only confirmed graph-backed claims and careful adjacent framing.
+6. Create a skill-gap questionnaire for proxy-source requirements that are not already confirmed.
+7. Generate a second-pass resume only after the user rates the gaps.
+
 ### Research Resume Standards
 
 Use when deciding resume length, sections, formatting, or content density.
@@ -176,6 +188,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 ## Current Product Rules
 
 - Opportunities can exist before exact postings.
+- Similar postings can be used to synthesize a proxy target profile for unposted or relationship-driven roles.
 - Referrals are first-class pipeline data.
 - Application deadlines are first-class pipeline data.
 - Location fit is a hard gate before normal resume tailoring.
@@ -193,6 +206,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Keyword match percentages must disclose their keyword source.
 - Bullet character gates measure achievement bullets separately from skill-list bullets; hard limits and ideal ranges are reported separately.
 - Tailored resumes are preferred over a single generic resume.
+- Proxy-role resumes must disclose that they are first-pass drafts and avoid overfitting to one source posting.
 - The portfolio receives only completed, approved resume artifacts.
 - Job Helper remains identity-agnostic; config supplies personal paths and preferences.
 
