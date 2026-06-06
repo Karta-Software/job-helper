@@ -102,15 +102,16 @@ Use when there is a target role, company, or posting.
 2. Read resume quality gates.
 3. Read target criteria or posting.
 4. Find graph-backed experience and evidence.
-5. Draft against section and length constraints.
-6. Audit evidence and voice.
-7. Render privately from HTML to PDF with the helper's PDF renderer.
+5. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
+6. Draft against section and length constraints.
+7. Audit evidence and voice.
+8. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-8. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-9. Run resume quality gates.
-10. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-11. Save completed artifact only after approval.
-12. Publish only through the configured portfolio handoff.
+9. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+10. Run resume quality gates.
+11. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+12. Save completed artifact only after approval.
+13. Publish only through the configured portfolio handoff.
 
 ### Run Resume Quality Gates
 
@@ -149,6 +150,8 @@ Default 100-point weighting:
 
 Story should make the resume coherent and targeted. It should not compete with role fit, proof, and parseable structure.
 
+Proof points should be selected like evidence in a sales pipeline. A memorable anecdote earns space when it proves a target-relevant claim better than a broader or more repeatable example. Do not overfit a resume around isolated anecdotes when the candidate's durable experience and skill pattern is the stronger signal.
+
 ### Discover Skills
 
 Use when the user wants to uncover skills that are missing from the graph or resume.
@@ -185,6 +188,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-count gates must use the rendered PDF/final artifact, not manual assertions.
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
+- Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.
 - Keyword match percentages must disclose their keyword source.
 - Bullet character gates measure achievement bullets separately from skill-list bullets; hard limits and ideal ranges are reported separately.
