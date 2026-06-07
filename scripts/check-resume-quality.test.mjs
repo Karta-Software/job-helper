@@ -161,6 +161,36 @@ test("CLI fails target company name in artifact filenames", () => {
   });
 });
 
+test("CLI fails skill claims that are not approved by the skill inventory gate", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        approvedSkillClaims: {
+          enabled: true,
+          claimTerms: ["TypeScript", "Go", "GraphQL"],
+          approvedTerms: ["TypeScript"],
+          severity: "error",
+          reworkAgent: "evidence-auditor"
+        }
+      },
+      {
+        resumeContent: "# Test Person\n\nBackend Engineer\n\n## Technical Skills\n\n- Backend: TypeScript, REST APIs, Go, GraphQL\n\n## Professional Experience\n\n- Delivered a concise result.\n"
+      }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "approvedSkillClaims");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /Go/);
+    assert.match(gate.message, /GraphQL/);
+    assert.doesNotMatch(gate.message, /TypeScript/);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,

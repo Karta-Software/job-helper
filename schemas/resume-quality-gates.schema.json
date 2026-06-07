@@ -61,6 +61,23 @@
             "reworkAgent": { "type": "string" }
           }
         },
+        "approvedSkillClaims": {
+          "type": "object",
+          "required": ["enabled", "claimTerms", "approvedTerms", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "claimTerms": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "approvedTerms": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        },
         "unsupportedTerms": {
           "type": "object",
           "required": ["enabled", "terms", "severity", "reworkAgent"],

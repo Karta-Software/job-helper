@@ -47,6 +47,7 @@ Use when creating a role-specific resume version.
 - Use quantified anecdotes only when they prove a role-relevant capability, scope, or outcome better than a broader experience claim.
 - Do not treat every true skill as equally important; use claim significance to decide what gets space.
 - Frame adjacent experience honestly.
+- Do not use "ramp-ready," "adjacent," or similar wording to include a tool as a public skill claim unless the user has explicitly approved that tool for resume use.
 - Remove do-not-claim skills.
 - Do not present AI tooling as a generic buzzword list; connect Claude Code, Codex, Cursor, or agent workflows to delivery, quality, review, testing, or developer productivity outcomes.
 - Respect max page count.

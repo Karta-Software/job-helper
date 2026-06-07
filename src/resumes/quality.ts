@@ -50,6 +50,14 @@ export type TargetBrandingGateConfig = {
   reworkAgent: string;
 };
 
+export type ApprovedSkillClaimsGateConfig = {
+  enabled: boolean;
+  claimTerms: string[];
+  approvedTerms: string[];
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type ResumeQualityGatesConfig = {
   id: string;
   version: string;
@@ -67,6 +75,7 @@ export type ResumeQualityGatesConfig = {
     privateLeak?: PrivateLeakGateConfig;
     unsupportedTerms?: UnsupportedTermsGateConfig;
     targetBranding?: TargetBrandingGateConfig;
+    approvedSkillClaims?: ApprovedSkillClaimsGateConfig;
   };
   agentRouting: {
     maxIterations: number;
@@ -142,6 +151,7 @@ export function evaluateResumeQuality(
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatchResult(results, config.gates.keywordMatch, snapshot);
   addPrivateLeakResult(results, config.gates.privateLeak, snapshot.resumeText);
+  addApprovedSkillClaimsResult(results, config.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTermsResult(results, config.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBrandingResult(results, config.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames || []);
 
@@ -349,8 +359,7 @@ function addUnsupportedTermsResult(
 ): void {
   if (!gate?.enabled) return;
 
-  const normalizedResume = normalizeSearchText(resumeText);
-  const matched = gate.terms.filter((term) => normalizedResume.includes(normalizeSearchText(term)));
+  const matched = gate.terms.filter((term) => containsSearchTerm(resumeText, term));
 
   results.push({
     gateId: "unsupportedTerms",
@@ -359,6 +368,28 @@ function addUnsupportedTermsResult(
     measured: matched.length,
     expected: "no unsupported technology or experience terms",
     message: matched.length === 0 ? "No unsupported terms matched." : `Unsupported terms matched: ${matched.join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addApprovedSkillClaimsResult(
+  results: ResumeQualityGateResult[],
+  gate: ApprovedSkillClaimsGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!gate?.enabled) return;
+
+  const approved = new Set((gate.approvedTerms || []).map(normalizeSearchText));
+  const claimed = uniqueTerms(gate.claimTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+  const unapproved = claimed.filter((term) => !approved.has(normalizeSearchText(term)));
+
+  results.push({
+    gateId: "approvedSkillClaims",
+    passed: unapproved.length === 0,
+    severity: gate.severity,
+    measured: unapproved.length,
+    expected: "no skill/tool claims outside the approved skill inventory",
+    message: unapproved.length === 0 ? "All configured skill claims are approved." : `Unapproved skill claims matched: ${unapproved.join(", ")}.`,
     reworkAgent: gate.reworkAgent
   });
 }
@@ -372,17 +403,16 @@ function addTargetBrandingResult(
   if (!gate?.enabled) return;
 
   const targetNames = gate.targetNames || [];
-  const normalizedResume = normalizeSearchText(resumeText);
   const textMatches =
     gate.checkResumeText === false
       ? []
-      : targetNames.filter((targetName) => normalizedResume.includes(normalizeSearchText(targetName)));
+      : targetNames.filter((targetName) => containsSearchTerm(resumeText, targetName));
   const filenameMatches =
     gate.checkArtifactNames === false
       ? []
       : artifactNames.flatMap((artifactName) =>
           targetNames
-            .filter((targetName) => normalizeSearchText(artifactName).includes(normalizeSearchText(targetName)))
+            .filter((targetName) => containsSearchTerm(artifactName, targetName))
             .map((targetName) => `${artifactName} -> ${targetName}`)
         );
   const matched = [
@@ -468,5 +498,17 @@ function normalizeTerm(term: string): string {
 }
 
 function normalizeSearchText(text: string): string {
-  return normalizeTerm(text.replace(/[^\w+#.]+/g, " "));
+  return normalizeTerm(text.replace(/[^A-Za-z0-9+#.]+/g, " "));
+}
+
+function containsSearchTerm(value: string, term: string): boolean {
+  const haystack = ` ${normalizeSearchText(value)} `;
+  const needle = normalizeSearchText(term);
+  if (!needle) return false;
+  const pattern = new RegExp(`\\s${escapeRegExp(needle).replace(/\s+/g, "\\s+")}\\s`, "i");
+  return pattern.test(haystack);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

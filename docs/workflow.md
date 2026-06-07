@@ -152,12 +152,14 @@ Use after rendering a resume draft.
    The report must label whether the keyword denominator came from configured required keywords, supplied posting keywords, or extracted posting keywords.
 4. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
-5. Check for private paths, internal notes, and application-only commentary.
-6. Check target branding.
+5. Check approved skill claims against the configured skill inventory.
+   A role keyword should not appear in applicant-facing resume text just because the posting asks for it. If the candidate has not approved the skill as resume-claimable, remove it or move it to private interview/prep notes.
+6. Check for private paths, internal notes, and application-only commentary.
+7. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-7. Treat `error` gate failures like CI failures.
-8. Route failures to the configured rework agent.
-9. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
+8. Treat `error` gate failures like CI failures.
+9. Route failures to the configured rework agent.
+10. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
 
 ### Score A Resume
 
@@ -231,6 +233,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - `ready-to-apply` means the resume/materials are done, but the application has not been submitted yet.
 - Resume standards are source-backed and revisable.
 - Resume quality gates are CI-style checks; failed `error` gates must notify agents and block completed artifacts.
+- Approved-skill gates should compare applicant-facing skill/tool claims against the skill inventory. Adjacent, unknown, or "ramp-ready" skills are not public skill claims unless the user explicitly approves that phrasing.
 - Completed resumes must be generated through the helper's PDF renderer with browser headers and footers disabled.
 - Raw HTML resume files are source/preview artifacts, not application artifacts.
 - Page-count gates must use the rendered PDF/final artifact, not manual assertions.

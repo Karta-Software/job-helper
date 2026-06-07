@@ -13,6 +13,7 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Keep claims factual.
 - Preserve the user's voice rules from local config.
 - Avoid unsupported superlatives and generic filler.
+- Do not include unapproved tools, languages, frameworks, or platforms in public skill sections, including as "ramp-ready" or "adjacent" claims.
 - Keep internal targeting notes outside applicant-facing resumes.
 - Keep target company names out of applicant-facing resumes by default; express fit through role-relevant skills, domains, and outcomes.
 - Tailor by changing headline, summary, skill groupings, bullet selection, bullet order, and domain framing, not only by adding keywords.

@@ -149,6 +149,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRange(results, "achievementBullets", gates.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatch(results, gates.gates.keywordMatch, snapshot.resumeText, postingText);
+  addApprovedSkillClaims(results, gates.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTerms(results, gates.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBranding(results, gates.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames);
   addPrivateLeak(results, gates.gates.privateLeak, snapshot.resumeText, parsedArgs.pdf);
@@ -260,8 +261,7 @@ function addKeywordMatch(results, gate, resumeText, postingText) {
 
 function addUnsupportedTerms(results, gate, resumeText) {
   if (!gate?.enabled) return;
-  const haystack = normalizeSearch(resumeText);
-  const matched = gate.terms.filter((term) => haystack.includes(normalizeSearch(term)));
+  const matched = gate.terms.filter((term) => containsSearchTerm(resumeText, term));
   results.push(result(
     "unsupportedTerms",
     gate,
@@ -272,17 +272,32 @@ function addUnsupportedTerms(results, gate, resumeText) {
   ));
 }
 
+function addApprovedSkillClaims(results, gate, resumeText) {
+  if (!gate?.enabled) return;
+  const approved = new Set((gate.approvedTerms || []).map(normalizeSearch));
+  const claimed = unique(gate.claimTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+  const unapproved = claimed.filter((term) => !approved.has(normalizeSearch(term)));
+  results.push(result(
+    "approvedSkillClaims",
+    gate,
+    unapproved.length === 0,
+    unapproved.length,
+    "no skill/tool claims outside the approved skill inventory",
+    unapproved.length === 0 ? "All configured skill claims are approved." : `Unapproved skill claims matched: ${unapproved.join(", ")}.`
+  ));
+}
+
 function addTargetBranding(results, gate, resumeText, artifactNames = []) {
   if (!gate?.enabled) return;
   const targetNames = gate.targetNames || [];
   const textMatches = gate.checkResumeText === false
     ? []
-    : targetNames.filter((name) => normalizeSearch(resumeText).includes(normalizeSearch(name)));
+    : targetNames.filter((name) => containsSearchTerm(resumeText, name));
   const filenameMatches = gate.checkArtifactNames === false
     ? []
     : artifactNames.flatMap((artifactName) =>
       targetNames
-        .filter((name) => normalizeSearch(artifactName).includes(normalizeSearch(name)))
+        .filter((name) => containsSearchTerm(artifactName, name))
         .map((name) => `${artifactName} -> ${name}`)
     );
   const matched = [
@@ -404,5 +419,17 @@ function normalize(value) {
 }
 
 function normalizeSearch(value) {
-  return normalize(value).replace(/[^\w+#.]+/g, " ");
+  return normalize(value).replace(/[^A-Za-z0-9+#.]+/g, " ");
+}
+
+function containsSearchTerm(value, term) {
+  const haystack = ` ${normalizeSearch(value)} `;
+  const needle = normalizeSearch(term);
+  if (!needle) return false;
+  const pattern = new RegExp(`\\s${escapeRegExp(needle).replace(/\s+/g, "\\s+")}\\s`, "i");
+  return pattern.test(haystack);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
