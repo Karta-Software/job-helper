@@ -77,6 +77,21 @@
             "severity": { "$ref": "#/$defs/severity" },
             "reworkAgent": { "type": "string" }
           }
+        },
+        "targetBranding": {
+          "type": "object",
+          "required": ["enabled", "targetNames", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "targetNames": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "checkResumeText": { "type": "boolean" },
+            "checkArtifactNames": { "type": "boolean" },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
         }
       }
     },

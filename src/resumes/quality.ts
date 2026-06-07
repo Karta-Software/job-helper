@@ -41,6 +41,15 @@ export type UnsupportedTermsGateConfig = {
   reworkAgent: string;
 };
 
+export type TargetBrandingGateConfig = {
+  enabled: boolean;
+  targetNames: string[];
+  checkResumeText?: boolean;
+  checkArtifactNames?: boolean;
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type ResumeQualityGatesConfig = {
   id: string;
   version: string;
@@ -57,6 +66,7 @@ export type ResumeQualityGatesConfig = {
     keywordMatch?: KeywordMatchGateConfig;
     privateLeak?: PrivateLeakGateConfig;
     unsupportedTerms?: UnsupportedTermsGateConfig;
+    targetBranding?: TargetBrandingGateConfig;
   };
   agentRouting: {
     maxIterations: number;
@@ -82,6 +92,7 @@ export type ResumeQualitySnapshot = {
   sectionNames: string[];
   inferredSections?: string[];
   postingKeywords?: string[];
+  artifactNames?: string[];
   measurementWarnings?: string[];
 };
 
@@ -132,6 +143,7 @@ export function evaluateResumeQuality(
   addKeywordMatchResult(results, config.gates.keywordMatch, snapshot);
   addPrivateLeakResult(results, config.gates.privateLeak, snapshot.resumeText);
   addUnsupportedTermsResult(results, config.gates.unsupportedTerms, snapshot.resumeText);
+  addTargetBrandingResult(results, config.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames || []);
 
   const blockingFailures = results.filter((result) => !result.passed && result.severity === "error");
   const agentNotifications = results
@@ -347,6 +359,44 @@ function addUnsupportedTermsResult(
     measured: matched.length,
     expected: "no unsupported technology or experience terms",
     message: matched.length === 0 ? "No unsupported terms matched." : `Unsupported terms matched: ${matched.join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addTargetBrandingResult(
+  results: ResumeQualityGateResult[],
+  gate: TargetBrandingGateConfig | undefined,
+  resumeText: string,
+  artifactNames: string[]
+): void {
+  if (!gate?.enabled) return;
+
+  const targetNames = gate.targetNames || [];
+  const normalizedResume = normalizeSearchText(resumeText);
+  const textMatches =
+    gate.checkResumeText === false
+      ? []
+      : targetNames.filter((targetName) => normalizedResume.includes(normalizeSearchText(targetName)));
+  const filenameMatches =
+    gate.checkArtifactNames === false
+      ? []
+      : artifactNames.flatMap((artifactName) =>
+          targetNames
+            .filter((targetName) => normalizeSearchText(artifactName).includes(normalizeSearchText(targetName)))
+            .map((targetName) => `${artifactName} -> ${targetName}`)
+        );
+  const matched = [
+    ...textMatches.map((targetName) => `resume text -> ${targetName}`),
+    ...filenameMatches
+  ];
+
+  results.push({
+    gateId: "targetBranding",
+    passed: matched.length === 0,
+    severity: gate.severity,
+    measured: matched.length,
+    expected: "no target company name in applicant-facing resume text or artifact filenames",
+    message: matched.length === 0 ? "No target-branding matches found." : `Target-branding matches found: ${matched.join(", ")}.`,
     reworkAgent: gate.reworkAgent
   });
 }

@@ -118,15 +118,20 @@ Use when there is a target role, company, or posting.
 6. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
-7. Draft against section and length constraints.
-8. Audit evidence and voice.
-9. Render privately from HTML to PDF with the helper's PDF renderer.
+7. Translate the target role into role-facing themes, not company-facing branding.
+   Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
+8. Rewrite the resume structure around the target role when needed.
+   Strong tailoring means changing the headline, summary, skill groupings, bullet selection, bullet order, and domain emphasis. It is not enough to preserve the old resume and sprinkle in keywords.
+9. Draft against section and length constraints.
+10. Audit evidence and voice.
+11. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-10. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-11. Run resume quality gates.
-12. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-13. Save completed artifact only after approval.
-14. Publish only through the configured portfolio handoff.
+12. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+13. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
+14. Run resume quality gates.
+15. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+16. Save completed artifact only after approval.
+17. Publish only through the configured portfolio handoff.
 
 ### Run Resume Quality Gates
 
@@ -145,9 +150,11 @@ Use after rendering a resume draft.
 4. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
 5. Check for private paths, internal notes, and application-only commentary.
-6. Treat `error` gate failures like CI failures.
-7. Route failures to the configured rework agent.
-8. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
+6. Check target branding.
+   Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
+7. Treat `error` gate failures like CI failures.
+8. Route failures to the configured rework agent.
+9. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
 
 ### Score A Resume
 
@@ -166,6 +173,8 @@ Default 100-point weighting:
 Story should make the resume coherent and targeted. It should not compete with role fit, proof, and parseable structure.
 
 Proof points should be selected like evidence in a sales pipeline. A memorable anecdote earns space when it proves a target-relevant claim better than a broader or more repeatable example. Do not overfit a resume around isolated anecdotes when the candidate's durable experience and skill pattern is the stronger signal.
+
+Quantified anecdotes should pass a relevance test: the metric needs to prove a role-critical capability, clarify scope, show a repeatable operating pattern, or differentiate the candidate. A metric that is true but disconnected from the target role should move to interview prep or a proof bank.
 
 ### Discover Skills
 
@@ -224,6 +233,9 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-count gates must use the rendered PDF/final artifact, not manual assertions.
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
+- Applicant-facing resumes should avoid target company names in the body and filename by default.
+  Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
+- Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
 - Claim confidence and claim significance are different signals. A `3` skill may still be low significance, and a niche proof point may be high significance for one target role only.
 - Technical resumes should usually include an evidence-backed AI-native development signal when the candidate graph supports it; in 2026 this is a capability signal, not just a tooling footnote.

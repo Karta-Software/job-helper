@@ -6,6 +6,7 @@ Use this checklist before a resume is treated as application-ready.
 
 - The resume contains only candidate-facing content.
 - Targeting notes, ranking notes, and "use this version" guidance are outside the resume.
+- The target company name is outside the resume body by default.
 - Every claim is verified or explicitly allowed as partial by the resume constraints.
 - Adjacent skills are framed honestly.
 - Do-not-claim skills are absent.
@@ -52,3 +53,5 @@ For each final resume version, keep:
 - PDF version for review and PDF uploads
 - separate index/README with targeting guidance
 - claim-evidence map when available
+
+Final applicant-facing filenames should use candidate and role, not target company, unless a human records an application-specific override.

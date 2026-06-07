@@ -107,6 +107,60 @@ test("CLI fails browser print header and footer leakage in the PDF artifact", ()
   });
 });
 
+test("CLI fails target company name in applicant-facing resume text", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        targetBranding: {
+          enabled: true,
+          targetNames: ["Acme"],
+          severity: "error",
+          reworkAgent: "voice-auditor"
+        }
+      },
+      {
+        resumeContent: "# Test Person\n\nTarget Role\n\n## Summary\n\nStrong fit for Acme's backend team.\n\n## Professional Experience\n\n- Delivered a concise result.\n"
+      }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "targetBranding");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /resume text -> Acme/);
+  });
+});
+
+test("CLI fails target company name in artifact filenames", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        targetBranding: {
+          enabled: true,
+          targetNames: ["Acme"],
+          severity: "error",
+          reworkAgent: "voice-auditor"
+        }
+      },
+      {
+        pdfName: "Test_Person_Acme_Resume_2026.pdf"
+      }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "targetBranding");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /Test_Person_Acme_Resume_2026\.pdf -> Acme/);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,
@@ -129,12 +183,15 @@ function runChecker(paths, extraArgs) {
   return run;
 }
 
-function writeQualityInputs(workspace, pdfContent, extraGates = {}) {
+function writeQualityInputs(workspace, pdfContent, extraGates = {}, options = {}) {
   const resume = path.join(workspace, "resume.md");
   const gates = path.join(workspace, "gates.json");
-  const pdf = path.join(workspace, "resume.pdf");
+  const pdf = path.join(workspace, options.pdfName || "resume.pdf");
 
-  fs.writeFileSync(resume, "# Test Person\n\nTarget Role\n\n## Professional Experience\n\n- Delivered a concise result.\n");
+  fs.writeFileSync(
+    resume,
+    options.resumeContent || "# Test Person\n\nTarget Role\n\n## Professional Experience\n\n- Delivered a concise result.\n"
+  );
   fs.writeFileSync(gates, JSON.stringify({
     id: "test-gates",
     version: "test",

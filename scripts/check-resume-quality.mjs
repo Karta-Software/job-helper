@@ -133,6 +133,7 @@ function buildSnapshot(raw, text, parsedArgs) {
     achievementBulletCount: achievementBullets.length,
     sectionNames: unique([...sectionNames, ...inferredSections]),
     inferredSections: unique(inferredSections),
+    artifactNames: artifactNamesFromArgs(parsedArgs),
     measurementWarnings
   };
 }
@@ -149,6 +150,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatch(results, gates.gates.keywordMatch, snapshot.resumeText, postingText);
   addUnsupportedTerms(results, gates.gates.unsupportedTerms, snapshot.resumeText);
+  addTargetBranding(results, gates.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames);
   addPrivateLeak(results, gates.gates.privateLeak, snapshot.resumeText, parsedArgs.pdf);
 
   const blockingFailures = results.filter((result) => !result.passed && result.severity === "error");
@@ -270,6 +272,33 @@ function addUnsupportedTerms(results, gate, resumeText) {
   ));
 }
 
+function addTargetBranding(results, gate, resumeText, artifactNames = []) {
+  if (!gate?.enabled) return;
+  const targetNames = gate.targetNames || [];
+  const textMatches = gate.checkResumeText === false
+    ? []
+    : targetNames.filter((name) => normalizeSearch(resumeText).includes(normalizeSearch(name)));
+  const filenameMatches = gate.checkArtifactNames === false
+    ? []
+    : artifactNames.flatMap((artifactName) =>
+      targetNames
+        .filter((name) => normalizeSearch(artifactName).includes(normalizeSearch(name)))
+        .map((name) => `${artifactName} -> ${name}`)
+    );
+  const matched = [
+    ...textMatches.map((name) => `resume text -> ${name}`),
+    ...filenameMatches
+  ];
+  results.push(result(
+    "targetBranding",
+    gate,
+    matched.length === 0,
+    matched.length,
+    "no target company name in applicant-facing resume text or artifact filenames",
+    matched.length === 0 ? "No target-branding matches found." : `Target-branding matches found: ${matched.join(", ")}.`
+  ));
+}
+
 function addPrivateLeak(results, gate, resumeText, pdfPath) {
   if (!gate?.enabled) return;
   const artifactText = pdfPath ? fs.readFileSync(pdfPath, "latin1") : "";
@@ -326,6 +355,18 @@ function textFromMarkup(raw) {
     .replace(/[#*_>`|]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function artifactNamesFromArgs(parsedArgs) {
+  return unique([
+    parsedArgs.resume,
+    parsedArgs.html,
+    parsedArgs.pdf,
+    parsedArgs.out,
+    parsedArgs["artifact-name"]
+  ]
+    .filter(Boolean)
+    .map((filePath) => path.basename(String(filePath))));
 }
 
 function describeRange(gate) {
