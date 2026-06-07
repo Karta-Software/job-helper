@@ -15,3 +15,8 @@ Use before publishing or sending a resume.
 - no role mismatch
 - no voice-rule violations
 - no private paths or notes leaked
+
+## Rules
+
+- Use `docs/agent-run-protocol.md` and report which evidence files, skill inventories, resume quality gates, and agent files were used.
+- Update private evidence-gap notes when the audit finds claims that are useful but not yet sourced.

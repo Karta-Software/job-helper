@@ -4,14 +4,16 @@ Use when the user mentions a company, referral, recruiter lead, or role they may
 
 ## Steps
 
-1. Create or update a graph note for the opportunity.
-2. Link the company, referral contact, target criteria, current resume, and application tracker.
-3. Capture posting URL, requisition id, deadline, location, remote eligibility, salary range, and referral status when available.
-4. Add or update a record in `.career-toolkit/jobs/opportunities.json`.
-5. Set the earliest accurate status.
-6. Run `network-finder` when a referral path exists.
-7. Run `posting-scorer` when a posting or role description exists.
-8. Run `application-strategist` to recommend next action.
+1. Follow `docs/agent-run-protocol.md` for private graph/workspace updates and reporting.
+2. Create or update a graph note for the opportunity.
+3. Link the company, referral contact, target criteria, current resume, and application tracker.
+4. Capture posting URL, requisition id, deadline, location, remote eligibility, salary range, and referral status when available.
+5. Add or update a record in `.career-toolkit/jobs/opportunities.json`.
+6. Set the earliest accurate status.
+7. Run `network-finder` when a referral path exists.
+8. Run `posting-scorer` when a posting or role description exists.
+9. Run `application-strategist` to recommend next action.
+10. Update the application tracker and private opportunity note before reporting status.
 
 ## Rules
 

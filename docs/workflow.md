@@ -12,6 +12,8 @@ career graph -> job helper -> private outputs -> completed artifacts -> portfoli
 
 The career graph is the source of truth for personal context. Job Helper is the reusable engine that turns that context into structured decisions, resume drafts, opportunity tracking, interview prep, and publishing plans.
 
+Every nontrivial run follows `docs/agent-run-protocol.md`. Skills define workflow steps, agents define role-specific judgment, and private graph/workspace files provide candidate-specific truth. A run is incomplete when it produces output but cannot say which skills, agents, private files, validations, commits, and push status were involved.
+
 ## Critique-Driven Improvement Loop
 
 Use this loop whenever the user says the workflow should work differently:
@@ -27,7 +29,8 @@ Use this loop whenever the user says the workflow should work differently:
    - source modules for shared logic
    - examples for safe fake-data demos
 5. Validate the graph, JSON, and git state.
-6. Report what changed and what remains open for critique.
+6. Commit reusable repo changes in a small commit and push when credentials allow.
+7. Report what changed, which skills/agents/files were used, validation status, commit SHA, push status, and what remains open for critique.
 
 ## Three Stores
 

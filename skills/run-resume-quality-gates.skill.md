@@ -30,20 +30,22 @@ Use after rendering a resume draft and before moving it to completed resumes.
 
 ## Steps
 
-1. Measure the rendered resume.
+1. Follow `docs/agent-run-protocol.md` and include quality-gate results in the run log/report.
+2. Measure the rendered resume.
    Page count must come from the rendered PDF or final artifact, not from a manual assertion.
    Page utilization must come from rendered HTML layout measurement, not eyeballing.
    Rendered text-line count must be measured from the final artifact or reported as unmeasured; do not substitute source Markdown line count.
-2. Compare measurements to configured gates.
+3. Compare measurements to configured gates.
    Disclose any required sections inferred from header structure rather than explicit section headings.
-3. Compare resume keywords against the posting keywords and label whether the comparison used configured required keywords, supplied posting keywords, or extracted posting keywords.
-4. Fail the run when any `error` gate fails.
-5. Check `targetBranding` when the target company is known.
+4. Compare resume keywords against the posting keywords and label whether the comparison used configured required keywords, supplied posting keywords, or extracted posting keywords.
+5. Fail the run when any `error` gate fails.
+6. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-6. Notify each gate's `reworkAgent`.
-7. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-8. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-9. Move to completed resumes only after gates pass or a human override is recorded.
+7. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+8. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+9. Update the private resume note/tracker with pass/fail status and the next rework action.
+10. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+11. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 

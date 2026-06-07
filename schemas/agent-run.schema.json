@@ -6,10 +6,75 @@
   "properties": {
     "id": { "type": "string" },
     "agent": { "type": "string" },
+    "skillsUsed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "agentsConsulted": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "startedAt": { "type": "string", "format": "date-time" },
     "endedAt": { "type": "string", "format": "date-time" },
     "status": { "enum": ["running", "complete", "failed"] },
     "inputs": { "type": "object" },
-    "outputs": { "type": "object" }
+    "outputs": { "type": "object" },
+    "privateFilesRead": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "privateFilesChanged": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "repoFilesChanged": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validationCommands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "status"],
+        "properties": {
+          "command": { "type": "string" },
+          "status": { "enum": ["passed", "failed", "blocked", "not-run"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "qualityGates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gateId", "status"],
+        "properties": {
+          "gateId": { "type": "string" },
+          "status": { "enum": ["passed", "failed", "warning", "blocked", "not-run"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "workflowFindings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "commit": {
+      "type": "object",
+      "properties": {
+        "sha": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "enum": ["committed", "not-needed", "blocked", "not-run"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "push": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["pushed", "blocked", "not-needed", "not-run"] },
+        "remote": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
   }
 }

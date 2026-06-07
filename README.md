@@ -48,6 +48,8 @@ The repo should never hardcode the user's name, role, vault path, or portfolio p
 
 See `docs/workflow.md` for the critique-driven operating process.
 
+See `docs/agent-run-protocol.md` for the required run loop. Nontrivial runs should report the skills used, agents consulted, private graph/workspace files read or changed, quality gates, validation commands, commit SHA, and push status.
+
 ## Private Workspace
 
 Create a private workspace outside git or in a gitignored `.career-toolkit/` folder:
@@ -120,6 +122,12 @@ Run the page-count regression tests with:
 
 ```bash
 node --test scripts/check-resume-quality.test.mjs scripts/render-resume-pdf.test.mjs scripts/measure-resume-layout.test.mjs
+```
+
+Run the agent/skill utilization contract test with:
+
+```bash
+node --test scripts/check-agent-run-protocol.test.mjs
 ```
 
 ## Opportunity Pipeline
