@@ -117,24 +117,26 @@ Use when there is a target role, company, or posting.
 2. Read resume quality gates.
 3. Read target criteria or posting.
 4. Find graph-backed experience and evidence.
-5. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
-6. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
+5. Build or refresh an experience surface map before drafting.
+   Split each major employer/project into responsibility buckets, product/domain buckets, and proof-point buckets so the resume can target the role from the right angle instead of reusing the same anecdotes.
+6. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
+7. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
-7. Translate the target role into role-facing themes, not company-facing branding.
+8. Translate the target role into role-facing themes, not company-facing branding.
    Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
-8. Rewrite the resume structure around the target role when needed.
+9. Rewrite the resume structure around the target role when needed.
    Strong tailoring means changing the headline, summary, skill groupings, bullet selection, bullet order, and domain emphasis. It is not enough to preserve the old resume and sprinkle in keywords.
-9. Draft against section and length constraints.
-10. Audit evidence and voice.
-11. Render privately from HTML to PDF with the helper's PDF renderer.
+10. Draft against section and length constraints.
+11. Audit evidence and voice.
+12. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-12. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-13. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
-14. Run resume quality gates.
-15. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-16. Save completed artifact only after approval.
-17. Publish only through the configured portfolio handoff.
+13. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+14. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
+15. Run resume quality gates.
+16. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+17. Save completed artifact only after approval.
+18. Publish only through the configured portfolio handoff.
 
 ### Run Resume Quality Gates
 
@@ -180,6 +182,20 @@ Story should make the resume coherent and targeted. It should not compete with r
 Proof points should be selected like evidence in a sales pipeline. A memorable anecdote earns space when it proves a target-relevant claim better than a broader or more repeatable example. Do not overfit a resume around isolated anecdotes when the candidate's durable experience and skill pattern is the stronger signal.
 
 Quantified anecdotes should pass a relevance test: the metric needs to prove a role-critical capability, clarify scope, show a repeatable operating pattern, or differentiate the candidate. A metric that is true but disconnected from the target role should move to interview prep or a proof bank.
+
+### Build An Experience Surface Map
+
+Use when a large role, employer, project, or consulting engagement is too broad to fit cleanly into one job description.
+
+1. Read the experience note, skill inventory, domain map, evidence backlog, current resume, and target role criteria.
+2. Split the experience into responsibility buckets such as product ownership, engineering delivery, infrastructure, support, customer work, leadership, documentation, quality, release operations, and technical debt.
+3. Split the experience into product/domain buckets such as platforms, reporting, analytics, GIS, IoT, workflow systems, data products, developer tooling, AI systems, or other target-relevant domains.
+4. Split proof into anecdotes, metrics, source artifacts, and interview stories.
+5. Mark each item as direct, adjacent, interview-only, needs-source, or do-not-claim.
+6. Use the map to choose resume themes before drafting bullets.
+7. Update private graph notes when the map reveals a new durable bucket, source gap, or do-not-claim guardrail.
+
+The surface map should not be applicant-facing by default. It is scaffolding for stronger tailoring: first choose the right role angle, then choose the anecdotes that prove it.
 
 ### Discover Skills
 
