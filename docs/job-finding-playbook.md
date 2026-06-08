@@ -78,6 +78,11 @@ Recommended buckets:
 - Possible: worth keeping, but needs careful positioning.
 - Stretch: appealing, but one or more gaps may block the application.
 - Blocked: dealbreaker, expired posting, or unsupported required credential.
+- Unrelated: active at an interesting company, but not connected to the candidate's experience or accepted stretch goals.
+
+Before showing roles as recommendations, build an evidence-overlap map. A role should name the candidate's relevant experience buckets, direct skill clusters, adjacent skill clusters, and missing critical requirements. Same-company listings are not automatically related; a role at a target employer can still be unrelated to the candidate.
+
+When a role is a stretch, explain why it remains worth attention: referral path, rare location fit, strategically useful domain, unusually strong compensation, or a clear ramp from known skills. If the reason is only "the company is interesting," keep it in discovery rather than recommendation output.
 
 ## 5. Build Listed And Unlisted Skill Inventory
 

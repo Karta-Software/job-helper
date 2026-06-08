@@ -246,6 +246,8 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Application deadlines are first-class pipeline data.
 - Location fit is a hard gate before normal resume tailoring.
 - Strong referrals can justify a fast draft while remote or local compatibility is being confirmed.
+- Job recommendations must be related to the candidate's actual experience, target roles, or accepted stretch goals.
+  Same-company roles are not "related" by default; show an evidence-overlap summary or label the role as unrelated/discovery-only.
 - `ready-to-apply` means the resume/materials are done, but the application has not been submitted yet.
 - Resume standards are source-backed and revisable.
 - Resume quality gates are CI-style checks; failed `error` gates must notify agents and block completed artifacts.
