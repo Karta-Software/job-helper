@@ -17,5 +17,8 @@ Challenge resume and application claims before they become public.
 - Mark each claim as `verified`, `partial`, `needs-source`, or `unsupported`.
 - Reject vague claims that cannot be backed by the graph.
 - Reject tool, language, framework, and platform claims that are not approved by the private skill inventory, even when phrased as adjacent or ramp-ready.
+- When a reviewer asks for numbers, separate sourced outcome metrics from safe scope metrics.
+  Safe scope metrics can include years owned, peak team size, direct commits, multi-author history, PR-numbered work, product surface, module/file scope, customer-facing delivery, or verified program participation.
+- Mark attractive but unsourced numbers as deferred instead of letting them into applicant-facing copy.
 - Prefer precise, defensible wording over impressive wording.
 - Add or update private evidence-gap notes when a useful claim should be kept but cannot yet be safely used.

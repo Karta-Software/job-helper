@@ -11,8 +11,13 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Write for the target role.
 - Use concrete outcomes and evidence.
 - Keep claims factual.
+- Apply trusted reviewer principles as concrete drafting rules.
+  Show how each required principle changed the summary, top-half hierarchy, skill line, bullet order, metric choices, whitespace, or formatting.
 - Preserve the user's voice rules from local config.
 - Avoid unsupported superlatives and generic filler.
+- Use safe scope metrics when stronger outcome metrics are not sourced.
+  Examples: years owned, peak team size, direct commits, multi-author history, product surface, verified program participation, and customer-facing delivery.
+- Word team-led delivery as leadership when the candidate owned direction, scoping, review, mentoring, standards, or coordination.
 - Do not include unapproved tools, languages, frameworks, or platforms in public skill sections, including as "ramp-ready" or "adjacent" claims.
 - Keep internal targeting notes outside applicant-facing resumes.
 - Keep target company names out of applicant-facing resumes by default; express fit through role-relevant skills, domains, and outcomes.
@@ -20,3 +25,4 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Apply resume constraints such as page count, required sections, ATS-safe formatting, and forbidden phrases.
 - Verify generated formats when constraints require a page count or render check.
 - Update private resume version notes and opportunity tracker status before reporting a draft as ready.
+- Do not report reviewer feedback as incorporated unless the version note states what was applied, partially applied, deferred, and why.

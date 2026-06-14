@@ -17,26 +17,32 @@ Use when creating a role-specific resume version.
    Prioritize durable skills, role-fit experience, ownership scope, and outcomes; use anecdotes as proof points rather than the resume's organizing structure.
 10. Read any available claim-significance ranking.
    Use it to decide which true claims deserve limited resume space after target-role relevance and claim confidence are considered.
-11. For technical roles, include at least one graph-backed AI-native development signal when available.
+11. Read any trusted reviewer principles or prior critique notes that apply to the role, source, or resume type.
+   Build a principle application table before the draft is marked ready: `applied`, `partial`, `deferred`, or `not applicable`.
+   Treat source-backed principles as workflow inputs, not optional comments.
+12. For technical roles, include at least one graph-backed AI-native development signal when available.
    Prefer outcomes such as agentic software delivery, AI-assisted testing/review, coding-agent orchestration, human-in-the-loop quality gates, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when the graph supports them.
-12. Translate company/posting language into candidate-owned role language.
+13. Translate company/posting language into candidate-owned role language.
    Do not put the target company name in the resume body by default; say what the candidate has done that maps to the role.
-13. Retarget the structure, not only the keywords.
+14. Retarget the structure, not only the keywords.
    Change headline, summary, skill groups, bullet selection, bullet order, and domain framing when the target role calls for it.
-14. Draft resume JSON or Markdown against the page, word, character, line, bullet, section, and style targets.
-15. Apply `ResumeConstraints`.
-16. Run `evidence-auditor`.
-17. Run `voice-auditor`.
-18. Remove fourth-wall guidance from applicant-facing files.
-19. Save a new private resume version.
-20. Update the private resume version note, opportunity note, application tracker, and structured opportunities JSON.
-21. Render the resume to the configured private rendered-resume output with `render-resume-pdf`.
+15. Draft resume JSON or Markdown against the page, word, character, line, bullet, section, and style targets.
+16. Apply `ResumeConstraints`.
+17. When outcome metrics are not sourced, prefer verified scope metrics such as years owned, peak team size, direct commit count, multi-author history, product surface, module/file scope, customer-facing delivery, or program participation.
+18. Word team-led work as leadership when the candidate owned direction, scoping, review, mentoring, delivery, standards, or cross-functional coordination.
+19. Run `evidence-auditor`.
+20. Run `voice-auditor`.
+21. Remove fourth-wall guidance from applicant-facing files.
+22. Save a new private resume version.
+23. Update the private resume version note, opportunity note, application tracker, and structured opportunities JSON.
+24. Render the resume to the configured private rendered-resume output with `render-resume-pdf`.
     Do not rely on the browser print dialog; it can add file URLs, dates, and page numbers as headers/footers.
-22. Improve scanability with section contrast, role-block separation, selective proof-point bolding, and readable leading.
-23. Name the final artifact by candidate and role, not target company, unless there is an explicit human override.
-24. Run `run-resume-quality-gates`.
-25. If any `error` gate fails, notify the mapped agent and rework the resume until it passes or reaches the configured iteration limit.
-26. If it is approved for sending, save it to completed resumes and run `publish-resume`.
+25. Improve scanability with section contrast, role-block separation, selective proof-point bolding, and readable leading.
+26. Name the final artifact by candidate and role, not target company, unless there is an explicit human override.
+27. Run `run-resume-quality-gates`.
+28. If any `error` gate fails, notify the mapped agent and rework the resume until it passes or reaches the configured iteration limit.
+29. If any required reviewer principle is `partial` or `deferred`, record the reason and route it to the mapped agent unless a human override is recorded.
+30. If it is approved for sending, save it to completed resumes and run `publish-resume`.
 
 ## Applicant-Facing Constraints
 
@@ -47,6 +53,9 @@ Use when creating a role-specific resume version.
 - Keep claims evidence-backed.
 - Do not overfit isolated anecdotes over stronger experience, skill, scope, or outcome signals.
 - Use quantified anecdotes only when they prove a role-relevant capability, scope, or outcome better than a broader experience claim.
+- Do not use unsourced metrics to satisfy reviewer pressure for numbers. Use safe scope metrics until the stronger metric is sourced.
+- Do not flatten leadership into individual-contributor wording when the evidence shows the candidate led direction, reviews, standards, delivery, mentoring, or coordination.
+- Do not mark reviewer feedback as done unless the version note records what changed and what remained intentionally deferred.
 - Do not treat every true skill as equally important; use claim significance to decide what gets space.
 - Frame adjacent experience honestly.
 - Do not use "ramp-ready," "adjacent," or similar wording to include a tool as a public skill claim unless the user has explicitly approved that tool for resume use.

@@ -109,6 +109,26 @@ Use when deciding resume length, sections, formatting, or content density.
 4. Save a graph note and `resumes/standards/resume-standards.json`.
 5. Make `tailor-resume` read those standards before drafting.
 
+### Apply Resume Principles
+
+Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow critique gives reusable resume advice.
+
+1. Capture each principle in the private graph or configured workspace with source, date, scope, and evidence level.
+2. Classify each principle before drafting:
+   - `required`: should apply to this resume unless explicitly overridden.
+   - `conditional`: applies only for certain roles, seniority levels, formats, or sources.
+   - `advisory`: useful judgment, but not a gate.
+3. Convert principles into concrete checks.
+   Examples: top-half leadership, evidence-gated metrics, no underfilled page, posting-aligned skills, no inconsistent bolding, shorter bullets, and CTO/startup summary only when it earns space.
+4. During drafting, keep a principle application table with `applied`, `partial`, `deferred`, or `not applicable`.
+5. When a requested metric is useful but not sourced, use a safer scope metric instead.
+   Examples: years owned, peak team size, direct commits, multi-author commit history, PR-numbered work, file/module scope, product surface, customer-facing delivery, or verified program participation.
+6. Reframe team-led work honestly.
+   If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
+7. Route unapplied required principles back to the right agent before the resume is marked ready.
+   Use `resume-writer` for structure, hierarchy, whitespace, bullet length, and summary choices; `experience-finder` for missing proof; `evidence-auditor` for metrics and claims; and `voice-auditor` for tone, hype, and consistency.
+8. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
+
 ### Tailor A Resume
 
 Use when there is a target role, company, or posting.
@@ -258,6 +278,10 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Applicant-facing resumes should avoid target company names in the body and filename by default.
+- Trusted reviewer principles should be first-class inputs, not comments that disappear after one draft.
+- Reviewer feedback is not applied until the resume version note records what was applied, partially applied, deferred, or rejected.
+- When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
+- Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
 - Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
