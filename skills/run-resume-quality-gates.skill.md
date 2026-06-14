@@ -35,6 +35,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 2. Measure the rendered resume.
    Page count must come from the rendered PDF or final artifact, not from a manual assertion.
    Page utilization must come from rendered HTML layout measurement, not eyeballing.
+   For one-page resumes, bottom whitespace should roughly match the page margins, usually around 3% to 3.5% of printable content height.
    Rendered text-line count must be measured from the final artifact or reported as unmeasured; do not substitute source Markdown line count.
 3. Compare measurements to configured gates.
    Disclose any required sections inferred from header structure rather than explicit section headings.
@@ -64,7 +65,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Treat quality gates like CI checks.
 - Never pass page-count gates by trusting a user or agent-provided page number when a rendered PDF exists.
 - Never treat a browser-printed PDF with local file URL/date/page-number headers or footers as a completed resume.
-- Do not pass one-page resumes that leave excessive bottom whitespace; route underfilled pages to `resume-writer`.
+- Do not pass one-page resumes that leave excessive bottom whitespace; route underfilled pages to `resume-writer`. A one-page resume with bottom whitespace much larger than the side and top margins is underfilled even when the page-utilization percentage passes a loose gate.
 - Manual page or rendered-line counts require an explicit human override flag and must be called out in the report.
 - Bullet character gates apply to achievement bullets, not compact skill-list bullets.
 - Hard bullet limits and ideal bullet ranges are separate: hard failures can block; ideal misses should notify the resume writer as warnings.

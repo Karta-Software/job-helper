@@ -112,6 +112,10 @@ export const seniorTechnicalResumeStandards2026: ResumeStandards = {
       rationale: "Keeps the file readable without shrinking content into a dense wall."
     },
     {
+      rule: "For one-page resumes, tune page fill so bottom whitespace roughly matches the page margins.",
+      rationale: "A resume that passes page count but leaves a large bottom gap looks underfilled and weakens scanability."
+    },
+    {
       rule: "Tailor summary, skills, and bullets to the specific posting.",
       rationale: "Current application data shows tailored resumes materially improve interview conversion."
     }

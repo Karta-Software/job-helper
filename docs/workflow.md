@@ -165,6 +165,7 @@ Use after rendering a resume draft.
 1. Measure page count, page utilization, word count, character count, rendered text lines, bullet lengths, and achievement bullet count.
    Page count must be measured from the final rendered PDF when a PDF exists.
    Page utilization should measure rendered HTML content height against the printable one-page area so one-page resumes do not leave excessive bottom whitespace.
+   For one-page resumes, bottom whitespace should visually approximate the page margins, usually around 3% to 3.5% of the printable page content height.
    Reject PDFs that contain browser print headers or footers such as file URLs, local paths, dates, or page numbers from the print dialog.
    Manual page or rendered-line counts require explicit override flags and must be disclosed in the report.
    Source Markdown line count is useful context, but it is not rendered text-line count.
@@ -275,7 +276,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Completed resumes must be generated through the helper's PDF renderer with browser headers and footers disabled.
 - Raw HTML resume files are source/preview artifacts, not application artifacts.
 - Page-count gates must use the rendered PDF/final artifact, not manual assertions.
-- Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages.
+- Page-utilization gates should keep one-page resumes in the configured target band instead of passing underfilled pages. Bottom whitespace should be close to the visual page margins, not merely under a loose maximum.
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Applicant-facing resumes should avoid target company names in the body and filename by default.
 - Trusted reviewer principles should be first-class inputs, not comments that disappear after one draft.
