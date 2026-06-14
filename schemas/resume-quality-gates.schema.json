@@ -15,6 +15,8 @@
         "charactersIncludingSpaces": { "$ref": "#/$defs/rangeGate" },
         "renderedTextLines": { "$ref": "#/$defs/rangeGate" },
         "pageUtilizationPercent": { "$ref": "#/$defs/rangeGate" },
+        "visualBottomGapPercent": { "$ref": "#/$defs/rangeGate" },
+        "visualBottomToReferenceMarginRatio": { "$ref": "#/$defs/rangeGate" },
         "bulletCharacters": { "$ref": "#/$defs/rangeGate" },
         "achievementBullets": { "$ref": "#/$defs/rangeGate" },
         "requiredSections": {

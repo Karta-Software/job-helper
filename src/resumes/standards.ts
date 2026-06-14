@@ -113,7 +113,7 @@ export const seniorTechnicalResumeStandards2026: ResumeStandards = {
     },
     {
       rule: "For one-page resumes, tune page fill so bottom whitespace roughly matches the page margins.",
-      rationale: "A resume that passes page count but leaves a large bottom gap looks underfilled and weakens scanability."
+      rationale: "A resume that passes page count but leaves a large bottom gap looks underfilled; compare the final PDF's visible bottom gap against the top and side margins."
     },
     {
       rule: "Tailor summary, skills, and bullets to the specific posting.",

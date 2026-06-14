@@ -3,11 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { measureResumeHtmlLayout } from "../src/resumes/layout-utilization.mjs";
 import { countPdfPages } from "../src/resumes/pdf-page-count.mjs";
+import { measurePdfVisualWhitespace } from "../src/resumes/pdf-visual-whitespace.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 
 if (!args.resume || !args.gates) {
-  console.error("Usage: node scripts/check-resume-quality.mjs --resume <file> --gates <file> [--posting <file>] [--pdf <file>] [--html <file>] [--max-pages 1] [--allow-manual-pages --pages 1] [--allow-manual-lines --lines 80] [--out <file>]");
+  console.error("Usage: node scripts/check-resume-quality.mjs --resume <file> --gates <file> [--posting <file>] [--pdf <file>] [--html <file>] [--browser <edge-or-chrome-path>] [--ghostscript <gs-path>] [--max-pages 1] [--allow-manual-pages --pages 1] [--allow-manual-lines --lines 80] [--out <file>]");
   process.exit(2);
 }
 
@@ -117,6 +118,18 @@ function buildSnapshot(raw, text, parsedArgs) {
     }
   }
 
+  let pdfVisualWhitespace;
+  if (parsedArgs.pdf) {
+    try {
+      pdfVisualWhitespace = measurePdfVisualWhitespace({
+        pdfPath: parsedArgs.pdf,
+        ghostscriptPath: parsedArgs.ghostscript
+      });
+    } catch (error) {
+      measurementWarnings.push(`pdfVisualWhitespace could not be measured: ${error.message}`);
+    }
+  }
+
   return {
     resumeText: text,
     pageCount,
@@ -128,6 +141,9 @@ function buildSnapshot(raw, text, parsedArgs) {
     pageUtilizationPercent: pageUtilization?.pageUtilizationPercent,
     bottomWhitespacePercent: pageUtilization?.bottomWhitespacePercent,
     layoutMeasurement: pageUtilization,
+    visualBottomGapPercent: pdfVisualWhitespace?.visualBottomGapPercent,
+    visualBottomToReferenceMarginRatio: pdfVisualWhitespace?.visualBottomToReferenceMarginRatio,
+    pdfVisualWhitespace,
     sourceTextLineCount: nonEmpty.length,
     bulletCharacterCounts: achievementBullets.map((bullet) => bullet.length),
     achievementBulletCount: achievementBullets.length,
@@ -145,6 +161,8 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRange(results, "charactersIncludingSpaces", gates.gates.charactersIncludingSpaces, snapshot.charactersIncludingSpaces);
   addRange(results, "renderedTextLines", gates.gates.renderedTextLines, snapshot.renderedTextLineCount);
   addRange(results, "pageUtilizationPercent", gates.gates.pageUtilizationPercent, snapshot.pageUtilizationPercent);
+  addRange(results, "visualBottomGapPercent", gates.gates.visualBottomGapPercent, snapshot.visualBottomGapPercent);
+  addRange(results, "visualBottomToReferenceMarginRatio", gates.gates.visualBottomToReferenceMarginRatio, snapshot.visualBottomToReferenceMarginRatio);
   addBulletCharacters(results, gates.gates.bulletCharacters, snapshot.bulletCharacterCounts);
   addRange(results, "achievementBullets", gates.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);

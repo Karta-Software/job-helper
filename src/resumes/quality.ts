@@ -68,6 +68,8 @@ export type ResumeQualityGatesConfig = {
     charactersIncludingSpaces?: RangeGateConfig;
     renderedTextLines?: RangeGateConfig;
     pageUtilizationPercent?: RangeGateConfig;
+    visualBottomGapPercent?: RangeGateConfig;
+    visualBottomToReferenceMarginRatio?: RangeGateConfig;
     bulletCharacters?: RangeGateConfig;
     achievementBullets?: RangeGateConfig;
     requiredSections?: RequiredSectionsGateConfig;
@@ -95,6 +97,8 @@ export type ResumeQualitySnapshot = {
   renderedTextLineCountSource?: "manual" | "unmeasured";
   pageUtilizationPercent?: number;
   bottomWhitespacePercent?: number;
+  visualBottomGapPercent?: number;
+  visualBottomToReferenceMarginRatio?: number;
   sourceTextLineCount?: number;
   bulletCharacterCounts: number[];
   achievementBulletCount: number;
@@ -146,6 +150,8 @@ export function evaluateResumeQuality(
   );
   addRangeGateResult(results, "renderedTextLines", config.gates.renderedTextLines, snapshot.renderedTextLineCount);
   addRangeGateResult(results, "pageUtilizationPercent", config.gates.pageUtilizationPercent, snapshot.pageUtilizationPercent);
+  addRangeGateResult(results, "visualBottomGapPercent", config.gates.visualBottomGapPercent, snapshot.visualBottomGapPercent);
+  addRangeGateResult(results, "visualBottomToReferenceMarginRatio", config.gates.visualBottomToReferenceMarginRatio, snapshot.visualBottomToReferenceMarginRatio);
   addBulletRangeResults(results, config.gates.bulletCharacters, snapshot.bulletCharacterCounts);
   addRangeGateResult(results, "achievementBullets", config.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
