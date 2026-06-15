@@ -145,6 +145,7 @@ function buildSnapshot(raw, text, parsedArgs) {
     visualBottomToReferenceMarginRatio: pdfVisualWhitespace?.visualBottomToReferenceMarginRatio,
     pdfVisualWhitespace,
     sourceTextLineCount: nonEmpty.length,
+    achievementBullets,
     bulletCharacterCounts: achievementBullets.map((bullet) => bullet.length),
     achievementBulletCount: achievementBullets.length,
     sectionNames: unique([...sectionNames, ...inferredSections]),
@@ -170,6 +171,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addApprovedSkillClaims(results, gates.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTerms(results, gates.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBranding(results, gates.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames);
+  addReviewerPrinciples(results, gates.gates.reviewerPrinciples, snapshot);
   addPrivateLeak(results, gates.gates.privateLeak, snapshot.resumeText, parsedArgs.pdf);
 
   const blockingFailures = results.filter((result) => !result.passed && result.severity === "error");
@@ -345,6 +347,131 @@ function addPrivateLeak(results, gate, resumeText, pdfPath) {
     "no private or internal-only text",
     matched.length === 0 ? "No private-leak patterns matched." : `Private-leak patterns matched: ${matched.join(", ")}.`
   ));
+}
+
+function addReviewerPrinciples(results, gate, snapshot) {
+  if (!gate?.enabled) return;
+
+  addLeadershipNearTop(results, gate, gate.leadershipNearTop, snapshot);
+  addLedTeamWording(results, gate, gate.ledTeamWording, snapshot.resumeText);
+  addTopHalfCarriesReview(results, gate, gate.topHalfCarriesReview, snapshot.resumeText);
+  addConsistentEmphasis(results, gate, gate.consistentEmphasis, snapshot.achievementBullets);
+  addTeamLedWorkNotFlattened(results, gate, gate.teamLedWorkNotFlattened, snapshot.achievementBullets);
+}
+
+function addLeadershipNearTop(results, parentGate, check, snapshot) {
+  if (!check?.enabled) return;
+  const maxTextPercent = check.maxTextPercent ?? 35;
+  const requiredTerms = check.requiredTerms || [];
+  const misplaced = termsOutsideTextPercent(snapshot.resumeText, requiredTerms, maxTextPercent);
+  results.push(result(
+    "reviewerPrinciples.leadershipNearTop",
+    principleGate(parentGate, check),
+    misplaced.length === 0,
+    requiredTerms.length - misplaced.length,
+    `configured leadership terms within top ${maxTextPercent}% of resume text`,
+    misplaced.length === 0
+      ? `Leadership and team-scope terms appear within the top ${maxTextPercent}% of resume text.`
+      : `Leadership and team-scope terms missing from the top ${maxTextPercent}% of resume text: ${misplaced.join(", ")}.`
+  ));
+}
+
+function addLedTeamWording(results, parentGate, check, resumeText) {
+  if (!check?.enabled) return;
+  const requiredPatterns = check.requiredPatterns || [];
+  const missing = requiredPatterns.filter((pattern) => !matchesPatternOrTerm(resumeText, pattern));
+  results.push(result(
+    "reviewerPrinciples.ledTeamWording",
+    principleGate(parentGate, check),
+    missing.length === 0,
+    requiredPatterns.length - missing.length,
+    `supportable team wording: ${requiredPatterns.join(", ")}`,
+    missing.length === 0
+      ? "Supportable team-size wording is present."
+      : `Supportable team-size wording is missing: ${missing.join(", ")}.`
+  ));
+}
+
+function addTopHalfCarriesReview(results, parentGate, check, resumeText) {
+  if (!check?.enabled) return;
+  const maxTextPercent = check.maxTextPercent ?? 50;
+  const requiredTerms = check.requiredTerms || [];
+  const misplaced = termsOutsideTextPercent(resumeText, requiredTerms, maxTextPercent);
+  results.push(result(
+    "reviewerPrinciples.topHalfCarriesReview",
+    principleGate(parentGate, check),
+    misplaced.length === 0,
+    requiredTerms.length - misplaced.length,
+    `configured high-signal terms within top ${maxTextPercent}% of resume text`,
+    misplaced.length === 0
+      ? `Top-half review terms appear within the top ${maxTextPercent}% of resume text.`
+      : `Top-half review terms missing from the top ${maxTextPercent}% of resume text: ${misplaced.join(", ")}.`
+  ));
+}
+
+function addConsistentEmphasis(results, parentGate, check, achievementBullets) {
+  if (!check?.enabled) return;
+  const mode = check.mode || "no-emphasis-in-bullets";
+  const emphasizedBullets = achievementBullets.filter(hasInlineEmphasis);
+  const passed = mode === "no-emphasis-in-bullets" ? emphasizedBullets.length === 0 : true;
+  results.push(result(
+    "reviewerPrinciples.consistentEmphasis",
+    principleGate(parentGate, check),
+    passed,
+    emphasizedBullets.length,
+    mode === "no-emphasis-in-bullets" ? "no bold or italic emphasis inside achievement bullets" : "configured emphasis mode",
+    passed
+      ? "Achievement bullets do not use inline emphasis."
+      : `${emphasizedBullets.length} achievement bullets use inline emphasis; keep emphasis consistent outside bullets or apply a deliberate full-section pattern.`
+  ));
+}
+
+function addTeamLedWorkNotFlattened(results, parentGate, check, achievementBullets) {
+  if (!check?.enabled) return;
+  const leadershipTerms = check.leadershipTerms || [];
+  const minimum = check.minimumLeadershipBullets ?? 1;
+  const leadershipBulletCount = achievementBullets.filter((bullet) =>
+    leadershipTerms.some((term) => containsSearchTerm(bullet, term))
+  ).length;
+  results.push(result(
+    "reviewerPrinciples.teamLedWorkNotFlattened",
+    principleGate(parentGate, check),
+    leadershipBulletCount >= minimum,
+    leadershipBulletCount,
+    `at least ${minimum} leadership or team-scope bullets`,
+    leadershipBulletCount >= minimum
+      ? `${leadershipBulletCount} leadership or team-scope bullets use configured language.`
+      : `${leadershipBulletCount} leadership or team-scope bullets found; expected at least ${minimum} so team-led work is not flattened into lone-IC wording.`
+  ));
+}
+
+function termsOutsideTextPercent(text, terms, maxTextPercent) {
+  const haystack = normalizeSearch(text);
+  const maxIndex = Math.floor(haystack.length * (maxTextPercent / 100));
+  return terms.filter((term) => {
+    const index = haystack.indexOf(normalizeSearch(term));
+    return index < 0 || index > maxIndex;
+  });
+}
+
+function matchesPatternOrTerm(text, pattern) {
+  try {
+    if (new RegExp(pattern, "i").test(text)) return true;
+  } catch {
+    // Fall back to normalized term matching for configs that use plain text.
+  }
+  return containsSearchTerm(text, pattern);
+}
+
+function hasInlineEmphasis(value) {
+  return /(^|[^\\])(\*\*|__|\*|_)|<\/?(strong|b|em|i)\b/i.test(value);
+}
+
+function principleGate(parentGate, check) {
+  return {
+    severity: check.severity || parentGate.severity,
+    reworkAgent: check.reworkAgent || parentGate.reworkAgent
+  };
 }
 
 function result(gateId, gate, passed, measured, expected, message) {

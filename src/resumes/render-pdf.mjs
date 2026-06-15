@@ -61,20 +61,31 @@ export function findBrowserPath() {
 }
 
 export function toFileUrl(filePath) {
-  const absolutePath = path.resolve(filePath);
-  if (absolutePath.startsWith("/mnt/") && absolutePath[6] === "/") {
-    const drive = absolutePath[5].toUpperCase();
-    const windowsPath = absolutePath.slice(7).split(path.sep).map(encodeURIComponent).join("/");
-    return `file:///${drive}:/${windowsPath}`;
+  const wslPath = parseWslPath(filePath);
+  if (wslPath) {
+    return `file:///${wslPath.drive}:/${wslPath.segments.map(encodeURIComponent).join("/")}`;
   }
+
+  const absolutePath = path.resolve(filePath);
   return new URL(`file://${absolutePath}`).href;
 }
 
 export function toBrowserPath(filePath) {
-  const absolutePath = path.resolve(filePath);
-  if (absolutePath.startsWith("/mnt/") && absolutePath[6] === "/") {
-    const drive = absolutePath[5].toUpperCase();
-    return `${drive}:\\${absolutePath.slice(7).split(path.sep).join("\\")}`;
+  const wslPath = parseWslPath(filePath);
+  if (wslPath) {
+    return `${wslPath.drive}:\\${wslPath.segments.join("\\")}`;
   }
+
+  const absolutePath = path.resolve(filePath);
   return absolutePath;
+}
+
+function parseWslPath(filePath) {
+  const normalizedPath = String(filePath).replace(/\\/g, "/");
+  const match = normalizedPath.match(/^\/mnt\/([A-Za-z])\/(.+)$/);
+  if (!match) return undefined;
+  return {
+    drive: match[1].toUpperCase(),
+    segments: match[2].split("/")
+  };
 }

@@ -111,6 +111,54 @@
             "severity": { "$ref": "#/$defs/severity" },
             "reworkAgent": { "type": "string" }
           }
+        },
+        "reviewerPrinciples": {
+          "type": "object",
+          "required": ["enabled", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" },
+            "leadershipNearTop": { "$ref": "#/$defs/topTextPrincipleGate" },
+            "ledTeamWording": {
+              "type": "object",
+              "required": ["enabled", "requiredPatterns"],
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "requiredPatterns": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "severity": { "$ref": "#/$defs/severity" },
+                "reworkAgent": { "type": "string" }
+              }
+            },
+            "topHalfCarriesReview": { "$ref": "#/$defs/topTextPrincipleGate" },
+            "consistentEmphasis": {
+              "type": "object",
+              "required": ["enabled", "mode"],
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "mode": { "enum": ["no-emphasis-in-bullets"] },
+                "severity": { "$ref": "#/$defs/severity" },
+                "reworkAgent": { "type": "string" }
+              }
+            },
+            "teamLedWorkNotFlattened": {
+              "type": "object",
+              "required": ["enabled", "minimumLeadershipBullets", "leadershipTerms"],
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "minimumLeadershipBullets": { "type": "integer" },
+                "leadershipTerms": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "severity": { "$ref": "#/$defs/severity" },
+                "reworkAgent": { "type": "string" }
+              }
+            }
+          }
         }
       }
     },
@@ -140,6 +188,20 @@
         "idealLow": { "type": "number" },
         "idealHigh": { "type": "number" },
         "maximum": { "type": "number" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
+      }
+    },
+    "topTextPrincipleGate": {
+      "type": "object",
+      "required": ["enabled", "requiredTerms", "maxTextPercent"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "requiredTerms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "maxTextPercent": { "type": "number" },
         "severity": { "$ref": "#/$defs/severity" },
         "reworkAgent": { "type": "string" }
       }

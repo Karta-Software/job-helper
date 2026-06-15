@@ -28,6 +28,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - target company name leakage in applicant-facing text or artifact filenames
 - private/internal note leakage
 - browser print header/footer leakage
+- configured reviewer-principle checks, including top-half leadership, supportable team-size wording, top-half proof terms, consistent emphasis, and team-led wording
 
 ## Steps
 
@@ -46,11 +47,13 @@ Use after rendering a resume draft and before moving it to completed resumes.
    This is a positive inventory gate: denylist checks are not enough.
 7. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-8. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-9. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-10. Update the private resume note/tracker with pass/fail status and the next rework action.
-11. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-12. Move to completed resumes only after gates pass or a human override is recorded.
+8. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
+   Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
+9. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+10. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+11. Update the private resume note/tracker with pass/fail status and the next rework action.
+12. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+13. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -74,6 +77,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Treat unsupported technology terms as a denylist guardrail, not a complete evidence audit. The evidence audit still needs graph-backed claim review.
 - Treat approved-skill failures as evidence-auditor failures: remove the skill claim or update the private skill inventory only after the user confirms the skill.
 - Treat target-branding failures as voice/positioning failures: remove the company name and express the same fit through role-relevant capabilities, domains, and outcomes.
+- Treat reviewer-principle failures as real CI failures when configured with `severity: "error"`. Do not mark a resume ready because an agent "considered" the principle; the report needs a passing `reviewerPrinciples.*` row or a recorded human override.
 - If an AI-native development signal is configured as required for a technical role, route omissions to `resume-writer` and unsupported AI claims to `evidence-auditor`.
 - Prefer contrast from typographic hierarchy: section anchors, leading, role-block rules, bold proof points, and bullet rhythm.
 - Avoid visual contrast that hurts parsing: tables, text boxes, icons, skill bars, or decorative graphics.

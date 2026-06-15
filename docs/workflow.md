@@ -181,9 +181,11 @@ Use after rendering a resume draft.
 6. Check for private paths, internal notes, and application-only commentary.
 7. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-8. Treat `error` gate failures like CI failures.
-9. Route failures to the configured rework agent.
-10. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
+8. Check configured `reviewerPrinciples`.
+   Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
+9. Treat `error` gate failures like CI failures.
+10. Route failures to the configured rework agent.
+11. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
 
 ### Score A Resume
 
@@ -282,6 +284,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Scanability should come from hierarchy, leading, contrast, and selective emphasis, not decorative graphics or dense walls of text.
 - Applicant-facing resumes should avoid target company names in the body and filename by default.
 - Trusted reviewer principles should be first-class inputs, not comments that disappear after one draft.
+- Required trusted reviewer principles should be first-class `reviewerPrinciples.*` quality-gate results, not just notes or agent memory.
 - Reviewer feedback is not applied until the resume version note records what was applied, partially applied, deferred, or rejected.
 - When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.

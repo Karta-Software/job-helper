@@ -58,6 +58,47 @@ export type ApprovedSkillClaimsGateConfig = {
   reworkAgent: string;
 };
 
+export type ReviewerPrincipleTopTextGateConfig = {
+  enabled: boolean;
+  requiredTerms: string[];
+  maxTextPercent: number;
+  severity?: ResumeQualityGateSeverity;
+  reworkAgent?: string;
+};
+
+export type ReviewerPrincipleLedTeamGateConfig = {
+  enabled: boolean;
+  requiredPatterns: string[];
+  severity?: ResumeQualityGateSeverity;
+  reworkAgent?: string;
+};
+
+export type ReviewerPrincipleEmphasisGateConfig = {
+  enabled: boolean;
+  mode: "no-emphasis-in-bullets";
+  severity?: ResumeQualityGateSeverity;
+  reworkAgent?: string;
+};
+
+export type ReviewerPrincipleTeamScopeGateConfig = {
+  enabled: boolean;
+  minimumLeadershipBullets: number;
+  leadershipTerms: string[];
+  severity?: ResumeQualityGateSeverity;
+  reworkAgent?: string;
+};
+
+export type ReviewerPrinciplesGateConfig = {
+  enabled: boolean;
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+  leadershipNearTop?: ReviewerPrincipleTopTextGateConfig;
+  ledTeamWording?: ReviewerPrincipleLedTeamGateConfig;
+  topHalfCarriesReview?: ReviewerPrincipleTopTextGateConfig;
+  consistentEmphasis?: ReviewerPrincipleEmphasisGateConfig;
+  teamLedWorkNotFlattened?: ReviewerPrincipleTeamScopeGateConfig;
+};
+
 export type ResumeQualityGatesConfig = {
   id: string;
   version: string;
@@ -78,6 +119,7 @@ export type ResumeQualityGatesConfig = {
     unsupportedTerms?: UnsupportedTermsGateConfig;
     targetBranding?: TargetBrandingGateConfig;
     approvedSkillClaims?: ApprovedSkillClaimsGateConfig;
+    reviewerPrinciples?: ReviewerPrinciplesGateConfig;
   };
   agentRouting: {
     maxIterations: number;
@@ -100,6 +142,7 @@ export type ResumeQualitySnapshot = {
   visualBottomGapPercent?: number;
   visualBottomToReferenceMarginRatio?: number;
   sourceTextLineCount?: number;
+  achievementBullets?: string[];
   bulletCharacterCounts: number[];
   achievementBulletCount: number;
   sectionNames: string[];
@@ -160,6 +203,7 @@ export function evaluateResumeQuality(
   addApprovedSkillClaimsResult(results, config.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTermsResult(results, config.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBrandingResult(results, config.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames || []);
+  addReviewerPrinciplesResult(results, config.gates.reviewerPrinciples, snapshot);
 
   const blockingFailures = results.filter((result) => !result.passed && result.severity === "error");
   const agentNotifications = results
@@ -437,6 +481,130 @@ function addTargetBrandingResult(
   });
 }
 
+function addReviewerPrinciplesResult(
+  results: ResumeQualityGateResult[],
+  gate: ReviewerPrinciplesGateConfig | undefined,
+  snapshot: ResumeQualitySnapshot
+): void {
+  if (!gate?.enabled) return;
+
+  addTopTextPrincipleResult(
+    results,
+    "reviewerPrinciples.leadershipNearTop",
+    gate,
+    gate.leadershipNearTop,
+    snapshot.resumeText,
+    "configured leadership terms"
+  );
+  addLedTeamWordingResult(results, gate, gate.ledTeamWording, snapshot.resumeText);
+  addTopTextPrincipleResult(
+    results,
+    "reviewerPrinciples.topHalfCarriesReview",
+    gate,
+    gate.topHalfCarriesReview,
+    snapshot.resumeText,
+    "configured high-signal terms"
+  );
+  addConsistentEmphasisResult(results, gate, gate.consistentEmphasis, snapshot.achievementBullets || []);
+  addTeamLedWorkNotFlattenedResult(results, gate, gate.teamLedWorkNotFlattened, snapshot.achievementBullets || []);
+}
+
+function addTopTextPrincipleResult(
+  results: ResumeQualityGateResult[],
+  gateId: string,
+  parentGate: ReviewerPrinciplesGateConfig,
+  check: ReviewerPrincipleTopTextGateConfig | undefined,
+  resumeText: string,
+  label: string
+): void {
+  if (!check?.enabled) return;
+
+  const misplaced = termsOutsideTextPercent(resumeText, check.requiredTerms, check.maxTextPercent);
+  results.push({
+    gateId,
+    passed: misplaced.length === 0,
+    severity: check.severity || parentGate.severity,
+    measured: check.requiredTerms.length - misplaced.length,
+    expected: `${label} within top ${check.maxTextPercent}% of resume text`,
+    message:
+      misplaced.length === 0
+        ? `${label} appear within the top ${check.maxTextPercent}% of resume text.`
+        : `${label} missing from the top ${check.maxTextPercent}% of resume text: ${misplaced.join(", ")}.`,
+    reworkAgent: check.reworkAgent || parentGate.reworkAgent
+  });
+}
+
+function addLedTeamWordingResult(
+  results: ResumeQualityGateResult[],
+  parentGate: ReviewerPrinciplesGateConfig,
+  check: ReviewerPrincipleLedTeamGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!check?.enabled) return;
+
+  const missing = check.requiredPatterns.filter((pattern) => !matchesPatternOrTerm(resumeText, pattern));
+  results.push({
+    gateId: "reviewerPrinciples.ledTeamWording",
+    passed: missing.length === 0,
+    severity: check.severity || parentGate.severity,
+    measured: check.requiredPatterns.length - missing.length,
+    expected: `supportable team wording: ${check.requiredPatterns.join(", ")}`,
+    message:
+      missing.length === 0
+        ? "Supportable team-size wording is present."
+        : `Supportable team-size wording is missing: ${missing.join(", ")}.`,
+    reworkAgent: check.reworkAgent || parentGate.reworkAgent
+  });
+}
+
+function addConsistentEmphasisResult(
+  results: ResumeQualityGateResult[],
+  parentGate: ReviewerPrinciplesGateConfig,
+  check: ReviewerPrincipleEmphasisGateConfig | undefined,
+  achievementBullets: string[]
+): void {
+  if (!check?.enabled) return;
+
+  const emphasizedBullets = achievementBullets.filter(hasInlineEmphasis);
+  results.push({
+    gateId: "reviewerPrinciples.consistentEmphasis",
+    passed: emphasizedBullets.length === 0,
+    severity: check.severity || parentGate.severity,
+    measured: emphasizedBullets.length,
+    expected: "no bold or italic emphasis inside achievement bullets",
+    message:
+      emphasizedBullets.length === 0
+        ? "Achievement bullets do not use inline emphasis."
+        : `${emphasizedBullets.length} achievement bullets use inline emphasis; keep emphasis consistent outside bullets or apply a deliberate full-section pattern.`,
+    reworkAgent: check.reworkAgent || parentGate.reworkAgent
+  });
+}
+
+function addTeamLedWorkNotFlattenedResult(
+  results: ResumeQualityGateResult[],
+  parentGate: ReviewerPrinciplesGateConfig,
+  check: ReviewerPrincipleTeamScopeGateConfig | undefined,
+  achievementBullets: string[]
+): void {
+  if (!check?.enabled) return;
+
+  const leadershipBulletCount = achievementBullets.filter((bullet) =>
+    check.leadershipTerms.some((term) => containsSearchTerm(bullet, term))
+  ).length;
+  results.push({
+    gateId: "reviewerPrinciples.teamLedWorkNotFlattened",
+    passed: leadershipBulletCount >= check.minimumLeadershipBullets,
+    severity: check.severity || parentGate.severity,
+    measured: leadershipBulletCount,
+    expected: `at least ${check.minimumLeadershipBullets} leadership or team-scope bullets`,
+    message:
+      leadershipBulletCount >= check.minimumLeadershipBullets
+        ? `${leadershipBulletCount} leadership or team-scope bullets use configured language.`
+        : `${leadershipBulletCount} leadership or team-scope bullets found; expected at least ${check.minimumLeadershipBullets} so team-led work is not flattened into lone-IC wording.`,
+    reworkAgent: check.reworkAgent || parentGate.reworkAgent
+  });
+}
+
 function formatRange(gate: RangeGateConfig): string {
   const parts: string[] = [];
   if (gate.minimum !== undefined) parts.push(`minimum ${gate.minimum}`);
@@ -513,6 +681,28 @@ function containsSearchTerm(value: string, term: string): boolean {
   if (!needle) return false;
   const pattern = new RegExp(`\\s${escapeRegExp(needle).replace(/\s+/g, "\\s+")}\\s`, "i");
   return pattern.test(haystack);
+}
+
+function termsOutsideTextPercent(text: string, terms: string[], maxTextPercent: number): string[] {
+  const haystack = normalizeSearchText(text);
+  const maxIndex = Math.floor(haystack.length * (maxTextPercent / 100));
+  return terms.filter((term) => {
+    const index = haystack.indexOf(normalizeSearchText(term));
+    return index < 0 || index > maxIndex;
+  });
+}
+
+function matchesPatternOrTerm(text: string, pattern: string): boolean {
+  try {
+    if (new RegExp(pattern, "i").test(text)) return true;
+  } catch {
+    // Fall back to normalized term matching for configs that use plain text.
+  }
+  return containsSearchTerm(text, pattern);
+}
+
+function hasInlineEmphasis(value: string): boolean {
+  return /(^|[^\\])(\*\*|__|\*|_)|<\/?(strong|b|em|i)\b/i.test(value);
 }
 
 function escapeRegExp(value: string): string {

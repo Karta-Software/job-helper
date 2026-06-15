@@ -191,6 +191,205 @@ test("CLI fails skill claims that are not approved by the skill inventory gate",
   });
 });
 
+test("CLI fails reviewer principles when leadership is not near the top half", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Built reliable internal products for customers.
+
+## Technical Skills
+
+- TypeScript, Node.js, PostgreSQL, AWS
+
+## Professional Experience
+
+- Built a customer reporting surface with durable TypeScript services.
+- Improved deployment safety with repeatable reviews and release notes.
+- Led a team of 4 engineers through delivery of the highest-scope product work.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: reviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "reviewerPrinciples.leadershipNearTop");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /top 35%/);
+  });
+});
+
+test("CLI fails reviewer principles when supportable Led a team wording is missing", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Hands-on technical leader for customer-facing workflow systems.
+
+## Technical Skills
+
+- TypeScript, Node.js, PostgreSQL, AWS
+
+## Professional Experience
+
+- Guided engineering delivery for customer-facing workflow systems.
+- Scoped platform reliability work across product, design, and support.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: reviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "reviewerPrinciples.ledTeamWording");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /Led a team of 4 engineers/);
+  });
+});
+
+test("CLI fails reviewer principles when achievement bullets use inconsistent emphasis", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Led a team of 4 engineers through customer-facing workflow delivery.
+
+## Technical Skills
+
+- TypeScript, Node.js, PostgreSQL, AWS
+
+## Professional Experience
+
+- Led a team of 4 engineers through **customer-facing workflow** delivery.
+- Scoped platform reliability work across product, design, and support.
+- Reviewed implementation plans with engineers before release.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: reviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "reviewerPrinciples.consistentEmphasis");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /emphasis/);
+  });
+});
+
+test("CLI fails reviewer principles when team-led work is flattened into lone-IC wording", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Led a team of 4 engineers through customer-facing workflow delivery.
+
+## Technical Skills
+
+- TypeScript, Node.js, PostgreSQL, AWS
+
+## Professional Experience
+
+- Built customer-facing workflow systems with TypeScript and PostgreSQL.
+- Implemented release automation for production deployments.
+- Added observability for backend APIs and dashboards.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: reviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "reviewerPrinciples.teamLedWorkNotFlattened");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /leadership or team-scope bullets/);
+  });
+});
+
+test("CLI passes reviewer principles when leadership, top-half proof, emphasis, and team scope are explicit", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Led a team of 4 engineers through customer-facing workflow delivery, reliability, and platform modernization.
+
+## Technical Skills
+
+- TypeScript, Node.js, PostgreSQL, AWS
+
+## Professional Experience
+
+- Led a team of 4 engineers through customer-facing workflow delivery across product, design, and support.
+- Scoped platform reliability work across product, design, and support before implementation.
+- Reviewed implementation plans with engineers before release.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: reviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const gates = report.results.filter((result) => result.gateId.startsWith("reviewerPrinciples."));
+    assert.equal(gates.length, 5);
+    assert.equal(gates.every((gate) => gate.passed), true);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,
@@ -257,6 +456,37 @@ function usingTempWorkspace(callback) {
 
 function pageGate(report) {
   return report.results.find((result) => result.gateId === "pages");
+}
+
+function reviewerPrinciplesGate() {
+  return {
+    enabled: true,
+    severity: "error",
+    reworkAgent: "resume-writer",
+    leadershipNearTop: {
+      enabled: true,
+      requiredTerms: ["Led a team of 4 engineers"],
+      maxTextPercent: 35
+    },
+    ledTeamWording: {
+      enabled: true,
+      requiredPatterns: ["Led a team of 4 engineers"]
+    },
+    topHalfCarriesReview: {
+      enabled: true,
+      requiredTerms: ["Led a team of 4 engineers"],
+      maxTextPercent: 50
+    },
+    consistentEmphasis: {
+      enabled: true,
+      mode: "no-emphasis-in-bullets"
+    },
+    teamLedWorkNotFlattened: {
+      enabled: true,
+      minimumLeadershipBullets: 2,
+      leadershipTerms: ["Led", "Scoped", "Reviewed", "Mentored"]
+    }
+  };
 }
 
 function minimalPdf({ pageCount, extraObject = "" }) {

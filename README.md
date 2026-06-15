@@ -98,11 +98,13 @@ The standards workflow uses market data, recruiter-style conversion logic, targe
 
 ## Resume Quality Gates
 
-Use `run-resume-quality-gates` after rendering a resume draft. Gates behave like CI checks for resumes: page count, page utilization, word count, character count, rendered lines, bullet length, required sections, keyword match, evidence safety, voice, and private-note leakage.
+Use `run-resume-quality-gates` after rendering a resume draft. Gates behave like CI checks for resumes: page count, page utilization, word count, character count, rendered lines, bullet length, required sections, keyword match, evidence safety, reviewer principles, voice, and private-note leakage.
 
 Failed `error` gates block the resume from moving to completed outputs. Each failing gate maps to a rework agent, such as `resume-writer`, `posting-scorer`, `experience-finder`, `evidence-auditor`, or `voice-auditor`.
 
 Measurement rules are strict. Page count comes from the rendered PDF/final artifact, rendered line count cannot be faked with source Markdown lines, keyword reports must disclose their keyword source, and unsupported-term scans are only a denylist guardrail until a graph-backed evidence audit confirms each claim.
+
+Reviewer-principle rules are explicit when configured. A report can require leadership near the top, supportable `Led a team of X engineers` wording, high-signal proof terms in the top half, consistent emphasis, and team-led work that is not flattened into lone-IC wording.
 
 Scanability rules are practical: use section anchors, role-block separation, selective bolding for metrics and proof points, readable leading, and enough whitespace to parse the page. Avoid tables, icons, text boxes, skill bars, or graphics for critical content.
 
