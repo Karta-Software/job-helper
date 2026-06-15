@@ -120,14 +120,16 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
    - `advisory`: useful judgment, but not a gate.
 3. Convert principles into concrete checks.
    Examples: top-half leadership, evidence-gated metrics, no underfilled page, posting-aligned skills, no inconsistent bolding, shorter bullets, and CTO/startup summary only when it earns space.
-4. During drafting, keep a principle application table with `applied`, `partial`, `deferred`, or `not applicable`.
-5. When a requested metric is useful but not sourced, use a safer scope metric instead.
+4. If a reviewer critique targets something previously measured only as a warning, tune the target gate or raise severity so the final report proves the critique was handled.
+   Do not call a reviewer-specific resume ready while the exact reviewer concern remains a failed warning unless a human override explains why.
+5. During drafting, keep a principle application table with `applied`, `partial`, `deferred`, or `not applicable`.
+6. When a requested metric is useful but not sourced, use a safer scope metric instead.
    Examples: years owned, peak team size, direct commits, multi-author commit history, PR-numbered work, file/module scope, product surface, customer-facing delivery, or verified program participation.
-6. Reframe team-led work honestly.
+7. Reframe team-led work honestly.
    If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
-7. Route unapplied required principles back to the right agent before the resume is marked ready.
+8. Route unapplied required principles back to the right agent before the resume is marked ready.
    Use `resume-writer` for structure, hierarchy, whitespace, bullet length, and summary choices; `experience-finder` for missing proof; `evidence-auditor` for metrics and claims; and `voice-auditor` for tone, hype, and consistency.
-8. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
+9. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
 
 ### Tailor A Resume
 
@@ -143,6 +145,7 @@ Use when there is a target role, company, or posting.
 7. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
+   When omitted for target fit, remove AI-tooling phrases from required keyword rewards and add target-specific unsupported terms if the prior workflow over-rewarded them.
 8. Translate the target role into role-facing themes, not company-facing branding.
    Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
 9. Rewrite the resume structure around the target role when needed.
@@ -183,9 +186,11 @@ Use after rendering a resume draft.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
 8. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
-9. Treat `error` gate failures like CI failures.
-10. Route failures to the configured rework agent.
-11. Keep the resume in rendered drafts until all `error` gates pass or a human override is recorded.
+9. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
+   Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
+10. Treat `error` gate failures like CI failures.
+11. Route failures to the configured rework agent.
+12. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
 
 ### Score A Resume
 
@@ -286,6 +291,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Trusted reviewer principles should be first-class inputs, not comments that disappear after one draft.
 - Required trusted reviewer principles should be first-class `reviewerPrinciples.*` quality-gate results, not just notes or agent memory.
 - Reviewer feedback is not applied until the resume version note records what was applied, partially applied, deferred, or rejected.
+- A reviewer-related warning is not harmless just because the checker can technically pass. If the warning represents the critique being addressed, resolve it, tune the target-specific range, raise severity, or record an explicit override.
 - When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
@@ -293,6 +299,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
 - Claim confidence and claim significance are different signals. A `3` skill may still be low significance, and a niche proof point may be high significance for one target role only.
 - Technical resumes should usually include an evidence-backed AI-native development signal when the candidate graph supports it; in 2026 this is a capability signal, not just a tooling footnote.
+- If target or reviewer feedback makes AI tooling distracting, remove it from keyword rewards and make it a target-specific unsupported term so future drafts cannot accidentally reintroduce it for that target.
 - `2` skill ratings should include an adjacency rationale before being used for resume positioning.
 - Interactive skill-gap forms should favor toggleable adjacency reasons over requiring the user to copy or retype suggested rationale.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.

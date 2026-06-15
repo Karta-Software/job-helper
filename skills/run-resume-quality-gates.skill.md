@@ -49,11 +49,13 @@ Use after rendering a resume draft and before moving it to completed resumes.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
 8. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
-9. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-10. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-11. Update the private resume note/tracker with pass/fail status and the next rework action.
-12. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-13. Move to completed resumes only after gates pass or a human override is recorded.
+9. Inspect warning failures against the stated critique.
+   If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
+10. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+11. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+12. Update the private resume note/tracker with pass/fail status and the next rework action.
+13. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+14. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -79,9 +81,11 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Treat target-branding failures as voice/positioning failures: remove the company name and express the same fit through role-relevant capabilities, domains, and outcomes.
 - Treat reviewer-principle failures as real CI failures when configured with `severity: "error"`. Do not mark a resume ready because an agent "considered" the principle; the report needs a passing `reviewerPrinciples.*` row or a recorded human override.
 - If an AI-native development signal is configured as required for a technical role, route omissions to `resume-writer` and unsupported AI claims to `evidence-auditor`.
+- If the target or reviewer feedback makes AI tooling distracting, remove AI-tooling phrases from keyword rewards and add target-specific unsupported terms so future drafts cannot reintroduce them by accident.
 - Prefer contrast from typographic hierarchy: section anchors, leading, role-block rules, bold proof points, and bullet rhythm.
 - Avoid visual contrast that hurts parsing: tables, text boxes, icons, skill bars, or decorative graphics.
 - Do not publish or submit a resume with failing `error` gates.
 - Warnings can pass but must be included in the audit report.
+- Reviewer-related warning failures are not ready-state proof. Resolve them, tune the target-specific ideal range, raise severity, or record a human override.
 - Do not hide failures by deleting useful evidence; rework the resume.
 - Record overrides explicitly in the private resume version notes.
