@@ -50,6 +50,20 @@
             "reworkAgent": { "type": "string" }
           }
         },
+        "metricSignals": {
+          "type": "object",
+          "required": ["enabled", "minimumCount", "patterns", "severity", "reworkAgent"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minimumCount": { "type": "integer" },
+            "patterns": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "severity": { "$ref": "#/$defs/severity" },
+            "reworkAgent": { "type": "string" }
+          }
+        },
         "privateLeak": {
           "type": "object",
           "required": ["enabled", "patterns", "severity", "reworkAgent"],

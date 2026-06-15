@@ -390,6 +390,85 @@ State University
   });
 });
 
+test("CLI fails metric signals when reviewer feedback asks for more numbers and too few are present", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+Led customer-facing workflow delivery.
+
+## Professional Experience
+
+- Led a team through a complex platform rebuild.
+- Improved operational workflows for customers.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        metricSignals: {
+          enabled: true,
+          minimumCount: 3,
+          patterns: ["5\\+ years", "4-6 person", "3,700\\+ direct commits", "Techstars 2025"],
+          severity: "error",
+          reworkAgent: "evidence-auditor"
+        }
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "metricSignals");
+    assert.equal(gate.passed, false);
+    assert.equal(gate.measured, 0);
+    assert.match(gate.message, /below 3/);
+  });
+});
+
+test("CLI passes metric signals when enough configured numeric proof points are present", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Summary
+
+5+ years building systems.
+
+## Professional Experience
+
+- Led a 4-6 person team and shipped with 3,700+ direct commits.
+- Selected for Techstars 2025.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        metricSignals: {
+          enabled: true,
+          minimumCount: 3,
+          patterns: ["5\\+ years", "4-6 person", "3,700\\+ direct commits", "Techstars 2025"],
+          severity: "error",
+          reworkAgent: "evidence-auditor"
+        }
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "metricSignals");
+    assert.equal(gate.passed, true);
+    assert.equal(gate.measured, 4);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,

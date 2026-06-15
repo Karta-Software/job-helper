@@ -120,6 +120,7 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
    - `advisory`: useful judgment, but not a gate.
 3. Convert principles into concrete checks.
    Examples: top-half leadership, evidence-gated metrics, no underfilled page, posting-aligned skills, no inconsistent bolding, shorter bullets, and CTO/startup summary only when it earns space.
+   When a reviewer asks for more numbers, use `metricSignals` to require configured safe proof phrases rather than relying on a subjective read.
 4. If a reviewer critique targets something previously measured only as a warning, tune the target gate or raise severity so the final report proves the critique was handled.
    Do not call a reviewer-specific resume ready while the exact reviewer concern remains a failed warning unless a human override explains why.
 5. During drafting, keep a principle application table with `applied`, `partial`, `deferred`, or `not applicable`.
@@ -177,20 +178,22 @@ Use after rendering a resume draft.
    Header-derived sections such as contact block or headline may be inferred, but inferred sections must be disclosed in the report.
 3. Compare resume keywords against posting keywords.
    The report must label whether the keyword denominator came from configured required keywords, supplied posting keywords, or extracted posting keywords.
-4. Check for unsupported technology or experience terms that are not backed by the graph.
+4. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
+   This gate counts configured proof patterns, such as years owned, peak team size, direct commits, verified programs, sourced business metrics, or other safe metric phrases.
+5. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
-5. Check approved skill claims against the configured skill inventory.
+6. Check approved skill claims against the configured skill inventory.
    A role keyword should not appear in applicant-facing resume text just because the posting asks for it. If the candidate has not approved the skill as resume-claimable, remove it or move it to private interview/prep notes.
-6. Check for private paths, internal notes, and application-only commentary.
-7. Check target branding.
+7. Check for private paths, internal notes, and application-only commentary.
+8. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-8. Check configured `reviewerPrinciples`.
+9. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
-9. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
+10. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
-10. Treat `error` gate failures like CI failures.
-11. Route failures to the configured rework agent.
-12. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
+11. Treat `error` gate failures like CI failures.
+12. Route failures to the configured rework agent.
+13. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
 
 ### Score A Resume
 
@@ -293,6 +296,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Reviewer feedback is not applied until the resume version note records what was applied, partially applied, deferred, or rejected.
 - A reviewer-related warning is not harmless just because the checker can technically pass. If the warning represents the critique being addressed, resolve it, tune the target-specific range, raise severity, or record an explicit override.
 - When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
+- Use `metricSignals` to prove safe numbers are visible when a reviewer asks for metrics. Do not use it as permission to add unsourced outcome metrics.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
 - Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.

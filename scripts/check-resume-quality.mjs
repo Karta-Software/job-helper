@@ -168,6 +168,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRange(results, "achievementBullets", gates.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatch(results, gates.gates.keywordMatch, snapshot.resumeText, postingText);
+  addMetricSignals(results, gates.gates.metricSignals, snapshot.resumeText);
   addApprovedSkillClaims(results, gates.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTerms(results, gates.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBranding(results, gates.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames);
@@ -276,6 +277,23 @@ function addKeywordMatch(results, gate, resumeText, postingText) {
     percent >= gate.minimumPercent
       ? `Keyword match passed at ${percent}% against ${usedConfiguredKeywords ? "configured required keywords" : "extracted posting keywords"}.`
       : `Keyword match is ${percent}% against ${usedConfiguredKeywords ? "configured required keywords" : "extracted posting keywords"}; missing: ${filtered.filter((keyword) => !matched.includes(keyword)).join(", ")}.`
+  ));
+}
+
+function addMetricSignals(results, gate, resumeText) {
+  if (!gate?.enabled) return;
+  const minimum = gate.minimumCount ?? 1;
+  const patterns = gate.patterns || [];
+  const matched = patterns.filter((pattern) => matchesPatternOrTerm(resumeText, pattern));
+  results.push(result(
+    "metricSignals",
+    gate,
+    matched.length >= minimum,
+    matched.length,
+    `at least ${minimum} configured metric or proof signals`,
+    matched.length >= minimum
+      ? `${matched.length} configured metric or proof signals matched: ${matched.join(", ")}.`
+      : `${matched.length} configured metric or proof signals matched, below ${minimum}; missing: ${patterns.filter((pattern) => !matched.includes(pattern)).join(", ")}.`
   ));
 }
 
