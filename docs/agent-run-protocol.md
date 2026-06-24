@@ -6,16 +6,18 @@ This protocol makes Job Helper's agents and skills operational instead of decora
 
 1. Load `AGENTS.md`.
 2. Load `docs/workflow.md`.
-3. Load the primary skill for the task and any directly referenced skills.
-4. Load the role agent files that should participate in the work.
-5. Load the configured private career graph and workspace files needed for the task.
-6. Run the task.
-7. Update private graph/workspace files when the run learns durable candidate, opportunity, evidence, or workflow context.
-8. Update repo docs, skills, agents, schemas, examples, or source modules when the run reveals reusable product behavior.
-9. Validate the changed private files and repo files.
-10. Commit reusable repo changes frequently in small commits.
-11. Push reusable repo changes when credentials allow; when push is blocked, record the blocker and leave the local commit ready.
-12. Report the skills used, agents consulted, private files touched, repo files touched, commands run, quality-gate status, commit SHA, and push status.
+3. Load `docs/workspace-roles.md`.
+4. Load the configured private workspace map for the current candidate or deployment.
+5. Load the primary skill for the task and any directly referenced skills.
+6. Load the role agent files that should participate in the work.
+7. Load the configured private career graph and workspace files needed for the task.
+8. Run the task.
+9. Update private graph/workspace files when the run learns durable candidate, opportunity, evidence, or workflow context.
+10. Update repo docs, skills, agents, schemas, examples, or source modules when the run reveals reusable product behavior.
+11. Validate the changed private files and repo files.
+12. Commit reusable repo changes frequently in small commits.
+13. Push reusable repo changes when credentials allow; when push is blocked, record the blocker and leave the local commit ready.
+14. Report the skills used, agents consulted, workspace roles used, private files touched, repo files touched, commands run, quality-gate status, commit SHA, and push status.
 
 ## Required Private Context
 
@@ -32,6 +34,19 @@ The exact file paths come from local config. For resume and application work, th
 - Relevant experience and evidence notes.
 
 If a file is expected but missing, record that as a graph/workspace gap instead of silently proceeding.
+
+## Workspace Role Discipline
+
+Every run should classify files by workspace role before reading or writing them:
+
+- career graph
+- private workspace
+- Job Helper repo
+- portfolio repo
+- drill workspace
+- human-facing shelf
+
+Do not create new storage roots just because a task is ambiguous. If the configured map does not say where an artifact belongs, record a workspace-map gap and ask for or infer the smallest safe update to the private map.
 
 ## Skill And Agent Utilization
 

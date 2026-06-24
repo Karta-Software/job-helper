@@ -22,6 +22,8 @@ Job Helper is a critique-driven career toolkit. When the user critiques the job-
 
 For any nontrivial run, follow `docs/agent-run-protocol.md`.
 
+Before using local candidate paths, load the configured private workspace map. The repo's generic workspace role contract lives in `docs/workspace-roles.md`; real candidate paths belong in private config or private graph notes, not in reusable repo files.
+
 Before drafting, scoring, tracking, or publishing, load the relevant skill file from `skills/` and the relevant role agent files from `agents/`. Treat those files as operating contracts, not background reading.
 
 When the run touches resume or application work, read and update the configured private career graph/workspace files needed for the task, including private equivalents of Resume Quality Gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, opportunity notes, application tracker, and structured opportunities JSON when available.

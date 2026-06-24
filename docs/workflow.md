@@ -34,6 +34,8 @@ Use this loop whenever the user says the workflow should work differently:
 
 ## Three Stores
 
+Workspace roles are defined in `docs/workspace-roles.md`. Real local paths come from private config or a private workspace map, not from this public repo.
+
 ### Career Graph
 
 Stores durable, human-readable context:
