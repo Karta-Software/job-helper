@@ -64,6 +64,7 @@
             "reworkAgent": { "type": "string" }
           }
         },
+        "numericConsistency": { "$ref": "#/$defs/numericConsistencyGate" },
         "privateLeak": {
           "type": "object",
           "required": ["enabled", "patterns", "severity", "reworkAgent"],
@@ -218,6 +219,83 @@
         "maxTextPercent": { "type": "number" },
         "severity": { "$ref": "#/$defs/severity" },
         "reworkAgent": { "type": "string" }
+      }
+    },
+    "numericConsistencyGate": {
+      "type": "object",
+      "required": ["enabled", "severity", "reworkAgent"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "claims": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/numericClaim" }
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/numericRelationship" }
+        },
+        "forbiddenPatterns": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/numericForbiddenPattern" }
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
+      }
+    },
+    "numericClaim": {
+      "type": "object",
+      "required": ["id", "pattern"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "pattern": { "type": "string" },
+        "flags": { "type": "string" },
+        "valueGroup": { "type": "integer" },
+        "required": { "type": "boolean" },
+        "unit": { "type": "string" }
+      }
+    },
+    "numericRelationship": {
+      "type": "object",
+      "required": ["operator"],
+      "properties": {
+        "id": { "type": "string" },
+        "left": { "type": "string" },
+        "operator": { "enum": [">", ">=", "<", "<=", "=", "==", "sumEquals"] },
+        "right": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        },
+        "value": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        },
+        "total": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        },
+        "addends": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tolerance": { "type": "number" },
+        "message": { "type": "string" }
+      }
+    },
+    "numericForbiddenPattern": {
+      "type": "object",
+      "required": ["pattern"],
+      "properties": {
+        "id": { "type": "string" },
+        "pattern": { "type": "string" },
+        "flags": { "type": "string" },
+        "message": { "type": "string" }
       }
     }
   }

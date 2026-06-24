@@ -98,7 +98,7 @@ The standards workflow uses market data, recruiter-style conversion logic, targe
 
 ## Resume Quality Gates
 
-Use `run-resume-quality-gates` after rendering a resume draft. Gates behave like CI checks for resumes: page count, page utilization, word count, character count, rendered lines, bullet length, required sections, keyword match, evidence safety, reviewer principles, voice, and private-note leakage.
+Use `run-resume-quality-gates` after rendering a resume draft. Gates behave like CI checks for resumes: page count, page utilization, word count, character count, rendered lines, bullet length, required sections, keyword match, metric visibility, numeric consistency, evidence safety, reviewer principles, voice, and private-note leakage.
 
 Failed `error` gates block the resume from moving to completed outputs. Each failing gate maps to a rework agent, such as `resume-writer`, `posting-scorer`, `experience-finder`, `evidence-auditor`, or `voice-auditor`.
 

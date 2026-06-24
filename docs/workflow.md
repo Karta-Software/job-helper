@@ -180,20 +180,23 @@ Use after rendering a resume draft.
    The report must label whether the keyword denominator came from configured required keywords, supplied posting keywords, or extracted posting keywords.
 4. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
    This gate counts configured proof patterns, such as years owned, peak team size, direct commits, verified programs, sourced business metrics, or other safe metric phrases.
-5. Check for unsupported technology or experience terms that are not backed by the graph.
+5. Check configured `numericConsistency` when a resume has multiple related numbers or reviewer-sensitive metrics.
+   This gate extracts named numeric claims, checks relationships such as totals, ratios, or minimum ordering, and blocks ambiguous wording where a true number is attached to the wrong label.
+   Use it to keep counts like commits, reviewed PRs, revenue, retention, defect rates, and cost reductions internally consistent across the document.
+6. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
-6. Check approved skill claims against the configured skill inventory.
+7. Check approved skill claims against the configured skill inventory.
    A role keyword should not appear in applicant-facing resume text just because the posting asks for it. If the candidate has not approved the skill as resume-claimable, remove it or move it to private interview/prep notes.
-7. Check for private paths, internal notes, and application-only commentary.
-8. Check target branding.
+8. Check for private paths, internal notes, and application-only commentary.
+9. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-9. Check configured `reviewerPrinciples`.
+10. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
-10. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
+11. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
-11. Treat `error` gate failures like CI failures.
-12. Route failures to the configured rework agent.
-13. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
+12. Treat `error` gate failures like CI failures.
+13. Route failures to the configured rework agent.
+14. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
 
 ### Score A Resume
 
@@ -297,6 +300,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - A reviewer-related warning is not harmless just because the checker can technically pass. If the warning represents the critique being addressed, resolve it, tune the target-specific range, raise severity, or record an explicit override.
 - When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
 - Use `metricSignals` to prove safe numbers are visible when a reviewer asks for metrics. Do not use it as permission to add unsourced outcome metrics.
+- Use `numericConsistency` to prove important numbers are internally coherent and clearly labeled. Do not let a true number pass when the surrounding noun makes it look like a different metric.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
 - Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.

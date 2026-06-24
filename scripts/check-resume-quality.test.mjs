@@ -469,6 +469,91 @@ Senior Engineer
   });
 });
 
+test("CLI fails numeric consistency when a relationship cannot be true", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Professional Experience
+
+- Reviewed 660+ peer-authored merged pull requests, representing 500+ commits inside those PRs.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        numericConsistency: commitReviewNumericGate()
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "numericConsistency");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /commits inside reviewed PRs should be greater than or equal to reviewed PR count/);
+  });
+});
+
+test("CLI fails numeric consistency when a protected number uses a confusing label", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Professional Experience
+
+- Shipped 3,700+ PRs over 5+ years and reviewed 660+ peer-authored merged pull requests, representing 5,900+ commits inside those PRs.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        numericConsistency: commitReviewNumericGate()
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "numericConsistency");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /3,700\+ is a direct commit count, not a PR count/);
+  });
+});
+
+test("CLI passes numeric consistency when commit and PR counts are clearly labeled", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Engineer
+
+## Professional Experience
+
+- Owned product engineering with 3,700+ personal source-control commits over 5+ years.
+- Reviewed 660+ peer-authored merged pull requests, representing 5,900+ commits inside those PRs.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        numericConsistency: commitReviewNumericGate()
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "numericConsistency");
+    assert.equal(gate.passed, true);
+    assert.equal(gate.measured, 3);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,
@@ -565,6 +650,55 @@ function reviewerPrinciplesGate() {
       minimumLeadershipBullets: 2,
       leadershipTerms: ["Led", "Scoped", "Reviewed", "Mentored"]
     }
+  };
+}
+
+function commitReviewNumericGate() {
+  return {
+    enabled: true,
+    severity: "error",
+    reworkAgent: "evidence-auditor",
+    claims: [
+      {
+        id: "personalCommits",
+        label: "personal source-control commits",
+        pattern: "([0-9][0-9,]*)\\+\\s+personal source-control commits",
+        unit: "commits"
+      },
+      {
+        id: "reviewedPeerPrs",
+        label: "peer-authored merged pull requests",
+        pattern: "([0-9][0-9,]*)\\+\\s+peer-authored merged pull requests",
+        unit: "pull requests"
+      },
+      {
+        id: "reviewedPrCommits",
+        label: "commits inside reviewed PRs",
+        pattern: "([0-9][0-9,]*)\\+\\s+commits inside those PRs",
+        unit: "commits"
+      }
+    ],
+    relationships: [
+      {
+        id: "reviewedPrCommitsAtLeastReviewedPrs",
+        left: "reviewedPrCommits",
+        operator: ">=",
+        right: "reviewedPeerPrs",
+        message: "commits inside reviewed PRs should be greater than or equal to reviewed PR count"
+      }
+    ],
+    forbiddenPatterns: [
+      {
+        id: "personalCommitsAsPrs",
+        pattern: "3,700\\+\\s+(?:merged\\s+)?PRs",
+        message: "3,700+ is a direct commit count, not a PR count"
+      },
+      {
+        id: "reviewedPrCommitsAsPrs",
+        pattern: "5,900\\+\\s+(?:peer-authored\\s+)?(?:merged\\s+)?PRs(?!\\s+commits)",
+        message: "5,900+ is a commit count inside reviewed PRs, not a PR count"
+      }
+    ]
   };
 }
 

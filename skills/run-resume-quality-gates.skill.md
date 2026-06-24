@@ -23,6 +23,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - required sections
 - keyword match against the posting
 - configured metric/proof signal count when reviewer feedback asks for numbers
+- configured numeric-consistency checks for related counts, totals, rates, and metric labels
 - unsupported technology or experience terms
 - skill/tool claims not approved by the configured skill inventory
 - missing AI-native development signal for technical roles when configured as required
@@ -45,20 +46,23 @@ Use after rendering a resume draft and before moving it to completed resumes.
 4. Compare resume keywords against the posting keywords and label whether the comparison used configured required keywords, supplied posting keywords, or extracted posting keywords.
 5. Check `metricSignals` when configured.
    Count only configured proof phrases so safe scope metrics, verified programs, and sourced outcome metrics are explicit; do not count random dates as proof by accident.
-6. Fail the run when any `error` gate fails.
-7. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
+6. Check `numericConsistency` when configured.
+   Extract named numbers, verify the configured relationships, and block ambiguous labels where the number is true but the surrounding noun changes the meaning.
+   Examples: reviewed-PR commit totals must be greater than or equal to reviewed PR count, defect-rate start values should be greater than end values, and revenue counts should not be reused as customer counts.
+7. Fail the run when any `error` gate fails.
+8. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
    This is a positive inventory gate: denylist checks are not enough.
-8. Check `targetBranding` when the target company is known.
+9. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-9. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
+10. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
-10. Inspect warning failures against the stated critique.
+11. Inspect warning failures against the stated critique.
    If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
-11. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-12. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-13. Update the private resume note/tracker with pass/fail status and the next rework action.
-14. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-15. Move to completed resumes only after gates pass or a human override is recorded.
+12. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+13. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+14. Update the private resume note/tracker with pass/fail status and the next rework action.
+15. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+16. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -66,6 +70,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - `posting-scorer`: keyword mismatch and posting alignment.
 - `experience-finder`: missing achievement bullets or weak evidence coverage.
 - `evidence-auditor`: unsupported claims or risky metrics.
+- `evidence-auditor`: numeric inconsistencies, ambiguous metric labels, and numbers that do not add up.
 - `evidence-auditor`: unsupported technology terms, such as skills that are not backed by the graph.
 - `voice-auditor`: private notes, AI-sounding text, hype, and tone.
 
@@ -82,6 +87,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Treat unsupported technology terms as a denylist guardrail, not a complete evidence audit. The evidence audit still needs graph-backed claim review.
 - Treat approved-skill failures as evidence-auditor failures: remove the skill claim or update the private skill inventory only after the user confirms the skill.
 - Treat metric-signal failures as evidence-auditor failures: add safe sourced metrics, add safer scope metrics, or record why stronger outcome metrics remain deferred.
+- Treat numeric-consistency failures as evidence-auditor failures: fix the wording, fix the math, remove the weak number, or record an explicit human override. Do not let true numbers survive if their labels make the document misleading.
 - Treat target-branding failures as voice/positioning failures: remove the company name and express the same fit through role-relevant capabilities, domains, and outcomes.
 - Treat reviewer-principle failures as real CI failures when configured with `severity: "error"`. Do not mark a resume ready because an agent "considered" the principle; the report needs a passing `reviewerPrinciples.*` row or a recorded human override.
 - If an AI-native development signal is configured as required for a technical role, route omissions to `resume-writer` and unsupported AI claims to `evidence-auditor`.

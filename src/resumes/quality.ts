@@ -58,6 +58,44 @@ export type ApprovedSkillClaimsGateConfig = {
   reworkAgent: string;
 };
 
+export type NumericConsistencyClaimConfig = {
+  id: string;
+  label?: string;
+  pattern: string;
+  flags?: string;
+  valueGroup?: number;
+  required?: boolean;
+  unit?: string;
+};
+
+export type NumericConsistencyRelationshipConfig = {
+  id?: string;
+  left?: string;
+  operator: ">" | ">=" | "<" | "<=" | "=" | "==" | "sumEquals";
+  right?: string | number;
+  value?: string | number;
+  total?: string | number;
+  addends?: string[];
+  tolerance?: number;
+  message?: string;
+};
+
+export type NumericConsistencyForbiddenPatternConfig = {
+  id?: string;
+  pattern: string;
+  flags?: string;
+  message?: string;
+};
+
+export type NumericConsistencyGateConfig = {
+  enabled: boolean;
+  claims?: NumericConsistencyClaimConfig[];
+  relationships?: NumericConsistencyRelationshipConfig[];
+  forbiddenPatterns?: NumericConsistencyForbiddenPatternConfig[];
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type ReviewerPrincipleTopTextGateConfig = {
   enabled: boolean;
   requiredTerms: string[];
@@ -119,6 +157,7 @@ export type ResumeQualityGatesConfig = {
     unsupportedTerms?: UnsupportedTermsGateConfig;
     targetBranding?: TargetBrandingGateConfig;
     approvedSkillClaims?: ApprovedSkillClaimsGateConfig;
+    numericConsistency?: NumericConsistencyGateConfig;
     reviewerPrinciples?: ReviewerPrinciplesGateConfig;
   };
   agentRouting: {
@@ -199,6 +238,7 @@ export function evaluateResumeQuality(
   addRangeGateResult(results, "achievementBullets", config.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatchResult(results, config.gates.keywordMatch, snapshot);
+  addNumericConsistencyResult(results, config.gates.numericConsistency, snapshot.resumeText);
   addPrivateLeakResult(results, config.gates.privateLeak, snapshot.resumeText);
   addApprovedSkillClaimsResult(results, config.gates.approvedSkillClaims, snapshot.resumeText);
   addUnsupportedTermsResult(results, config.gates.unsupportedTerms, snapshot.resumeText);
@@ -380,6 +420,184 @@ function addKeywordMatchResult(
         : `Keyword match is ${percent}% against ${sourceLabel}; missing: ${keywords.filter((keyword) => !matched.includes(keyword)).join(", ")}.`,
     reworkAgent: gate.reworkAgent
   });
+}
+
+type ExtractedNumericClaim = {
+  id: string;
+  label: string;
+  unit?: string;
+  value: number;
+  text: string;
+};
+
+function addNumericConsistencyResult(
+  results: ResumeQualityGateResult[],
+  gate: NumericConsistencyGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!gate?.enabled) return;
+
+  const issues: string[] = [];
+  const claims = new Map<string, ExtractedNumericClaim>();
+
+  for (const claim of gate.claims || []) {
+    const extracted = extractNumericClaim(resumeText, claim, issues);
+    if (extracted) claims.set(extracted.id, extracted);
+  }
+
+  addNumericForbiddenPatternIssues(issues, gate, resumeText);
+
+  for (const relationship of gate.relationships || []) {
+    evaluateNumericRelationship(issues, claims, relationship);
+  }
+
+  const passed = issues.length === 0;
+  const claimSummary = [...claims.values()]
+    .map((claim) => `${claim.id}=${formatNumericValue(claim.value)}${claim.unit ? ` ${claim.unit}` : ""}`)
+    .join(", ");
+
+  results.push({
+    gateId: "numericConsistency",
+    passed,
+    severity: gate.severity,
+    measured: passed ? claims.size : issues.length,
+    expected: "configured numeric claims are clear and mathematically consistent",
+    message: passed
+      ? `Numeric consistency passed for ${claims.size} configured claims${claimSummary ? `: ${claimSummary}` : ""}.`
+      : `Numeric consistency issues: ${issues.join("; ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function extractNumericClaim(
+  resumeText: string,
+  claim: NumericConsistencyClaimConfig,
+  issues: string[]
+): ExtractedNumericClaim | undefined {
+  if (!claim?.id) {
+    issues.push("A numeric claim is missing an id");
+    return undefined;
+  }
+  if (!claim.pattern) {
+    issues.push(`Numeric claim ${claim.id} is missing a pattern`);
+    return undefined;
+  }
+
+  let regex: RegExp;
+  try {
+    regex = new RegExp(claim.pattern, claim.flags || "i");
+  } catch (error) {
+    issues.push(`Numeric claim ${claim.id} has an invalid pattern: ${error instanceof Error ? error.message : String(error)}`);
+    return undefined;
+  }
+
+  const match = regex.exec(resumeText);
+  if (!match) {
+    if (claim.required !== false) {
+      issues.push(`Missing numeric claim ${claim.id}${claim.label ? ` (${claim.label})` : ""}`);
+    }
+    return undefined;
+  }
+
+  const value = parseNumericValue(match[claim.valueGroup ?? 1]);
+  if (!Number.isFinite(value)) {
+    issues.push(`Numeric claim ${claim.id} matched but did not expose a parseable number`);
+    return undefined;
+  }
+
+  return {
+    id: claim.id,
+    label: claim.label || claim.id,
+    unit: claim.unit,
+    value,
+    text: match[0]
+  };
+}
+
+function addNumericForbiddenPatternIssues(
+  issues: string[],
+  gate: NumericConsistencyGateConfig,
+  resumeText: string
+): void {
+  for (const check of gate.forbiddenPatterns || []) {
+    let regex: RegExp;
+    try {
+      regex = new RegExp(check.pattern, check.flags || "i");
+    } catch (error) {
+      issues.push(`Forbidden numeric pattern ${check.id || check.pattern} is invalid: ${error instanceof Error ? error.message : String(error)}`);
+      continue;
+    }
+    if (regex.test(resumeText)) {
+      issues.push(check.message || `Forbidden numeric pattern matched: ${check.id || check.pattern}`);
+    }
+  }
+}
+
+function evaluateNumericRelationship(
+  issues: string[],
+  claims: Map<string, ExtractedNumericClaim>,
+  relationship: NumericConsistencyRelationshipConfig
+): void {
+  const id = relationship.id || relationship.operator || "numeric relationship";
+  const tolerance = relationship.tolerance ?? 0;
+
+  if (relationship.operator === "sumEquals") {
+    const addends = relationship.addends || [];
+    const missing = addends.filter((claimId) => !claims.has(claimId));
+    const total = resolveRelationshipValue(claims, relationship.total ?? relationship.right ?? relationship.value);
+    if (missing.length > 0 || !total) {
+      issues.push(`${id} cannot be checked because numeric claims are missing: ${[...missing, total ? "" : "total"].filter(Boolean).join(", ")}`);
+      return;
+    }
+
+    const sum = addends.reduce((accumulator, claimId) => accumulator + (claims.get(claimId)?.value || 0), 0);
+    if (Math.abs(sum - total.value) > tolerance) {
+      issues.push(relationship.message || `${id} failed: ${addends.join(" + ")} = ${formatNumericValue(sum)}, expected ${formatNumericValue(total.value)}`);
+    }
+    return;
+  }
+
+  const left = resolveRelationshipValue(claims, relationship.left);
+  const right = resolveRelationshipValue(claims, relationship.right ?? relationship.value);
+  if (!left || !right) {
+    issues.push(`${id} cannot be checked because ${!left ? "left" : "right"} numeric value is missing`);
+    return;
+  }
+
+  if (!compareNumericValues(left.value, relationship.operator, right.value, tolerance)) {
+    issues.push(relationship.message || `${id} failed: ${left.label} ${formatNumericValue(left.value)} ${relationship.operator} ${right.label} ${formatNumericValue(right.value)}`);
+  }
+}
+
+function resolveRelationshipValue(
+  claims: Map<string, ExtractedNumericClaim>,
+  keyOrValue: string | number | undefined
+): { label: string; value: number } | undefined {
+  if (typeof keyOrValue === "string" && claims.has(keyOrValue)) return claims.get(keyOrValue);
+  const value = parseNumericValue(keyOrValue);
+  if (!Number.isFinite(value)) return undefined;
+  return {
+    label: String(keyOrValue),
+    value
+  };
+}
+
+function compareNumericValues(left: number, operator: string, right: number, tolerance: number): boolean {
+  switch (operator) {
+    case ">":
+      return left > right;
+    case ">=":
+      return left >= right;
+    case "<":
+      return left < right;
+    case "<=":
+      return left <= right;
+    case "=":
+    case "==":
+      return Math.abs(left - right) <= tolerance;
+    default:
+      return false;
+  }
 }
 
 function addPrivateLeakResult(
@@ -703,6 +921,16 @@ function matchesPatternOrTerm(text: string, pattern: string): boolean {
 
 function hasInlineEmphasis(value: string): boolean {
   return /(^|[^\\])(\*\*|__|\*|_)|<\/?(strong|b|em|i)\b/i.test(value);
+}
+
+function parseNumericValue(value: string | number | undefined): number {
+  if (typeof value === "number") return value;
+  if (value === undefined) return Number.NaN;
+  return Number(value.replace(/,/g, "").trim());
+}
+
+function formatNumericValue(value: number): string {
+  return Number.isInteger(value) ? value.toLocaleString("en-US") : String(value);
 }
 
 function escapeRegExp(value: string): string {
