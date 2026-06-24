@@ -26,6 +26,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - configured numeric-consistency checks for related counts, totals, rates, and metric labels
 - unsupported technology or experience terms
 - skill/tool claims not approved by the configured skill inventory
+- configured education wording, including required generic degree wording and forbidden stale degree labels
 - missing AI-native development signal for technical roles when configured as required
 - target company name leakage in applicant-facing text or artifact filenames
 - private/internal note leakage
@@ -52,17 +53,19 @@ Use after rendering a resume draft and before moving it to completed resumes.
 7. Fail the run when any `error` gate fails.
 8. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
    This is a positive inventory gate: denylist checks are not enough.
-9. Check `targetBranding` when the target company is known.
+9. Check `educationWording` when candidate defaults define exact education wording.
+   Use this when old artifacts may contain stale degree labels. For example, if the configured default is generic `Bachelor's, Computer Science`, block `Bachelor of Science` and `Bachelor of Arts` unless the user explicitly changes the standard.
+10. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-10. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
+11. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
-11. Inspect warning failures against the stated critique.
+12. Inspect warning failures against the stated critique.
    If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
-12. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-13. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-14. Update the private resume note/tracker with pass/fail status and the next rework action.
-15. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-16. Move to completed resumes only after gates pass or a human override is recorded.
+13. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+14. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+15. Update the private resume note/tracker with pass/fail status and the next rework action.
+16. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+17. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -86,6 +89,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Hard bullet limits and ideal bullet ranges are separate: hard failures can block; ideal misses should notify the resume writer as warnings.
 - Treat unsupported technology terms as a denylist guardrail, not a complete evidence audit. The evidence audit still needs graph-backed claim review.
 - Treat approved-skill failures as evidence-auditor failures: remove the skill claim or update the private skill inventory only after the user confirms the skill.
+- Treat education-wording failures as resume-writer failures: load the configured candidate defaults, use the exact required wording, and remove stale degree labels rather than guessing a degree type from old artifacts.
 - Treat metric-signal failures as evidence-auditor failures: add safe sourced metrics, add safer scope metrics, or record why stronger outcome metrics remain deferred.
 - Treat numeric-consistency failures as evidence-auditor failures: fix the wording, fix the math, remove the weak number, or record an explicit human override. Do not let true numbers survive if their labels make the document misleading.
 - Treat target-branding failures as voice/positioning failures: remove the company name and express the same fit through role-relevant capabilities, domains, and outcomes.

@@ -58,6 +58,14 @@ export type ApprovedSkillClaimsGateConfig = {
   reworkAgent: string;
 };
 
+export type EducationWordingGateConfig = {
+  enabled: boolean;
+  requiredTerms?: string[];
+  forbiddenTerms?: string[];
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type NumericConsistencyClaimConfig = {
   id: string;
   label?: string;
@@ -157,6 +165,7 @@ export type ResumeQualityGatesConfig = {
     unsupportedTerms?: UnsupportedTermsGateConfig;
     targetBranding?: TargetBrandingGateConfig;
     approvedSkillClaims?: ApprovedSkillClaimsGateConfig;
+    educationWording?: EducationWordingGateConfig;
     numericConsistency?: NumericConsistencyGateConfig;
     reviewerPrinciples?: ReviewerPrinciplesGateConfig;
   };
@@ -241,6 +250,7 @@ export function evaluateResumeQuality(
   addNumericConsistencyResult(results, config.gates.numericConsistency, snapshot.resumeText);
   addPrivateLeakResult(results, config.gates.privateLeak, snapshot.resumeText);
   addApprovedSkillClaimsResult(results, config.gates.approvedSkillClaims, snapshot.resumeText);
+  addEducationWordingResult(results, config.gates.educationWording, snapshot.resumeText);
   addUnsupportedTermsResult(results, config.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBrandingResult(results, config.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames || []);
   addReviewerPrinciplesResult(results, config.gates.reviewerPrinciples, snapshot);
@@ -658,6 +668,33 @@ function addApprovedSkillClaimsResult(
     measured: unapproved.length,
     expected: "no skill/tool claims outside the approved skill inventory",
     message: unapproved.length === 0 ? "All configured skill claims are approved." : `Unapproved skill claims matched: ${unapproved.join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addEducationWordingResult(
+  results: ResumeQualityGateResult[],
+  gate: EducationWordingGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!gate?.enabled) return;
+
+  const missing = (gate.requiredTerms || []).filter((term) => !containsSearchTerm(resumeText, term));
+  const forbidden = (gate.forbiddenTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+  const messages: string[] = [];
+  if (missing.length > 0) messages.push(`missing required education wording: ${missing.join(", ")}`);
+  if (forbidden.length > 0) messages.push(`forbidden education wording matched: ${forbidden.join(", ")}`);
+
+  results.push({
+    gateId: "educationWording",
+    passed: missing.length === 0 && forbidden.length === 0,
+    severity: gate.severity,
+    measured: missing.length + forbidden.length,
+    expected: "required education wording present and stale degree labels absent",
+    message:
+      messages.length === 0
+        ? "Education wording matched required terms and no forbidden stale degree labels matched."
+        : messages.join("; "),
     reworkAgent: gate.reworkAgent
   });
 }

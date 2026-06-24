@@ -191,6 +191,62 @@ test("CLI fails skill claims that are not approved by the skill inventory gate",
   });
 });
 
+test("CLI fails stale degree labels when configured education wording is generic", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        educationWording: {
+          enabled: true,
+          requiredTerms: ["Bachelor's, Computer Science"],
+          forbiddenTerms: ["Bachelor of Science", "Bachelor of Arts"],
+          severity: "error",
+          reworkAgent: "resume-writer"
+        }
+      },
+      {
+        resumeContent: "# Test Person\n\nSoftware Engineer\n\n## Education\n\nBachelor of Science, Computer Science - State University, 2020\n"
+      }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "educationWording");
+    assert.equal(gate.passed, false);
+    assert.match(gate.message, /missing required education wording: Bachelor's, Computer Science/);
+    assert.match(gate.message, /forbidden education wording matched: Bachelor of Science/);
+  });
+});
+
+test("CLI passes configured education wording when stale degree labels are absent", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        educationWording: {
+          enabled: true,
+          requiredTerms: ["Bachelor's, Computer Science"],
+          forbiddenTerms: ["Bachelor of Science", "Bachelor of Arts"],
+          severity: "error",
+          reworkAgent: "resume-writer"
+        }
+      },
+      {
+        resumeContent: "# Test Person\n\nSoftware Engineer\n\n## Education\n\nBachelor's, Computer Science - State University, 2020\n"
+      }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const gate = report.results.find((result) => result.gateId === "educationWording");
+    assert.equal(gate.passed, true);
+  });
+});
+
 test("CLI fails reviewer principles when leadership is not near the top half", () => {
   usingTempWorkspace((workspace) => {
     const resumeContent = `# Test Person

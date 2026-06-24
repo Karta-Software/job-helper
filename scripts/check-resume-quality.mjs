@@ -171,6 +171,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addMetricSignals(results, gates.gates.metricSignals, snapshot.resumeText);
   addNumericConsistency(results, gates.gates.numericConsistency, snapshot.resumeText);
   addApprovedSkillClaims(results, gates.gates.approvedSkillClaims, snapshot.resumeText);
+  addEducationWording(results, gates.gates.educationWording, snapshot.resumeText);
   addUnsupportedTerms(results, gates.gates.unsupportedTerms, snapshot.resumeText);
   addTargetBranding(results, gates.gates.targetBranding, snapshot.resumeText, snapshot.artifactNames);
   addReviewerPrinciples(results, gates.gates.reviewerPrinciples, snapshot);
@@ -486,6 +487,23 @@ function addApprovedSkillClaims(results, gate, resumeText) {
     unapproved.length,
     "no skill/tool claims outside the approved skill inventory",
     unapproved.length === 0 ? "All configured skill claims are approved." : `Unapproved skill claims matched: ${unapproved.join(", ")}.`
+  ));
+}
+
+function addEducationWording(results, gate, resumeText) {
+  if (!gate?.enabled) return;
+  const missing = (gate.requiredTerms || []).filter((term) => !containsSearchTerm(resumeText, term));
+  const forbidden = (gate.forbiddenTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+  const messages = [];
+  if (missing.length > 0) messages.push(`missing required education wording: ${missing.join(", ")}`);
+  if (forbidden.length > 0) messages.push(`forbidden education wording matched: ${forbidden.join(", ")}`);
+  results.push(result(
+    "educationWording",
+    gate,
+    missing.length === 0 && forbidden.length === 0,
+    missing.length + forbidden.length,
+    "required education wording present and stale degree labels absent",
+    messages.length === 0 ? "Education wording matched required terms and no forbidden stale degree labels matched." : messages.join("; ")
   ));
 }
 
