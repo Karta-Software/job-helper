@@ -10,6 +10,7 @@
 # Generated private outputs
 outputs/
 generated/
+tmp/
 *.pdf
 
 # Dependencies and build output
