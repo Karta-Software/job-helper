@@ -11,7 +11,8 @@ Job Helper should run inside a small set of named workspace roles instead of sca
 | Job Helper repo | Reusable engine: skills, agents, schemas, scripts, docs, fake examples | No | Yes |
 | Portfolio repo | Approved public portfolio/resume artifacts | Public-only | Yes |
 | Drill workspace | Interview drill app, practice deck, exported practice submissions | Usually private | No by default |
-| Human-facing shelf | Ready-to-use PDFs, quick actions, shortcuts, final handoff files | Yes, but curated | No |
+| Human-facing shelf | Ready-to-use PDFs, shortcuts, and final handoff files | Yes, but curated | No |
+| Agent-managed support shelf | Working files, temporary helper artifacts, paste targets, quick actions, drill exports | Yes | No |
 
 ## Routing Rules
 
@@ -20,7 +21,8 @@ Job Helper should run inside a small set of named workspace roles instead of sca
 - The Job Helper repo must stay identity-agnostic. Use config and private workspace roles for real paths.
 - The portfolio repo receives only approved public artifacts.
 - The drill workspace owns practice mechanics, not resume truth.
-- The human-facing shelf is for convenience copies and shortcuts, not a second knowledge graph.
+- The human-facing shelf is for curated ready-to-use files, not a second knowledge graph.
+- Agent-managed support shelves are allowed, but agents should retrieve, promote, or archive files there instead of asking the user to browse them.
 - If a run does not know the workspace role for a file, it should stop and record a workspace-map gap instead of inventing a new location.
 
 ## Agent Requirement
@@ -32,5 +34,6 @@ Before a resume, application, or publishing run, agents should load the configur
 - repo files changed
 - portfolio files changed
 - human-facing shelf files produced
+- agent-managed support files moved, promoted, archived, or created
 
 This makes path use auditable and prevents hidden artifact spread.

@@ -45,8 +45,11 @@ Every run should classify files by workspace role before reading or writing them
 - portfolio repo
 - drill workspace
 - human-facing shelf
+- agent-managed support shelf
 
 Do not create new storage roots just because a task is ambiguous. If the configured map does not say where an artifact belongs, record a workspace-map gap and ask for or infer the smallest safe update to the private map.
+
+When a file is in an agent-managed support shelf, do not make the user sort through that shelf. Retrieve the exact file, promote approved artifacts to the human-facing shelf or portfolio handoff, archive stale material under the configured legacy area, and report the exact path used.
 
 ## Skill And Agent Utilization
 
@@ -122,6 +125,7 @@ Minimum fields:
 - `workflowFindings`
 - `commit`
 - `push`
+- `supportFilesTouched`
 
 The run log must not include private source text that belongs only in the career graph.
 

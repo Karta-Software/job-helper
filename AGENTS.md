@@ -12,6 +12,7 @@ Job Helper is a critique-driven career toolkit. When the user critiques the job-
    - agent prompt or skill
    - private workspace output
    - portfolio publishing handoff
+   - human-facing shelf vs agent-managed support shelf
 3. Update the private career graph first when the critique contains user-specific context.
 4. Generalize reusable behavior into this repo without hardcoding the user's name, graph path, target role, relationships, or portfolio location.
 5. Update `docs/workflow.md` whenever the process itself changes.
@@ -29,6 +30,8 @@ Before drafting, scoring, tracking, or publishing, load the relevant skill file 
 When the run touches resume or application work, read and update the configured private career graph/workspace files needed for the task, including private equivalents of Resume Quality Gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, opportunity notes, application tracker, and structured opportunities JSON when available.
 
 When the run discovers reusable workflow learning, update the repo and make a small commit. Push when credentials allow. If push is blocked, leave the commit ready and report the blocker.
+
+When a configured support folder is marked agent-managed, do not ask the user to browse it. Retrieve the exact file, promote approved artifacts to the configured human-facing shelf or portfolio handoff, archive stale material, and report what moved.
 
 ## Boundaries
 

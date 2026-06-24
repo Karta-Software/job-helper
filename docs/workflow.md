@@ -62,6 +62,18 @@ Stores operational data that should not be committed:
 - `study/`
 - `outputs/`
 
+### Agent-Managed Support Shelf
+
+Stores files that are useful during an application or prep run but should not be part of the user's normal navigation:
+
+- quick actions and autofill helpers
+- drill answer exports
+- pasted transcripts or paste targets
+- temporary cheat sheets and meeting-prep pages
+- legacy working files waiting for archive or promotion
+
+Agents should operate this shelf on the user's behalf. If a file becomes ready to use, promote it to the human-facing shelf, completed private workspace, or portfolio handoff. If it is stale, archive it under the configured legacy area. Do not make the user browse support folders to find the current artifact.
+
 ### Job Helper Repo
 
 Stores reusable machinery:
@@ -285,6 +297,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Strong referrals can justify a fast draft while remote or local compatibility is being confirmed.
 - Job recommendations must be related to the candidate's actual experience, target roles, or accepted stretch goals.
   Same-company roles are not "related" by default; show an evidence-overlap summary or label the role as unrelated/discovery-only.
+- Supporting folders are agent-managed by default. Human-facing shelves should stay shallow, curated, and ready-to-use.
 - `ready-to-apply` means the resume/materials are done, but the application has not been submitted yet.
 - Resume standards are source-backed and revisable.
 - Resume quality gates are CI-style checks; failed `error` gates must notify agents and block completed artifacts.
