@@ -154,27 +154,30 @@ Use when there is a target role, company, or posting.
 2. Read resume quality gates.
 3. Read target criteria or posting.
 4. Find graph-backed experience and evidence.
-5. Build or refresh an experience surface map before drafting.
+5. Load candidate identity facts and application defaults before copying or rendering header, contact, education, or legal-form content.
+6. Build or refresh an experience surface map before drafting.
    Split each major employer/project into responsibility buckets, product/domain buckets, and proof-point buckets so the resume can target the role from the right angle instead of reusing the same anecdotes.
-6. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
-7. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
+7. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
+8. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
    When omitted for target fit, remove AI-tooling phrases from required keyword rewards and add target-specific unsupported terms if the prior workflow over-rewarded them.
-8. Translate the target role into role-facing themes, not company-facing branding.
+9. Translate the target role into role-facing themes, not company-facing branding.
    Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
-9. Rewrite the resume structure around the target role when needed.
+10. Rewrite the resume structure around the target role when needed.
    Strong tailoring means changing the headline, summary, skill groupings, bullet selection, bullet order, and domain emphasis. It is not enough to preserve the old resume and sprinkle in keywords.
-10. Draft against section and length constraints.
-11. Audit evidence and voice.
-12. Render privately from HTML to PDF with the helper's PDF renderer.
+11. Draft against section and length constraints.
+12. Audit evidence and voice.
+13. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-13. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-14. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
-15. Run resume quality gates.
-16. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-17. Save completed artifact only after approval.
-18. Publish only through the configured portfolio handoff.
+14. Treat render command failure as fatal before copying or promoting any PDF.
+15. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+16. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
+17. Run resume quality gates.
+18. Verify the rendered PDF text for target-specific must-have and must-not-have phrases such as education wording, target-branding removal, and forbidden stale terms.
+19. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+20. Save completed artifact only after approval.
+21. Publish only through the configured portfolio handoff.
 
 ### Run Resume Quality Gates
 
@@ -323,6 +326,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Claim confidence and claim significance are different signals. A `3` skill may still be low significance, and a niche proof point may be high significance for one target role only.
 - Technical resumes should usually include an evidence-backed AI-native development signal when the candidate graph supports it; in 2026 this is a capability signal, not just a tooling footnote.
 - If target or reviewer feedback makes AI tooling distracting, remove it from keyword rewards and make it a target-specific unsupported term so future drafts cannot accidentally reintroduce it for that target.
+- Do not infer degree type from old artifacts. Education wording must come from configured candidate facts or application defaults, and target-specific gates should block stale degree labels when the configured wording is generic.
 - `2` skill ratings should include an adjacency rationale before being used for resume positioning.
 - Interactive skill-gap forms should favor toggleable adjacency reasons over requiring the user to copy or retype suggested rationale.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.

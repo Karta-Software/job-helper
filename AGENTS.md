@@ -33,6 +33,8 @@ When the run discovers reusable workflow learning, update the repo and make a sm
 
 When a configured support folder is marked agent-managed, do not ask the user to browse it. Retrieve the exact file, promote approved artifacts to the configured human-facing shelf or portfolio handoff, archive stale material, and report what moved.
 
+When rendering or publishing a resume, fail fast on native command errors and verify the rendered artifact itself. Source Markdown/HTML checks do not prove that a PDF copy is current.
+
 ## Boundaries
 
 - Do not commit private career data, application notes, generated resumes, relationship details, or graph contents.

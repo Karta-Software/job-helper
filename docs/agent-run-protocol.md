@@ -15,9 +15,10 @@ This protocol makes Job Helper's agents and skills operational instead of decora
 9. Update private graph/workspace files when the run learns durable candidate, opportunity, evidence, or workflow context.
 10. Update repo docs, skills, agents, schemas, examples, or source modules when the run reveals reusable product behavior.
 11. Validate the changed private files and repo files.
-12. Commit reusable repo changes frequently in small commits.
-13. Push reusable repo changes when credentials allow; when push is blocked, record the blocker and leave the local commit ready.
-14. Report the skills used, agents consulted, workspace roles used, private files touched, repo files touched, commands run, quality-gate status, commit SHA, and push status.
+12. For rendered artifacts, verify the final artifact itself, not only the source file used to produce it.
+13. Commit reusable repo changes frequently in small commits.
+14. Push reusable repo changes when credentials allow; when push is blocked, record the blocker and leave the local commit ready.
+15. Report the skills used, agents consulted, workspace roles used, private files touched, repo files touched, commands run, quality-gate status, rendered-artifact verification, commit SHA, and push status.
 
 ## Required Private Context
 
@@ -29,6 +30,7 @@ The exact file paths come from local config. For resume and application work, th
 - Resume Finalization notes.
 - Skill Inventory and role-specific skill questionnaires.
 - Experience Domain Map.
+- Candidate identity and application defaults such as name, preferred contact facts, education wording, and application form preferences.
 - Current Resume and relevant resume version notes.
 - Opportunity note, application tracker, and structured opportunities JSON.
 - Relevant experience and evidence notes.
@@ -50,6 +52,8 @@ Every run should classify files by workspace role before reading or writing them
 Do not create new storage roots just because a task is ambiguous. If the configured map does not say where an artifact belongs, record a workspace-map gap and ask for or infer the smallest safe update to the private map.
 
 When a file is in an agent-managed support shelf, do not make the user sort through that shelf. Retrieve the exact file, promote approved artifacts to the human-facing shelf or portfolio handoff, archive stale material under the configured legacy area, and report the exact path used.
+
+When using shells where native command failures do not automatically stop execution, check the native exit code before copying, promoting, or reporting artifacts. A stale output copied after a failed render is a workflow failure even if later source-file checks pass.
 
 ## Skill And Agent Utilization
 
@@ -126,6 +130,7 @@ Minimum fields:
 - `commit`
 - `push`
 - `supportFilesTouched`
+- `renderedArtifactVerification`
 
 The run log must not include private source text that belongs only in the career graph.
 
