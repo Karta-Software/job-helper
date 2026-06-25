@@ -54,7 +54,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 8. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
    This is a positive inventory gate: denylist checks are not enough.
 9. Check `educationWording` when candidate defaults define exact education wording.
-   Use this when old artifacts may contain stale degree labels. For example, if the configured default is generic `Bachelor's, Computer Science`, block `Bachelor of Science` and `Bachelor of Arts` unless the user explicitly changes the standard.
+   Use this when old artifacts may contain stale degree labels. For example, if the configured default is `Bachelor's Degree in Computer Science`, block `Bachelor of Science` and `Bachelor of Arts` unless the user explicitly changes the standard.
 10. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
 11. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.

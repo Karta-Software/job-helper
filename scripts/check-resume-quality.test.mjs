@@ -199,7 +199,7 @@ test("CLI fails stale degree labels when configured education wording is generic
       {
         educationWording: {
           enabled: true,
-          requiredTerms: ["Bachelor's, Computer Science"],
+          requiredTerms: ["Bachelor's Degree in Computer Science"],
           forbiddenTerms: ["Bachelor of Science", "Bachelor of Arts"],
           severity: "error",
           reworkAgent: "resume-writer"
@@ -215,7 +215,7 @@ test("CLI fails stale degree labels when configured education wording is generic
     const report = JSON.parse(run.stdout);
     const gate = report.results.find((result) => result.gateId === "educationWording");
     assert.equal(gate.passed, false);
-    assert.match(gate.message, /missing required education wording: Bachelor's, Computer Science/);
+    assert.match(gate.message, /missing required education wording: Bachelor's Degree in Computer Science/);
     assert.match(gate.message, /forbidden education wording matched: Bachelor of Science/);
   });
 });
@@ -228,14 +228,14 @@ test("CLI passes configured education wording when stale degree labels are absen
       {
         educationWording: {
           enabled: true,
-          requiredTerms: ["Bachelor's, Computer Science"],
+          requiredTerms: ["Bachelor's Degree in Computer Science"],
           forbiddenTerms: ["Bachelor of Science", "Bachelor of Arts"],
           severity: "error",
           reworkAgent: "resume-writer"
         }
       },
       {
-        resumeContent: "# Test Person\n\nSoftware Engineer\n\n## Education\n\nBachelor's, Computer Science - State University, 2020\n"
+        resumeContent: "# Test Person\n\nSoftware Engineer\n\n## Education\n\nBachelor's Degree in Computer Science - State University, 2020\n"
       }
     );
     const run = runChecker(paths, ["--max-pages", "1"]);
