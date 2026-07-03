@@ -4,6 +4,10 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const DEFAULT_BROWSER_PATHS = [
+  "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+  "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
+  "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
   "/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe",
   "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",

@@ -9,6 +9,7 @@ Use when creating a role-specific resume version.
 3. Read resume quality gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, and the opportunity tracker when available.
 4. Read configured candidate identity and application defaults before copying header, contact, or education lines.
    Do not infer degree type from old artifacts. If the default education wording is generic, keep it generic and configure `educationWording` to block stale degree labels.
+   For senior, staff, principal, product-owner, or founder/operator resumes, omit `Relevant coursework` by default unless the posting explicitly asks for coursework, the resume has a real education-keyword gap that stronger experience cannot cover, or a human override records why it earns space.
 5. Read target posting or role criteria.
 6. Confirm the posting link is live or intentionally proceed from a saved posting.
 7. Build or load the role's skill inventory.

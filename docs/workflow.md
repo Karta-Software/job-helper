@@ -180,6 +180,12 @@ Use when there is a target role, company, or posting.
 21. Save completed artifact only after approval.
 22. Publish only through the configured portfolio handoff.
 
+### Education And Coursework
+
+- For senior, staff, principal, product-owner, or founder/operator resumes, omit `Relevant coursework` by default.
+- Include coursework only when the posting explicitly asks for coursework, the candidate lacks stronger role evidence for a required education keyword, or the user records a deliberate override.
+- If coursework is included, record the reason in the private resume version note. Do not let copied old artifacts reintroduce stale degree labels or entry-level education filler.
+
 ### Run Resume Quality Gates
 
 Use after rendering a resume draft.
