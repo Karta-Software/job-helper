@@ -446,6 +446,94 @@ State University
   });
 });
 
+test("CLI fails founder signal balance when founder identity dominates and proof is weak", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Founder and CTO
+
+## Summary
+
+Visionary founder who wore many hats and did everything needed to build the company.
+
+## Technical Skills
+
+- JavaScript
+
+## Professional Experience
+
+- Personally generated all company revenue while building the product alone.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: founderReviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const founderGates = report.results.filter((result) =>
+      result.gateId.startsWith("reviewerPrinciples.founder")
+    );
+    assert.deepEqual(
+      founderGates.map((gate) => gate.gateId),
+      [
+        "reviewerPrinciples.founderTargetRoleTranslation",
+        "reviewerPrinciples.founderOperatingProof",
+        "reviewerPrinciples.founderCollaboration",
+        "reviewerPrinciples.founderTechnicalDepth",
+        "reviewerPrinciples.founderRiskLanguage",
+        "reviewerPrinciples.founderAttributionBoundaries"
+      ]
+    );
+    assert.equal(founderGates.every((gate) => gate.passed === false), true);
+  });
+});
+
+test("CLI passes founder signal balance when target role and grounded founder proof are explicit", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Lead Software Engineer | Technical Co-Founder
+
+## Summary
+
+Lead software engineer with nearly six years owning production delivery for customer-facing SaaS. Led a team of 4 engineers while remaining hands-on across TypeScript, Node.js, PostgreSQL, and AWS.
+
+## Professional Experience
+
+- Led technical direction and reviewed delivery plans with engineers across product, customers, and production support.
+- Built repeatable testing, deployment, documentation, and mentoring systems for a production platform.
+- Helped lead product delivery during a period when the company generated more than $1M in revenue.
+
+## Education
+
+State University
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { reviewerPrinciples: founderReviewerPrinciplesGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const founderGates = report.results.filter((result) =>
+      result.gateId.startsWith("reviewerPrinciples.founder")
+    );
+    assert.equal(founderGates.length, 6);
+    assert.equal(founderGates.every((gate) => gate.passed), true);
+  });
+});
+
 test("CLI fails metric signals when reviewer feedback asks for more numbers and too few are present", () => {
   usingTempWorkspace((workspace) => {
     const resumeContent = `# Test Person
@@ -705,6 +793,43 @@ function reviewerPrinciplesGate() {
       enabled: true,
       minimumLeadershipBullets: 2,
       leadershipTerms: ["Led", "Scoped", "Reviewed", "Mentored"]
+    }
+  };
+}
+
+function founderReviewerPrinciplesGate() {
+  return {
+    enabled: true,
+    severity: "error",
+    reworkAgent: "resume-writer",
+    founderSignalBalance: {
+      enabled: true,
+      topTextPercent: 35,
+      proofTextPercent: 65,
+      targetRoleTerms: ["Lead Software Engineer", "Senior Software Engineer"],
+      founderTerms: ["Founder", "Co-Founder", "CTO"],
+      proofGroups: [
+        { id: "tenure", terms: ["nearly six years", "6 years"] },
+        { id: "team", terms: ["team of 4", "4 engineers"] },
+        { id: "operating", terms: ["production", "customers", "customer-facing"] },
+        { id: "business", terms: ["revenue", "$1M"] }
+      ],
+      minimumProofGroups: 3,
+      collaborationTerms: ["led", "reviewed", "with engineers", "mentoring"],
+      minimumCollaborationMatches: 2,
+      technicalTerms: ["TypeScript", "Node.js", "PostgreSQL", "AWS"],
+      minimumTechnicalMatches: 3,
+      forbiddenTerms: [
+        "wore many hats",
+        "did everything",
+        "visionary founder",
+        "serial entrepreneur",
+        "used to being my own boss"
+      ],
+      forbiddenAttributionPatterns: [
+        "personally generated all company revenue",
+        "built the product alone"
+      ]
     }
   };
 }

@@ -32,8 +32,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - private/internal note leakage
 - browser print header/footer leakage
 - configured reviewer-principle checks, including top-half leadership, supportable team-size wording, top-half proof terms, consistent emphasis, and team-led wording
-- configured founder-scope-density checks when founder/operator experience is central: tenure and team scope near the top, multiple founder-scope dimensions in the top half, and at least one safe scale or business signal
-- configured founder-fit-translation checks when founder/operator experience is central: target role identity is at least as prominent as founder identity, collaboration and repeatable team delivery are visible, and risk-amplifying founder shorthand is absent
+- configured `founderSignalBalance` when founder/operator experience is central; it emits named results for target-role translation, operating proof, collaboration, technical depth, risk language, and attribution boundaries
 
 ## Steps
 
@@ -61,7 +60,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
 11. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
-   For founder/operator resumes, use existing top-half leadership/proof and metric-signal gates to prove the founder role changes the positioning. Add a named founder-fit-translation result that checks target-role orientation, collaboration/repeatable delivery signals, and forbidden founder shorthand. A title-only `CTO` or `co-founder` mention is not sufficient.
+   For founder/operator resumes, enable `founderSignalBalance` and require all six named results to pass. Use existing top-half leadership/proof and metric-signal gates as supporting checks. A title-only `CTO` or `co-founder` mention is not sufficient.
 12. Inspect warning failures against the stated critique.
    If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
 13. Notify each gate's `reworkAgent` and cite the matching agent file in the report.

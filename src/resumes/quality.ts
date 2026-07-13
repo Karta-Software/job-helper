@@ -134,6 +134,29 @@ export type ReviewerPrincipleTeamScopeGateConfig = {
   reworkAgent?: string;
 };
 
+export type ReviewerPrincipleFounderProofGroup = {
+  id: string;
+  terms: string[];
+};
+
+export type ReviewerPrincipleFounderSignalGateConfig = {
+  enabled: boolean;
+  topTextPercent: number;
+  proofTextPercent: number;
+  targetRoleTerms: string[];
+  founderTerms: string[];
+  proofGroups: ReviewerPrincipleFounderProofGroup[];
+  minimumProofGroups: number;
+  collaborationTerms: string[];
+  minimumCollaborationMatches: number;
+  technicalTerms: string[];
+  minimumTechnicalMatches: number;
+  forbiddenTerms: string[];
+  forbiddenAttributionPatterns: string[];
+  severity?: ResumeQualityGateSeverity;
+  reworkAgent?: string;
+};
+
 export type ReviewerPrinciplesGateConfig = {
   enabled: boolean;
   severity: ResumeQualityGateSeverity;
@@ -143,6 +166,7 @@ export type ReviewerPrinciplesGateConfig = {
   topHalfCarriesReview?: ReviewerPrincipleTopTextGateConfig;
   consistentEmphasis?: ReviewerPrincipleEmphasisGateConfig;
   teamLedWorkNotFlattened?: ReviewerPrincipleTeamScopeGateConfig;
+  founderSignalBalance?: ReviewerPrincipleFounderSignalGateConfig;
 };
 
 export type ResumeQualityGatesConfig = {
@@ -762,6 +786,7 @@ function addReviewerPrinciplesResult(
   );
   addConsistentEmphasisResult(results, gate, gate.consistentEmphasis, snapshot.achievementBullets || []);
   addTeamLedWorkNotFlattenedResult(results, gate, gate.teamLedWorkNotFlattened, snapshot.achievementBullets || []);
+  addFounderSignalBalanceResult(results, gate, gate.founderSignalBalance, snapshot.resumeText);
 }
 
 function addTopTextPrincipleResult(
@@ -858,6 +883,139 @@ function addTeamLedWorkNotFlattenedResult(
         : `${leadershipBulletCount} leadership or team-scope bullets found; expected at least ${check.minimumLeadershipBullets} so team-led work is not flattened into lone-IC wording.`,
     reworkAgent: check.reworkAgent || parentGate.reworkAgent
   });
+}
+
+function addFounderSignalBalanceResult(
+  results: ResumeQualityGateResult[],
+  parentGate: ReviewerPrinciplesGateConfig,
+  check: ReviewerPrincipleFounderSignalGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!check?.enabled) return;
+
+  const severity = check.severity || parentGate.severity;
+  const reworkAgent = check.reworkAgent || parentGate.reworkAgent;
+  const topText = textWithinPercent(resumeText, check.topTextPercent);
+  const proofText = textWithinPercent(resumeText, check.proofTextPercent);
+  const targetMatch = firstTermMatch(topText, check.targetRoleTerms);
+  const founderMatch = firstTermMatch(topText, check.founderTerms);
+  const targetRolePassed = Boolean(targetMatch && founderMatch && targetMatch.index <= founderMatch.index);
+
+  results.push({
+    gateId: "reviewerPrinciples.founderTargetRoleTranslation",
+    passed: targetRolePassed,
+    severity,
+    measured: targetRolePassed ? 1 : 0,
+    expected: `target role appears before founder identity within top ${check.topTextPercent}% of resume text`,
+    message: targetRolePassed
+      ? `Target role ${targetMatch?.term} appears before founder identity ${founderMatch?.term} in the opening.`
+      : `Put a configured target role before the founder identity within the top ${check.topTextPercent}% of resume text.`,
+    reworkAgent
+  });
+
+  const matchedProofGroups = check.proofGroups.filter((group) =>
+    group.terms.some((term) => containsSearchTerm(proofText, term))
+  );
+  results.push({
+    gateId: "reviewerPrinciples.founderOperatingProof",
+    passed: matchedProofGroups.length >= check.minimumProofGroups,
+    severity,
+    measured: matchedProofGroups.length,
+    expected: `at least ${check.minimumProofGroups} founder operating-proof groups within top ${check.proofTextPercent}% of resume text`,
+    message:
+      matchedProofGroups.length >= check.minimumProofGroups
+        ? `Founder operating proof covers: ${matchedProofGroups.map((group) => group.id).join(", ")}.`
+        : `Founder operating proof covers ${matchedProofGroups.length} groups; expected ${check.minimumProofGroups}. Missing options: ${check.proofGroups.filter((group) => !matchedProofGroups.includes(group)).map((group) => group.id).join(", ")}.`,
+    reworkAgent
+  });
+
+  addFounderTermCountResult(
+    results,
+    "reviewerPrinciples.founderCollaboration",
+    proofText,
+    check.collaborationTerms,
+    check.minimumCollaborationMatches,
+    `collaboration signals within top ${check.proofTextPercent}% of resume text`,
+    severity,
+    reworkAgent
+  );
+  addFounderTermCountResult(
+    results,
+    "reviewerPrinciples.founderTechnicalDepth",
+    proofText,
+    check.technicalTerms,
+    check.minimumTechnicalMatches,
+    `technical-depth signals within top ${check.proofTextPercent}% of resume text`,
+    severity,
+    reworkAgent
+  );
+
+  const riskyTerms = check.forbiddenTerms.filter((term) => containsSearchTerm(resumeText, term));
+  results.push({
+    gateId: "reviewerPrinciples.founderRiskLanguage",
+    passed: riskyTerms.length === 0,
+    severity,
+    measured: riskyTerms.length,
+    expected: "no risk-amplifying founder shorthand",
+    message:
+      riskyTerms.length === 0
+        ? "No risk-amplifying founder shorthand found."
+        : `Risk-amplifying founder shorthand found: ${riskyTerms.join(", ")}.`,
+    reworkAgent
+  });
+
+  const attributionMatches = check.forbiddenAttributionPatterns.filter((pattern) =>
+    matchesPatternOrTerm(resumeText, pattern)
+  );
+  results.push({
+    gateId: "reviewerPrinciples.founderAttributionBoundaries",
+    passed: attributionMatches.length === 0,
+    severity,
+    measured: attributionMatches.length,
+    expected: "no configured lone-hero or unsupported personal-attribution patterns",
+    message:
+      attributionMatches.length === 0
+        ? "Founder attribution stays within configured team and company boundaries."
+        : `Founder attribution crosses configured boundaries: ${attributionMatches.join(", ")}.`,
+    reworkAgent
+  });
+}
+
+function addFounderTermCountResult(
+  results: ResumeQualityGateResult[],
+  gateId: string,
+  text: string,
+  terms: string[],
+  minimum: number,
+  label: string,
+  severity: ResumeQualityGateSeverity,
+  reworkAgent: string
+): void {
+  const matchedTerms = terms.filter((term) => containsSearchTerm(text, term));
+  results.push({
+    gateId,
+    passed: matchedTerms.length >= minimum,
+    severity,
+    measured: matchedTerms.length,
+    expected: `at least ${minimum} configured ${label}`,
+    message:
+      matchedTerms.length >= minimum
+        ? `Found ${matchedTerms.length} configured ${label}: ${matchedTerms.join(", ")}.`
+        : `Found ${matchedTerms.length} configured ${label}; expected at least ${minimum}.`,
+    reworkAgent
+  });
+}
+
+function textWithinPercent(text: string, percent: number): string {
+  const normalized = normalizeSearchText(text);
+  return normalized.slice(0, Math.floor(normalized.length * (percent / 100)));
+}
+
+function firstTermMatch(text: string, terms: string[]): { term: string; index: number } | undefined {
+  return terms
+    .map((term) => ({ term, index: text.indexOf(normalizeSearchText(term)) }))
+    .filter((match) => match.index >= 0)
+    .sort((left, right) => left.index - right.index)[0];
 }
 
 function formatRange(gate: RangeGateConfig): string {

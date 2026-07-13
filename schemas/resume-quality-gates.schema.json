@@ -189,7 +189,8 @@
                 "severity": { "$ref": "#/$defs/severity" },
                 "reworkAgent": { "type": "string" }
               }
-            }
+            },
+            "founderSignalBalance": { "$ref": "#/$defs/founderSignalGate" }
           }
         }
       }
@@ -236,6 +237,79 @@
         "maxTextPercent": { "type": "number" },
         "severity": { "$ref": "#/$defs/severity" },
         "reworkAgent": { "type": "string" }
+      }
+    },
+    "founderSignalGate": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "topTextPercent",
+        "proofTextPercent",
+        "targetRoleTerms",
+        "founderTerms",
+        "proofGroups",
+        "minimumProofGroups",
+        "collaborationTerms",
+        "minimumCollaborationMatches",
+        "technicalTerms",
+        "minimumTechnicalMatches",
+        "forbiddenTerms",
+        "forbiddenAttributionPatterns"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "topTextPercent": { "type": "number", "minimum": 1, "maximum": 100 },
+        "proofTextPercent": { "type": "number", "minimum": 1, "maximum": 100 },
+        "targetRoleTerms": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "founderTerms": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "proofGroups": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/founderProofGroup" }
+        },
+        "minimumProofGroups": { "type": "integer", "minimum": 1 },
+        "collaborationTerms": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "minimumCollaborationMatches": { "type": "integer", "minimum": 1 },
+        "technicalTerms": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "minimumTechnicalMatches": { "type": "integer", "minimum": 1 },
+        "forbiddenTerms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbiddenAttributionPatterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
+      }
+    },
+    "founderProofGroup": {
+      "type": "object",
+      "required": ["id", "terms"],
+      "properties": {
+        "id": { "type": "string" },
+        "terms": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
       }
     },
     "numericConsistencyGate": {

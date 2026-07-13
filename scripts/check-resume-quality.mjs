@@ -557,6 +557,7 @@ function addReviewerPrinciples(results, gate, snapshot) {
   addTopHalfCarriesReview(results, gate, gate.topHalfCarriesReview, snapshot.resumeText);
   addConsistentEmphasis(results, gate, gate.consistentEmphasis, snapshot.achievementBullets);
   addTeamLedWorkNotFlattened(results, gate, gate.teamLedWorkNotFlattened, snapshot.achievementBullets);
+  addFounderSignalBalance(results, gate, gate.founderSignalBalance, snapshot.resumeText);
 }
 
 function addLeadershipNearTop(results, parentGate, check, snapshot) {
@@ -643,6 +644,117 @@ function addTeamLedWorkNotFlattened(results, parentGate, check, achievementBulle
       ? `${leadershipBulletCount} leadership or team-scope bullets use configured language.`
       : `${leadershipBulletCount} leadership or team-scope bullets found; expected at least ${minimum} so team-led work is not flattened into lone-IC wording.`
   ));
+}
+
+function addFounderSignalBalance(results, parentGate, check, resumeText) {
+  if (!check?.enabled) return;
+
+  const topTextPercent = check.topTextPercent ?? 35;
+  const proofTextPercent = check.proofTextPercent ?? 65;
+  const topText = textWithinPercent(resumeText, topTextPercent);
+  const proofText = textWithinPercent(resumeText, proofTextPercent);
+  const targetMatch = firstTermMatch(topText, check.targetRoleTerms || []);
+  const founderMatch = firstTermMatch(topText, check.founderTerms || []);
+  const targetRolePassed = targetMatch && founderMatch && targetMatch.index <= founderMatch.index;
+
+  results.push(result(
+    "reviewerPrinciples.founderTargetRoleTranslation",
+    principleGate(parentGate, check),
+    Boolean(targetRolePassed),
+    targetRolePassed ? 1 : 0,
+    `target role appears before founder identity within top ${topTextPercent}% of resume text`,
+    targetRolePassed
+      ? `Target role ${targetMatch.term} appears before founder identity ${founderMatch.term} in the opening.`
+      : `Put a configured target role before the founder identity within the top ${topTextPercent}% of resume text.`
+  ));
+
+  const proofGroups = check.proofGroups || [];
+  const matchedProofGroups = proofGroups.filter((group) =>
+    (group.terms || []).some((term) => containsSearchTerm(proofText, term))
+  );
+  const minimumProofGroups = check.minimumProofGroups ?? proofGroups.length;
+  results.push(result(
+    "reviewerPrinciples.founderOperatingProof",
+    principleGate(parentGate, check),
+    matchedProofGroups.length >= minimumProofGroups,
+    matchedProofGroups.length,
+    `at least ${minimumProofGroups} founder operating-proof groups within top ${proofTextPercent}% of resume text`,
+    matchedProofGroups.length >= minimumProofGroups
+      ? `Founder operating proof covers: ${matchedProofGroups.map((group) => group.id).join(", ")}.`
+      : `Founder operating proof covers ${matchedProofGroups.length} groups; expected ${minimumProofGroups}. Missing options: ${proofGroups.filter((group) => !matchedProofGroups.includes(group)).map((group) => group.id).join(", ")}.`
+  ));
+
+  addFounderTermCountResult(
+    results,
+    parentGate,
+    check,
+    "reviewerPrinciples.founderCollaboration",
+    proofText,
+    check.collaborationTerms || [],
+    check.minimumCollaborationMatches ?? 1,
+    `collaboration signals within top ${proofTextPercent}% of resume text`
+  );
+  addFounderTermCountResult(
+    results,
+    parentGate,
+    check,
+    "reviewerPrinciples.founderTechnicalDepth",
+    proofText,
+    check.technicalTerms || [],
+    check.minimumTechnicalMatches ?? 1,
+    `technical-depth signals within top ${proofTextPercent}% of resume text`
+  );
+
+  const riskyTerms = (check.forbiddenTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+  results.push(result(
+    "reviewerPrinciples.founderRiskLanguage",
+    principleGate(parentGate, check),
+    riskyTerms.length === 0,
+    riskyTerms.length,
+    "no risk-amplifying founder shorthand",
+    riskyTerms.length === 0
+      ? "No risk-amplifying founder shorthand found."
+      : `Risk-amplifying founder shorthand found: ${riskyTerms.join(", ")}.`
+  ));
+
+  const attributionPatterns = check.forbiddenAttributionPatterns || [];
+  const attributionMatches = attributionPatterns.filter((pattern) => matchesPatternOrTerm(resumeText, pattern));
+  results.push(result(
+    "reviewerPrinciples.founderAttributionBoundaries",
+    principleGate(parentGate, check),
+    attributionMatches.length === 0,
+    attributionMatches.length,
+    "no configured lone-hero or unsupported personal-attribution patterns",
+    attributionMatches.length === 0
+      ? "Founder attribution stays within configured team and company boundaries."
+      : `Founder attribution crosses configured boundaries: ${attributionMatches.join(", ")}.`
+  ));
+}
+
+function addFounderTermCountResult(results, parentGate, check, gateId, text, terms, minimum, label) {
+  const matchedTerms = terms.filter((term) => containsSearchTerm(text, term));
+  results.push(result(
+    gateId,
+    principleGate(parentGate, check),
+    matchedTerms.length >= minimum,
+    matchedTerms.length,
+    `at least ${minimum} configured ${label}`,
+    matchedTerms.length >= minimum
+      ? `Found ${matchedTerms.length} configured ${label}: ${matchedTerms.join(", ")}.`
+      : `Found ${matchedTerms.length} configured ${label}; expected at least ${minimum}.`
+  ));
+}
+
+function textWithinPercent(text, percent) {
+  const normalized = normalizeSearch(text);
+  return normalized.slice(0, Math.floor(normalized.length * (percent / 100)));
+}
+
+function firstTermMatch(text, terms) {
+  return terms
+    .map((term) => ({ term, index: text.indexOf(normalizeSearch(term)) }))
+    .filter((match) => match.index >= 0)
+    .sort((left, right) => left.index - right.index)[0];
 }
 
 function termsOutsideTextPercent(text, terms, maxTextPercent) {
