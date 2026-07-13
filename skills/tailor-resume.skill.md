@@ -20,6 +20,8 @@ Use when creating a role-specific resume version.
    Prioritize durable skills, role-fit experience, ownership scope, and outcomes; use anecdotes as proof points rather than the resume's organizing structure.
    When a founder/operator role is the primary recent experience, build a founder-scope-density mix: verified tenure and team scope near the top, at least three target-relevant dimensions across engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact, and one defensible scale or business signal when available.
    Do not rely on `founder`, `co-founder`, or `CTO` as self-explanatory seniority. Translate the scope for the target role and keep company-level outcomes distinct from personal attribution.
+   Treat founder experience as a conditional signal, not an automatic advantage. Make the target role identity at least as prominent as the founder identity and show stable tenure, collaboration, team systems, and repeatable delivery to reduce fit and commitment uncertainty.
+   For narrow specialist roles, lead with the specialty and keep founder scope as supporting evidence. Use founder-forward positioning for roles that reward ownership, personnel responsibility, ambiguity, client responsibility, product influence, or platform scope.
 11. Read any available claim-significance ranking.
    Use it to decide which true claims deserve limited resume space after target-role relevance and claim confidence are considered.
 12. Read any trusted reviewer principles or prior critique notes that apply to the role, source, or resume type.
@@ -62,6 +64,8 @@ Use when creating a role-specific resume version.
 - Do not flatten leadership into individual-contributor wording when the evidence shows the candidate led direction, reviews, standards, delivery, mentoring, or coordination.
 - Do not flatten founder/operator experience into a title plus ordinary IC bullets when the graph supports sustained cross-functional ownership. Founder breadth should materially change the opening, top-half proof mix, and bullet selection.
 - Do not say founder years count double or imply startup experience is inherently superior to other employment. Show why the scope matters with evidence.
+- Do not use founder shorthand that amplifies fit or commitment concerns, including `wore many hats`, `did everything`, `visionary founder`, `serial entrepreneur`, or `used to being my own boss`.
+- Do not make the founder identity more prominent than the target professional identity unless the posting explicitly seeks founders or entrepreneurs.
 - Do not mark reviewer feedback as done unless the version note records what changed and what remained intentionally deferred.
 - Do not treat every true skill as equally important; use claim significance to decide what gets space.
 - Frame adjacent experience honestly.

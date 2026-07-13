@@ -19,6 +19,8 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
   Examples: years owned, peak team size, direct commits, multi-author history, product surface, verified program participation, and customer-facing delivery.
 - Word team-led delivery as leadership when the candidate owned direction, scoping, review, mentoring, standards, or coordination.
 - When a founder/operator role is the candidate's primary recent experience, translate founder scope instead of relying on the title. Put verified tenure, hands-on ownership, and team scope near the top; show at least three relevant dimensions such as engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact; and include a defensible scale or business signal when available.
+- Do not assume founder experience is a hiring advantage. Make the target role identity at least as prominent as the founder identity, and use stable tenure, collaboration, team systems, customer commitments, and repeatable delivery to reduce fit and commitment uncertainty.
+- For narrower specialist roles, lead with the directly relevant specialty and use founder scope as supporting evidence. Founder-first positioning is strongest for roles with meaningful ownership, personnel responsibility, ambiguity, client responsibility, product influence, or platform scope.
 - Do not claim founder years count double or that startup experience is inherently superior. The value must come from visible scope, accountability, outcomes, and target-role translation.
 - Do not include unapproved tools, languages, frameworks, or platforms in public skill sections, including as "ramp-ready" or "adjacent" claims.
 - Keep internal targeting notes outside applicant-facing resumes.

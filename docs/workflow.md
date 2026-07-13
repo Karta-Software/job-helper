@@ -143,7 +143,7 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
 7. Reframe team-led work honestly.
    If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
 8. Translate founder/operator scope when it is the candidate's primary recent experience.
-   Put verified tenure, hands-on ownership, and team scope near the top. Show at least three target-relevant dimensions such as engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact. Include a defensible scale or business signal when available. Do not claim founder years count double or rely on `CTO` as self-explanatory seniority.
+   Put verified tenure, hands-on ownership, and team scope near the top. Show at least three target-relevant dimensions such as engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact. Include a defensible scale or business signal when available. Do not claim founder years count double or rely on `CTO` as self-explanatory seniority. Treat founder experience as a conditional signal: make the target role identity at least as prominent as the founder identity, show stable tenure and collaborative operating systems, and avoid shorthand that amplifies fit or commitment concerns.
 9. Route unapplied required principles back to the right agent before the resume is marked ready.
    Use `resume-writer` for structure, hierarchy, whitespace, bullet length, and summary choices; `experience-finder` for missing proof; `evidence-auditor` for metrics and claims; and `voice-auditor` for tone, hype, and consistency.
 10. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
@@ -161,7 +161,7 @@ Use when there is a target role, company, or posting.
    Split each major employer/project into responsibility buckets, product/domain buckets, and proof-point buckets so the resume can target the role from the right angle instead of reusing the same anecdotes.
 7. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
 8. When founder/operator experience is the primary recent role, apply founder scope density before drafting.
-   Translate the title into verified tenure, hands-on ownership, team scope, at least three target-relevant responsibility dimensions, and one safe scale or business signal when available. The opening and top-half proof mix should change materially; a title-only founder mention is not enough.
+   Translate the title into verified tenure, hands-on ownership, team scope, at least three target-relevant responsibility dimensions, and one safe scale or business signal when available. The opening and top-half proof mix should change materially; a title-only founder mention is not enough. For established employers, explicitly reduce fit and commitment uncertainty through target-role orientation, collaboration, repeatable delivery systems, and a clear transition rationale outside the resume when useful.
 9. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
@@ -220,7 +220,7 @@ Use after rendering a resume draft.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
 10. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
-   When founder/operator experience is central, configure those rows and `metricSignals` to prove tenure/team scope near the top, multiple founder-scope dimensions in the top half, and at least one safe scale or business signal. A title-only founder mention should fail review.
+   When founder/operator experience is central, configure those rows and `metricSignals` to prove tenure/team scope near the top, multiple founder-scope dimensions in the top half, and at least one safe scale or business signal. Add a founder-fit-translation result for target-role orientation, collaboration/repeatable delivery, and forbidden founder shorthand. A title-only founder mention should fail review.
 11. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
 12. Treat `error` gate failures like CI failures.
@@ -332,7 +332,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Use `metricSignals` to prove safe numbers are visible when a reviewer asks for metrics. Do not use it as permission to add unsourced outcome metrics.
 - Use `numericConsistency` to prove important numbers are internally coherent and clearly labeled. Do not let a true number pass when the surrounding noun makes it look like a different metric.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
-- Founder/operator experience should be translated into visible scope density when it is central: tenure, hands-on ownership, team scope, cross-functional responsibility, and safe scale/business proof. Do not claim startup years count double or treat a founder title as self-proving.
+- Founder/operator experience should be translated into visible scope density when it is central: tenure, hands-on ownership, team scope, cross-functional responsibility, and safe scale/business proof. Treat it as a conditional hiring signal, orient the opening around the target role, and show collaboration and repeatable delivery to reduce fit and commitment concerns. Do not claim startup years count double or treat a founder title as self-proving.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
 - Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.
