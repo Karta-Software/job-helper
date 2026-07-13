@@ -142,9 +142,11 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
    Examples: years owned, peak team size, direct commits, multi-author commit history, PR-numbered work, file/module scope, product surface, customer-facing delivery, or verified program participation.
 7. Reframe team-led work honestly.
    If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
-8. Route unapplied required principles back to the right agent before the resume is marked ready.
+8. Translate founder/operator scope when it is the candidate's primary recent experience.
+   Put verified tenure, hands-on ownership, and team scope near the top. Show at least three target-relevant dimensions such as engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact. Include a defensible scale or business signal when available. Do not claim founder years count double or rely on `CTO` as self-explanatory seniority.
+9. Route unapplied required principles back to the right agent before the resume is marked ready.
    Use `resume-writer` for structure, hierarchy, whitespace, bullet length, and summary choices; `experience-finder` for missing proof; `evidence-auditor` for metrics and claims; and `voice-auditor` for tone, hype, and consistency.
-9. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
+10. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
 
 ### Tailor A Resume
 
@@ -158,27 +160,29 @@ Use when there is a target role, company, or posting.
 6. Build or refresh an experience surface map before drafting.
    Split each major employer/project into responsibility buckets, product/domain buckets, and proof-point buckets so the resume can target the role from the right angle instead of reusing the same anecdotes.
 7. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
-8. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
+8. When founder/operator experience is the primary recent role, apply founder scope density before drafting.
+   Translate the title into verified tenure, hands-on ownership, team scope, at least three target-relevant responsibility dimensions, and one safe scale or business signal when available. The opening and top-half proof mix should change materially; a title-only founder mention is not enough.
+9. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
    When omitted for target fit, remove AI-tooling phrases from required keyword rewards and add target-specific unsupported terms if the prior workflow over-rewarded them.
-9. Translate the target role into role-facing themes, not company-facing branding.
+10. Translate the target role into role-facing themes, not company-facing branding.
    Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
-10. Rewrite the resume structure around the target role when needed.
+11. Rewrite the resume structure around the target role when needed.
    Strong tailoring means changing the headline, summary, skill groupings, bullet selection, bullet order, and domain emphasis. It is not enough to preserve the old resume and sprinkle in keywords.
-11. Draft against section and length constraints.
-12. Audit evidence and voice.
-13. Render privately from HTML to PDF with the helper's PDF renderer.
+12. Draft against section and length constraints.
+13. Audit evidence and voice.
+14. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
-14. Treat render command failure as fatal before copying or promoting any PDF.
-15. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
-16. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
-17. Run resume quality gates.
-18. Configure and run `educationWording` when candidate defaults require exact education wording or stale degree labels must be blocked.
-19. Verify the rendered PDF text for target-specific must-have and must-not-have phrases such as education wording, target-branding removal, and forbidden stale terms.
-20. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
-21. Save completed artifact only after approval.
-22. Publish only through the configured portfolio handoff.
+15. Treat render command failure as fatal before copying or promoting any PDF.
+16. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+17. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
+18. Run resume quality gates.
+19. Configure and run `educationWording` when candidate defaults require exact education wording or stale degree labels must be blocked.
+20. Verify the rendered PDF text for target-specific must-have and must-not-have phrases such as education wording, target-branding removal, and forbidden stale terms.
+21. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
+22. Save completed artifact only after approval.
+23. Publish only through the configured portfolio handoff.
 
 ### Education And Coursework
 
@@ -216,6 +220,7 @@ Use after rendering a resume draft.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
 10. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
+   When founder/operator experience is central, configure those rows and `metricSignals` to prove tenure/team scope near the top, multiple founder-scope dimensions in the top half, and at least one safe scale or business signal. A title-only founder mention should fail review.
 11. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
 12. Treat `error` gate failures like CI failures.
@@ -327,6 +332,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Use `metricSignals` to prove safe numbers are visible when a reviewer asks for metrics. Do not use it as permission to add unsourced outcome metrics.
 - Use `numericConsistency` to prove important numbers are internally coherent and clearly labeled. Do not let a true number pass when the surrounding noun makes it look like a different metric.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
+- Founder/operator experience should be translated into visible scope density when it is central: tenure, hands-on ownership, team scope, cross-functional responsibility, and safe scale/business proof. Do not claim startup years count double or treat a founder title as self-proving.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.
 - Tailoring should alter the resume's visible structure and emphasis: headline, summary, skill grouping, bullet order, and domain framing should reflect the role family.
 - Anecdotes and stories are evidence for claims, not a substitute for role fit, skills, scope, outcomes, and repeatable experience.

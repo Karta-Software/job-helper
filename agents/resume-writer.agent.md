@@ -18,6 +18,8 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Use safe scope metrics when stronger outcome metrics are not sourced.
   Examples: years owned, peak team size, direct commits, multi-author history, product surface, verified program participation, and customer-facing delivery.
 - Word team-led delivery as leadership when the candidate owned direction, scoping, review, mentoring, standards, or coordination.
+- When a founder/operator role is the candidate's primary recent experience, translate founder scope instead of relying on the title. Put verified tenure, hands-on ownership, and team scope near the top; show at least three relevant dimensions such as engineering/architecture, product, clients, team leadership, production/business operations, or commercial impact; and include a defensible scale or business signal when available.
+- Do not claim founder years count double or that startup experience is inherently superior. The value must come from visible scope, accountability, outcomes, and target-role translation.
 - Do not include unapproved tools, languages, frameworks, or platforms in public skill sections, including as "ramp-ready" or "adjacent" claims.
 - Keep internal targeting notes outside applicant-facing resumes.
 - Keep target company names out of applicant-facing resumes by default; express fit through role-relevant skills, domains, and outcomes.
