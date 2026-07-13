@@ -22,6 +22,8 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - achievement bullet count
 - required sections
 - keyword match against the posting
+- configured `agentPlatformEvidenceDepth` for agent-platform roles; at least four source-backed evidence dimensions, platform-building proof rather than tool usage, a top-half architecture bullet, and a top-half measured outcome
+- configured `semanticBulletReview`; duplicate-concept detection, posting-echo detection, and a recorded manual semantic/voice review
 - configured metric/proof signal count when reviewer feedback asks for numbers
 - configured numeric-consistency checks for related counts, totals, rates, and metric labels
 - unsupported technology or experience terms
@@ -46,28 +48,34 @@ Use after rendering a resume draft and before moving it to completed resumes.
 3. Compare measurements to configured gates.
    Disclose any required sections inferred from header structure rather than explicit section headings.
 4. Compare resume keywords against the posting keywords and label whether the comparison used configured required keywords, supplied posting keywords, or extracted posting keywords.
-5. Check `metricSignals` when configured.
+   Keyword match is never a substitute for evidence depth.
+5. For agent-platform, AI-platform, or agent-foundations roles, run `agentPlatformEvidenceDepth`.
+   Count a dimension only when resume language matches it, the evidence status is `supported`, and at least one source reference is recorded. Using Claude Code, Codex, or another harness does not satisfy platform-building proof by itself.
+   Require at least four of six dimensions: deployment boundary, users/consumers, durable state/runtime, failure/idempotency, observability/evaluations, and scale/measured outcome. Also require one architecture-rich bullet and one measured outcome in the configured top section.
+6. Run `semanticBulletReview` when the resume is heavily tailored or repeats posting language.
+   Mechanical checks may flag duplicate concepts and posting echoes without proof. A human or designated voice agent must still record `manualReviewStatus: pass` with notes.
+7. Check `metricSignals` when configured.
    Count only configured proof phrases so safe scope metrics, verified programs, and sourced outcome metrics are explicit; do not count random dates as proof by accident.
-6. Check `numericConsistency` when configured.
+8. Check `numericConsistency` when configured.
    Extract named numbers, verify the configured relationships, and block ambiguous labels where the number is true but the surrounding noun changes the meaning.
    Examples: reviewed-PR commit totals must be greater than or equal to reviewed PR count, defect-rate start values should be greater than end values, and revenue counts should not be reused as customer counts.
-7. Fail the run when any `error` gate fails.
-8. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
+9. Fail the run when any `error` gate fails.
+10. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
    This is a positive inventory gate: denylist checks are not enough.
-9. Check `educationWording` when candidate defaults define exact education wording.
+11. Check `educationWording` when candidate defaults define exact education wording.
    Use this when old artifacts may contain stale degree labels. For example, if the configured default is `Bachelor's Degree in Computer Science`, block `Bachelor of Science` and `Bachelor of Arts` unless the user explicitly changes the standard.
-10. Check `targetBranding` when the target company is known.
+12. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-11. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
+13. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
    For founder/operator resumes, enable `founderSignalBalance` and require all six named results to pass. Use existing top-half leadership/proof and metric-signal gates as supporting checks. A title-only `CTO` or `co-founder` mention is not sufficient.
-12. Inspect warning failures against the stated critique.
+14. Inspect warning failures against the stated critique.
    If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
-13. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-14. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-15. Update the private resume note/tracker with pass/fail status and the next rework action.
-16. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-17. Move to completed resumes only after gates pass or a human override is recorded.
+15. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+16. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+17. Update the private resume note/tracker with pass/fail status and the next rework action.
+18. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+19. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -91,6 +99,8 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Hard bullet limits and ideal bullet ranges are separate: hard failures can block; ideal misses should notify the resume writer as warnings.
 - Treat unsupported technology terms as a denylist guardrail, not a complete evidence audit. The evidence audit still needs graph-backed claim review.
 - Treat approved-skill failures as evidence-auditor failures: remove the skill claim or update the private skill inventory only after the user confirms the skill.
+- Treat `agentPlatformEvidenceDepth` failures as evidence failures, not keyword failures. Remove or narrow the platform claim, find source-backed proof, or build the missing evidence outside the resume. Do not solve the failure by copying more posting terms.
+- Treat `semanticBulletReview` failures as voice and evidence failures. Consolidate duplicate bullets, replace posting mimicry with candidate-owned language and proof, and require manual review notes before ready status.
 - Treat education-wording failures as resume-writer failures: load the configured candidate defaults, use the exact required wording, and remove stale degree labels rather than guessing a degree type from old artifacts.
 - Treat metric-signal failures as evidence-auditor failures: add safe sourced metrics, add safer scope metrics, or record why stronger outcome metrics remain deferred.
 - Treat numeric-consistency failures as evidence-auditor failures: fix the wording, fix the math, remove the weak number, or record an explicit human override. Do not let true numbers survive if their labels make the document misleading.

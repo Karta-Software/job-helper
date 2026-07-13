@@ -13,6 +13,8 @@ Use when creating a role-specific resume version.
 5. Read target posting or role criteria.
 6. Confirm the posting link is live or intentionally proceed from a saved posting.
 7. Build or load the role's skill inventory.
+   Classify each required and preferred skill as `supported`, `adjacent`, `project-only`, or `do-not-claim`, with evidence references. Do not let an ATS keyword target change that classification.
+   For agent-platform, AI-platform, or agent-foundations roles, configure `agentPlatformEvidenceDepth`. Require at least four source-backed dimensions across deployment boundary, users/consumers, durable state/runtime, failure/idempotency, observability/evaluations, and scale/measured outcome.
 8. Run `experience-finder` and use its evidence gaps before drafting.
 9. Build or refresh an experience surface map for the strongest relevant employers/projects.
    Choose responsibility buckets and domain buckets before selecting anecdotes, metrics, or bullets.
@@ -30,6 +32,7 @@ Use when creating a role-specific resume version.
    Treat source-backed principles as workflow inputs, not optional comments.
 13. For technical roles, include at least one graph-backed AI-native development signal when available.
    Prefer outcomes such as agentic software delivery, AI-assisted testing/review, coding-agent orchestration, human-in-the-loop quality gates, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when the graph supports them.
+   Treat these as AI-assisted development evidence, not agent-platform construction evidence. A platform claim needs a deployed boundary, consumers, runtime behavior, and operating proof.
 14. Translate company/posting language into candidate-owned role language.
    Do not put the target company name in the resume body by default; say what the candidate has done that maps to the role.
 15. Retarget the structure, not only the keywords.
@@ -40,9 +43,11 @@ Use when creating a role-specific resume version.
 19. Word team-led work as leadership when the candidate owned direction, scoping, review, mentoring, delivery, standards, or cross-functional coordination.
 20. Run `evidence-auditor`.
 21. Run `voice-auditor`.
+   For heavily tailored or agent-platform resumes, configure `semanticBulletReview`; remove semantically duplicate bullets, flag posting echoes that lack proof, and record an explicit manual review result with notes.
 22. Remove fourth-wall guidance from applicant-facing files.
 23. Save a new private resume version.
 24. Update the private resume version note, opportunity note, application tracker, and structured opportunities JSON.
+   Keep referral and recruiter-contact state here. A referral submission or privacy notice proves intake, not recruiter review or hiring-manager advocacy.
 25. Render the resume to the configured private rendered-resume output with `render-resume-pdf`.
     Do not rely on the browser print dialog; it can add file URLs, dates, and page numbers as headers/footers.
 26. Improve scanability with section contrast, role-block separation, selective proof-point bolding, and readable leading.
@@ -73,6 +78,8 @@ Use when creating a role-specific resume version.
 - Do not use "ramp-ready," "adjacent," or similar wording to include a tool as a public skill claim unless the user has explicitly approved that tool for resume use.
 - Remove do-not-claim skills.
 - Do not present AI tooling as a generic buzzword list; connect Claude Code, Codex, Cursor, or agent workflows to delivery, quality, review, testing, or developer productivity outcomes.
+- Do not present coding-agent usage as proof that the candidate built a multi-user agent platform.
+- Do not let founder breadth stand in for unsupported distributed-systems scale. State verified scope and users; omit concurrency, queueing, idempotency, tracing, SLO, and production-scale claims unless the evidence map supports them.
 - Respect max page count.
 - Prefer ATS-safe formatting unless the target role calls for a designed resume.
 - The final report must name the skill files, agent files, graph/workspace files, quality gates, and validation commands used.

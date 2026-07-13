@@ -534,6 +534,141 @@ State University
   });
 });
 
+test("CLI blocks keyword-rich agent-platform copy when source-backed evidence depth is shallow", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Software Engineer, Agent Foundations
+
+## Summary
+
+Built multi-agent orchestration, task planning, coordination, execution, recovery, state management, scheduling, and observability with Claude Code and Codex.
+
+## Professional Experience
+
+- Built platform primitives for task planning, state management, scheduling, observability, and long-running workflows.
+- Designed agent workflows with durable state, workers, leases, and approval gates.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      {
+        keywordMatch: {
+          enabled: true,
+          minimumPercent: 90,
+          requiredKeywords: [
+            "multi-agent orchestration",
+            "task planning",
+            "coordination",
+            "execution",
+            "recovery",
+            "state management",
+            "scheduling",
+            "observability"
+          ],
+          severity: "error",
+          reworkAgent: "posting-scorer"
+        },
+        agentPlatformEvidenceDepth: shallowAgentPlatformEvidenceGate()
+      },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "keywordMatch").passed, true);
+    assert.equal(report.results.find((result) => result.gateId === "agentPlatformEvidenceDepth").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "agentPlatformEvidenceDepth.outcomeTopHalf").passed, false);
+  });
+});
+
+test("CLI passes agent-platform evidence depth with four sourced dimensions and top-half architecture plus outcome", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Platform Engineer | Agent Orchestration
+
+## Summary
+
+Designed and operated an internal Windmill control plane with Postgres-backed durable state, scheduled workers, source dedupe, recovery leases, and human approval gates.
+
+## Professional Experience
+
+- Routed 1,200 task runs from Slack and GitHub for 8 internal consumers through source probes, a task ledger, signal gates, and durable workers with explicit local deployment and operator boundaries.
+- Recovered 96% of injected worker failures and prevented duplicate execution with idempotency keys.
+- Exposed worker state, queue depth, trace coverage, evaluations, connector health, and manual blockers in an operator dashboard.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { agentPlatformEvidenceDepth: supportedAgentPlatformEvidenceGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const gates = report.results.filter((result) => result.gateId.startsWith("agentPlatformEvidenceDepth"));
+    assert.equal(gates.length, 4);
+    assert.equal(gates.every((gate) => gate.passed), true);
+  });
+});
+
+test("CLI flags duplicate platform bullets and posting echo without concrete proof", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Platform Engineer
+
+## Professional Experience
+
+- Built repo-stored agent workflow primitives for task planning, state files, recovery leases, scheduler locks, and approval gates.
+- Built platform primitives for task planning, state management, recovery leases, scheduler locks, and approval checkpoints.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { semanticBulletReview: semanticBulletReviewGate("pass") },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.duplicateConcepts").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.postingEchoWithoutProof").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.manualReview").passed, true);
+  });
+});
+
+test("CLI requires explicit manual semantic review even when mechanical checks pass", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Platform Engineer
+
+## Professional Experience
+
+- Routed events through source probes, a task ledger, and durable workers with explicit approval boundaries.
+- Recovered 96% of 300 injected worker failures and prevented duplicate execution with idempotency keys.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { semanticBulletReview: semanticBulletReviewGate("not-reviewed") },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.duplicateConcepts").passed, true);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.postingEchoWithoutProof").passed, true);
+    assert.equal(report.results.find((result) => result.gateId === "semanticBulletReview.manualReview").passed, false);
+  });
+});
+
 test("CLI fails metric signals when reviewer feedback asks for more numbers and too few are present", () => {
   usingTempWorkspace((workspace) => {
     const resumeContent = `# Test Person
@@ -831,6 +966,114 @@ function founderReviewerPrinciplesGate() {
         "built the product alone"
       ]
     }
+  };
+}
+
+function shallowAgentPlatformEvidenceGate() {
+  const gate = supportedAgentPlatformEvidenceGate();
+  return {
+    ...gate,
+    dimensions: gate.dimensions.map((dimension, index) => ({
+      ...dimension,
+      evidenceStatus: index < 2 ? "supported" : "adjacent",
+      evidenceRefs: index < 2 ? [`evidence-${index + 1}`] : []
+    }))
+  };
+}
+
+function supportedAgentPlatformEvidenceGate() {
+  return {
+    enabled: true,
+    minimumDimensions: 4,
+    dimensions: [
+      {
+        id: "deploymentBoundary",
+        terms: ["internal", "local deployment", "control plane"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["deployment-evidence"]
+      },
+      {
+        id: "usersConsumers",
+        terms: ["internal consumers", "operators", "engineering teams"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["consumer-evidence"]
+      },
+      {
+        id: "durableStateRuntime",
+        terms: ["Postgres-backed durable state", "task ledger", "durable workers"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["state-evidence"]
+      },
+      {
+        id: "failureIdempotency",
+        terms: ["recovery leases", "idempotency keys", "duplicate execution", "worker failures"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["failure-evidence"]
+      },
+      {
+        id: "observabilityEvaluations",
+        terms: ["trace coverage", "evaluations", "worker state", "queue depth"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["observability-evidence"]
+      },
+      {
+        id: "scaleOutcome",
+        terms: ["task runs", "internal consumers", "injected worker failures"],
+        minimumTermMatches: 1,
+        evidenceStatus: "supported",
+        evidenceRefs: ["scale-evidence"]
+      }
+    ],
+    usageOnlyTerms: ["Claude Code", "Codex", "AI-assisted"],
+    platformBuildTerms: ["control plane", "durable state", "workers", "task ledger", "idempotency", "queue"],
+    minimumPlatformBuildMatches: 3,
+    topTextPercent: 60,
+    architectureTerms: ["source probes", "task ledger", "signal gates", "durable workers", "Postgres-backed durable state"],
+    minimumArchitectureMatchesInBullet: 3,
+    outcomePatterns: [
+      "[0-9][0-9,]*\\s+task runs",
+      "[0-9][0-9,]*\\s+internal consumers",
+      "[0-9]+%\\s+of injected worker failures"
+    ],
+    severity: "error",
+    reworkAgent: "evidence-auditor"
+  };
+}
+
+function semanticBulletReviewGate(manualReviewStatus) {
+  return {
+    enabled: true,
+    conceptGroups: [
+      { id: "planning", terms: ["task planning", "planning"] },
+      { id: "state", terms: ["state files", "state management"] },
+      { id: "recovery", terms: ["recovery leases", "recovery"] },
+      { id: "scheduling", terms: ["scheduler locks", "scheduling"] },
+      { id: "approvals", terms: ["approval gates", "approval checkpoints"] }
+    ],
+    minimumSharedConcepts: 3,
+    postingPhrases: [
+      "platform primitives",
+      "task planning",
+      "state management",
+      "recovery",
+      "scheduling"
+    ],
+    minimumPostingPhraseMatches: 2,
+    proofPatterns: [
+      "[0-9]+%",
+      "[0-9][0-9,]*\\s+(runs|tasks|workers|users|agents|evaluations)",
+      "local deployment",
+      "internal consumers"
+    ],
+    manualReviewStatus,
+    manualReviewNotes: manualReviewStatus === "pass" ? "Reviewed by evidence and voice auditors." : "",
+    severity: "error",
+    reworkAgent: "voice-auditor"
   };
 }
 

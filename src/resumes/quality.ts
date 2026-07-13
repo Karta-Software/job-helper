@@ -26,6 +26,49 @@ export type KeywordMatchGateConfig = {
   reworkAgent: string;
 };
 
+export type AgentPlatformEvidenceDimensionConfig = {
+  id: string;
+  terms: string[];
+  minimumTermMatches?: number;
+  evidenceStatus: "supported" | "adjacent" | "project-only" | "do-not-claim" | string;
+  evidenceRefs: string[];
+};
+
+export type AgentPlatformEvidenceDepthGateConfig = {
+  enabled: boolean;
+  minimumDimensions: number;
+  dimensions: AgentPlatformEvidenceDimensionConfig[];
+  supportedStatuses?: string[];
+  usageOnlyTerms: string[];
+  platformBuildTerms: string[];
+  minimumPlatformBuildMatches: number;
+  topTextPercent: number;
+  architectureTerms: string[];
+  minimumArchitectureMatchesInBullet: number;
+  outcomePatterns: string[];
+  minimumOutcomeMatches?: number;
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
+export type SemanticConceptGroupConfig = {
+  id: string;
+  terms: string[];
+};
+
+export type SemanticBulletReviewGateConfig = {
+  enabled: boolean;
+  conceptGroups: SemanticConceptGroupConfig[];
+  minimumSharedConcepts: number;
+  postingPhrases: string[];
+  minimumPostingPhraseMatches: number;
+  proofPatterns: string[];
+  manualReviewStatus: "not-reviewed" | "pass" | "fail";
+  manualReviewNotes?: string;
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type PrivateLeakGateConfig = {
   enabled: boolean;
   patterns: string[];
@@ -185,6 +228,8 @@ export type ResumeQualityGatesConfig = {
     achievementBullets?: RangeGateConfig;
     requiredSections?: RequiredSectionsGateConfig;
     keywordMatch?: KeywordMatchGateConfig;
+    agentPlatformEvidenceDepth?: AgentPlatformEvidenceDepthGateConfig;
+    semanticBulletReview?: SemanticBulletReviewGateConfig;
     privateLeak?: PrivateLeakGateConfig;
     unsupportedTerms?: UnsupportedTermsGateConfig;
     targetBranding?: TargetBrandingGateConfig;
@@ -271,6 +316,8 @@ export function evaluateResumeQuality(
   addRangeGateResult(results, "achievementBullets", config.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatchResult(results, config.gates.keywordMatch, snapshot);
+  addAgentPlatformEvidenceDepthResult(results, config.gates.agentPlatformEvidenceDepth, snapshot);
+  addSemanticBulletReviewResult(results, config.gates.semanticBulletReview, snapshot.achievementBullets || []);
   addNumericConsistencyResult(results, config.gates.numericConsistency, snapshot.resumeText);
   addPrivateLeakResult(results, config.gates.privateLeak, snapshot.resumeText);
   addApprovedSkillClaimsResult(results, config.gates.approvedSkillClaims, snapshot.resumeText);
@@ -452,6 +499,159 @@ function addKeywordMatchResult(
       percent >= gate.minimumPercent
         ? `Keyword match passed at ${percent}% against ${sourceLabel}.`
         : `Keyword match is ${percent}% against ${sourceLabel}; missing: ${keywords.filter((keyword) => !matched.includes(keyword)).join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addAgentPlatformEvidenceDepthResult(
+  results: ResumeQualityGateResult[],
+  gate: AgentPlatformEvidenceDepthGateConfig | undefined,
+  snapshot: ResumeQualitySnapshot
+): void {
+  if (!gate?.enabled) return;
+
+  const supportedStatuses = new Set((gate.supportedStatuses || ["supported"]).map(normalizeTerm));
+  const supportedDimensions = gate.dimensions.filter((dimension) => {
+    const termMatches = dimension.terms.filter((term) => containsSearchTerm(snapshot.resumeText, term));
+    const hasSource = dimension.evidenceRefs.some((ref) => ref.trim().length > 0);
+    return hasSource &&
+      supportedStatuses.has(normalizeTerm(dimension.evidenceStatus)) &&
+      termMatches.length >= (dimension.minimumTermMatches ?? 1);
+  });
+  const missingDimensions = gate.dimensions.filter((dimension) => !supportedDimensions.includes(dimension));
+  results.push({
+    gateId: "agentPlatformEvidenceDepth",
+    passed: supportedDimensions.length >= gate.minimumDimensions,
+    severity: gate.severity,
+    measured: supportedDimensions.length,
+    expected: `at least ${gate.minimumDimensions} source-backed agent-platform evidence dimensions`,
+    message:
+      supportedDimensions.length >= gate.minimumDimensions
+        ? `Source-backed agent-platform evidence covers: ${supportedDimensions.map((dimension) => dimension.id).join(", ")}.`
+        : `Only ${supportedDimensions.length} source-backed agent-platform dimensions passed; expected ${gate.minimumDimensions}. Missing or weak: ${missingDimensions.map((dimension) => dimension.id).join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+
+  const usageOnlyMatches = gate.usageOnlyTerms.filter((term) => containsSearchTerm(snapshot.resumeText, term));
+  const platformBuildMatches = gate.platformBuildTerms.filter((term) => containsSearchTerm(snapshot.resumeText, term));
+  const buildingPassed = platformBuildMatches.length >= gate.minimumPlatformBuildMatches;
+  results.push({
+    gateId: "agentPlatformEvidenceDepth.buildingVsUsing",
+    passed: buildingPassed,
+    severity: gate.severity,
+    measured: platformBuildMatches.length,
+    expected: `at least ${gate.minimumPlatformBuildMatches} platform-building signals`,
+    message: buildingPassed
+      ? `Platform-building signals matched: ${platformBuildMatches.join(", ")}.`
+      : `Agent-tool usage${usageOnlyMatches.length > 0 ? ` (${usageOnlyMatches.join(", ")})` : ""} does not prove platform construction; only ${platformBuildMatches.length} platform-building signals matched.`,
+    reworkAgent: gate.reworkAgent
+  });
+
+  const normalizedResumeText = normalizeSearchText(snapshot.resumeText);
+  const topTextEnd = Math.floor(normalizedResumeText.length * (gate.topTextPercent / 100));
+  const topText = normalizedResumeText.slice(0, topTextEnd);
+  const topBullets = (snapshot.achievementBullets || []).filter((bullet) => {
+    const normalizedBullet = normalizeSearchText(bullet);
+    const bulletStart = normalizedResumeText.indexOf(normalizedBullet);
+    return Boolean(normalizedBullet) && bulletStart >= 0 && bulletStart <= topTextEnd;
+  });
+  const architectureMatches = topBullets.map((bullet) => ({
+    bullet,
+    terms: gate.architectureTerms.filter((term) => containsSearchTerm(bullet, term))
+  }));
+  const strongestArchitectureBullet = architectureMatches
+    .sort((left, right) => right.terms.length - left.terms.length)[0];
+  const architecturePassed = Boolean(
+    strongestArchitectureBullet &&
+    strongestArchitectureBullet.terms.length >= gate.minimumArchitectureMatchesInBullet
+  );
+  results.push({
+    gateId: "agentPlatformEvidenceDepth.architectureTopHalf",
+    passed: architecturePassed,
+    severity: gate.severity,
+    measured: strongestArchitectureBullet?.terms.length || 0,
+    expected: `one top-${gate.topTextPercent}% bullet with at least ${gate.minimumArchitectureMatchesInBullet} architecture signals`,
+    message: architecturePassed
+      ? `Top-half architecture bullet matched: ${strongestArchitectureBullet?.terms.join(", ")}.`
+      : `No bullet in the top ${gate.topTextPercent}% contains ${gate.minimumArchitectureMatchesInBullet} configured architecture signals.`,
+    reworkAgent: gate.reworkAgent
+  });
+
+  const topOutcomeText = `${topText} ${topBullets.join(" ")}`;
+  const matchedOutcomes = gate.outcomePatterns.filter((pattern) => matchesPatternOrTerm(topOutcomeText, pattern));
+  const minimumOutcomeMatches = gate.minimumOutcomeMatches ?? 1;
+  results.push({
+    gateId: "agentPlatformEvidenceDepth.outcomeTopHalf",
+    passed: matchedOutcomes.length >= minimumOutcomeMatches,
+    severity: gate.severity,
+    measured: matchedOutcomes.length,
+    expected: `at least ${minimumOutcomeMatches} measured outcome in the top ${gate.topTextPercent}%`,
+    message:
+      matchedOutcomes.length >= minimumOutcomeMatches
+        ? `Top-half measured outcomes matched: ${matchedOutcomes.join(", ")}.`
+        : `No configured measured agent-platform outcome appears in the top ${gate.topTextPercent}% of resume text.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addSemanticBulletReviewResult(
+  results: ResumeQualityGateResult[],
+  gate: SemanticBulletReviewGateConfig | undefined,
+  achievementBullets: string[]
+): void {
+  if (!gate?.enabled) return;
+
+  const duplicatePairs: Array<{ sharedConcepts: SemanticConceptGroupConfig[] }> = [];
+  for (let leftIndex = 0; leftIndex < achievementBullets.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < achievementBullets.length; rightIndex += 1) {
+      const sharedConcepts = gate.conceptGroups.filter((group) =>
+        group.terms.some((term) => containsSearchTerm(achievementBullets[leftIndex], term)) &&
+        group.terms.some((term) => containsSearchTerm(achievementBullets[rightIndex], term))
+      );
+      if (sharedConcepts.length >= gate.minimumSharedConcepts) duplicatePairs.push({ sharedConcepts });
+    }
+  }
+  results.push({
+    gateId: "semanticBulletReview.duplicateConcepts",
+    passed: duplicatePairs.length === 0,
+    severity: gate.severity,
+    measured: duplicatePairs.length,
+    expected: "no achievement-bullet pair repeats the configured concept threshold",
+    message:
+      duplicatePairs.length === 0
+        ? "No achievement-bullet pair repeats too many configured concepts."
+        : `${duplicatePairs.length} bullet pair(s) repeat the same underlying concepts: ${duplicatePairs.map((pair) => pair.sharedConcepts.map((group) => group.id).join("/")).join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+
+  const postingEchoes = achievementBullets.filter((bullet) => {
+    const phraseMatches = gate.postingPhrases.filter((phrase) => containsSearchTerm(bullet, phrase));
+    const hasProof = gate.proofPatterns.some((pattern) => matchesPatternOrTerm(bullet, pattern));
+    return phraseMatches.length >= gate.minimumPostingPhraseMatches && !hasProof;
+  });
+  results.push({
+    gateId: "semanticBulletReview.postingEchoWithoutProof",
+    passed: postingEchoes.length === 0,
+    severity: gate.severity,
+    measured: postingEchoes.length,
+    expected: "no posting-like bullet without concrete proof",
+    message:
+      postingEchoes.length === 0
+        ? "No achievement bullet echoes multiple posting phrases without concrete proof."
+        : `${postingEchoes.length} achievement bullet(s) echo posting language without a configured metric, scope, user, or deployment proof.`,
+    reworkAgent: gate.reworkAgent
+  });
+
+  const manualReviewPassed = gate.manualReviewStatus === "pass" && Boolean(gate.manualReviewNotes?.trim());
+  results.push({
+    gateId: "semanticBulletReview.manualReview",
+    passed: manualReviewPassed,
+    severity: gate.severity,
+    measured: manualReviewPassed ? 1 : 0,
+    expected: "explicit semantic and voice review marked pass with notes",
+    message: manualReviewPassed
+      ? `Manual semantic review passed: ${gate.manualReviewNotes?.trim()}`
+      : "Manual semantic review is required. Record a pass with notes after checking duplicate meaning, posting mimicry, evidence, and natural voice.",
     reworkAgent: gate.reworkAgent
   });
 }
