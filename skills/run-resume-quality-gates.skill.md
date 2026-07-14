@@ -22,6 +22,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - achievement bullet count
 - required sections
 - keyword match against the posting
+- configured `evidenceAnchors` for source-backed signature claims and approved public wording
 - configured `agentPlatformEvidenceDepth` for agent-platform roles; at least four source-backed evidence dimensions, platform-building proof rather than tool usage, a top-half architecture bullet, and a top-half measured outcome
 - configured `semanticBulletReview`; duplicate-concept detection, posting-echo detection, and a recorded manual semantic/voice review
 - configured metric/proof signal count when reviewer feedback asks for numbers
@@ -45,6 +46,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
    For one-page resumes, bottom whitespace should roughly match the page margins, usually around 3% to 3.5% of printable content height.
    Also measure the final PDF visually when possible: render page 1 to pixels, find the non-white content bounding box, and compare bottom gap against the top/side reference margin.
    Rendered text-line count must be measured from the final artifact or reported as unmeasured; do not substitute source Markdown line count.
+   When visual proof is part of the package, pass the final page image through `artifactFreshness`. The proof image must exist and its modification time must be at or after the final PDF.
 3. Compare measurements to configured gates.
    Disclose any required sections inferred from header structure rather than explicit section headings.
 4. Compare resume keywords against the posting keywords and label whether the comparison used configured required keywords, supplied posting keywords, or extracted posting keywords.
@@ -52,30 +54,32 @@ Use after rendering a resume draft and before moving it to completed resumes.
 5. For agent-platform, AI-platform, or agent-foundations roles, run `agentPlatformEvidenceDepth`.
    Count a dimension only when resume language matches it, the evidence status is `supported`, and at least one source reference is recorded. Using Claude Code, Codex, or another harness does not satisfy platform-building proof by itself.
    Require at least four of six dimensions: deployment boundary, users/consumers, durable state/runtime, failure/idempotency, observability/evaluations, and scale/measured outcome. Also require one architecture-rich bullet and one measured outcome in the configured top section.
-6. Run `semanticBulletReview` when the resume is heavily tailored or repeats posting language.
+6. Run `evidenceAnchors` when the private graph identifies signature evidence that must survive tailoring.
+   Each anchor needs an approved evidence status, at least one evidence reference, required public terms, optional acceptable alternatives, and any forbidden weakening or private-boundary terms. A missing or generalized anchor is a blocking evidence failure, even when keyword and evidence-depth gates pass.
+7. Run `semanticBulletReview` when the resume is heavily tailored or repeats posting language.
    Mechanical checks may flag duplicate concepts and posting echoes without proof. A human or designated voice agent must still record `manualReviewStatus: pass` with notes.
-7. Check `metricSignals` when configured.
+8. Check `metricSignals` when configured.
    Count only configured proof phrases so safe scope metrics, verified programs, and sourced outcome metrics are explicit; do not count random dates as proof by accident.
-8. Check `numericConsistency` when configured.
+9. Check `numericConsistency` when configured.
    Extract named numbers, verify the configured relationships, and block ambiguous labels where the number is true but the surrounding noun changes the meaning.
    Examples: reviewed-PR commit totals must be greater than or equal to reviewed PR count, defect-rate start values should be greater than end values, and revenue counts should not be reused as customer counts.
-9. Fail the run when any `error` gate fails.
-10. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
+10. Fail the run when any `error` gate fails.
+11. Check `approvedSkillClaims` when the role has skill/tool keywords and a skill inventory is available.
    This is a positive inventory gate: denylist checks are not enough.
-11. Check `educationWording` when candidate defaults define exact education wording.
+12. Check `educationWording` when candidate defaults define exact education wording.
    Use this when old artifacts may contain stale degree labels. For example, if the configured default is `Bachelor's Degree in Computer Science`, block `Bachelor of Science` and `Bachelor of Arts` unless the user explicitly changes the standard.
-12. Check `targetBranding` when the target company is known.
+13. Check `targetBranding` when the target company is known.
    Target company names belong in private strategy artifacts by default, not in the public resume text or final filename.
-13. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
+14. Check `reviewerPrinciples` when trusted reviewer feedback has been classified as required.
    Each required principle should produce a named `reviewerPrinciples.*` result so the report can prove whether it passed.
    For founder/operator resumes, enable `founderSignalBalance` and require all six named results to pass. Use existing top-half leadership/proof and metric-signal gates as supporting checks. A title-only `CTO` or `co-founder` mention is not sufficient.
-14. Inspect warning failures against the stated critique.
+15. Inspect warning failures against the stated critique.
    If a warning is the exact issue the reviewer or user complained about, do not mark the resume ready until it is resolved, tuned for the target, raised to `error`, or explicitly overridden.
-15. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
-16. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
-17. Update the private resume note/tracker with pass/fail status and the next rework action.
-18. If the resume still fails, keep it in rendered drafts and ask for a human decision.
-19. Move to completed resumes only after gates pass or a human override is recorded.
+16. Notify each gate's `reworkAgent` and cite the matching agent file in the report.
+17. Re-run `tailor-resume` until the gates pass or `agentRouting.maxIterations` is reached.
+18. Update the private resume note/tracker with pass/fail status and the next rework action.
+19. If the resume still fails, keep it in rendered drafts and ask for a human decision.
+20. Move to completed resumes only after gates pass or a human override is recorded.
 
 ## Agent Routing
 
@@ -92,6 +96,7 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Treat quality gates like CI checks.
 - Never pass page-count gates by trusting a user or agent-provided page number when a rendered PDF exists.
 - Never treat a browser-printed PDF with local file URL/date/page-number headers or footers as a completed resume.
+- Never accept a visual-inspection screenshot that predates the final PDF. Enable `artifactFreshness` and regenerate proof from the final PDF after the last content or layout change.
 - Do not pass one-page resumes that leave excessive bottom whitespace; route underfilled pages to `resume-writer`. A one-page resume with bottom whitespace much larger than the side and top margins is underfilled even when the page-utilization percentage passes a loose gate.
 - Prefer `visualBottomToReferenceMarginRatio` over the older `bottomWhitespacePercent` proxy when the user is reacting to what the PDF actually looks like.
 - Manual page or rendered-line counts require an explicit human override flag and must be called out in the report.

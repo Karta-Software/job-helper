@@ -27,6 +27,7 @@ Use when creating a role-specific resume version.
    For a current or former founder, record a positive `founderCommitmentBridge` in the private application/interview plan: why now, why this role, and why this organization. Do not add defensive transition prose to the resume.
 11. Read any available claim-significance ranking.
    Use it to decide which true claims deserve limited resume space after target-role relevance and claim confidence are considered.
+   Also load configured signature evidence anchors and the strongest prior relevant resume. Build a preservation table before drafting: `retain`, `retarget`, `defer with reason`, or `not relevant`. Enable `evidenceAnchors` for every retained or retargeted anchor. Do not let brevity, keyword optimization, or caution silently replace a supported specific claim with a generic one.
 12. Read any trusted reviewer principles or prior critique notes that apply to the role, source, or resume type.
    Build a principle application table before the draft is marked ready: `applied`, `partial`, `deferred`, or `not applicable`.
    Treat source-backed principles as workflow inputs, not optional comments.
@@ -53,6 +54,7 @@ Use when creating a role-specific resume version.
 26. Improve scanability with section contrast, role-block separation, selective proof-point bolding, and readable leading.
 27. Name the final artifact by candidate and role, not target company, unless there is an explicit human override.
 28. Run `run-resume-quality-gates`.
+    Confirm the rendered PDF, rendered-text verification, and saved page images were all produced from the same final source revision. Regenerate stale visual proof instead of carrying it forward from an earlier PDF.
 29. If any `error` gate fails, notify the mapped agent and rework the resume until it passes or reaches the configured iteration limit.
 30. If any required reviewer principle is `partial` or `deferred`, record the reason and route it to the mapped agent unless a human override is recorded.
 31. If it is approved for sending, save it to completed resumes and run `publish-resume`.

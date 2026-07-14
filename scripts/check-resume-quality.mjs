@@ -8,7 +8,7 @@ import { measurePdfVisualWhitespace } from "../src/resumes/pdf-visual-whitespace
 const args = parseArgs(process.argv.slice(2));
 
 if (!args.resume || !args.gates) {
-  console.error("Usage: node scripts/check-resume-quality.mjs --resume <file> --gates <file> [--posting <file>] [--pdf <file>] [--html <file>] [--browser <edge-or-chrome-path>] [--ghostscript <gs-path>] [--max-pages 1] [--allow-manual-pages --pages 1] [--allow-manual-lines --lines 80] [--out <file>]");
+  console.error("Usage: node scripts/check-resume-quality.mjs --resume <file> --gates <file> [--posting <file>] [--pdf <file>] [--visual-proof <file>] [--html <file>] [--browser <edge-or-chrome-path>] [--ghostscript <gs-path>] [--max-pages 1] [--allow-manual-pages --pages 1] [--allow-manual-lines --lines 80] [--out <file>]");
   process.exit(2);
 }
 
@@ -70,6 +70,10 @@ function buildSnapshot(raw, text, parsedArgs) {
   if (nonEmpty.length > 1 && !nonEmpty[1].startsWith("#")) inferredSections.push("Headline");
 
   const measurementWarnings = [];
+  const sourcePdfModifiedAtMs = fileModifiedAtMs(parsedArgs.pdf);
+  const artifactModifiedAtMs = {
+    visualProof: fileModifiedAtMs(parsedArgs["visual-proof"])
+  };
   let pageCount;
   let pageCountSource = "unmeasured";
   if (parsedArgs.pdf) {
@@ -151,6 +155,8 @@ function buildSnapshot(raw, text, parsedArgs) {
     sectionNames: unique([...sectionNames, ...inferredSections]),
     inferredSections: unique(inferredSections),
     artifactNames: artifactNamesFromArgs(parsedArgs),
+    sourcePdfModifiedAtMs,
+    artifactModifiedAtMs,
     measurementWarnings
   };
 }
@@ -168,6 +174,8 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRange(results, "achievementBullets", gates.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatch(results, gates.gates.keywordMatch, snapshot.resumeText, postingText);
+  addEvidenceAnchors(results, gates.gates.evidenceAnchors, snapshot.resumeText);
+  addArtifactFreshness(results, gates.gates.artifactFreshness, snapshot);
   addAgentPlatformEvidenceDepth(results, gates.gates.agentPlatformEvidenceDepth, snapshot);
   addSemanticBulletReview(results, gates.gates.semanticBulletReview, snapshot.achievementBullets);
   addMetricSignals(results, gates.gates.metricSignals, snapshot.resumeText);
@@ -281,6 +289,88 @@ function addKeywordMatch(results, gate, resumeText, postingText) {
     percent >= gate.minimumPercent
       ? `Keyword match passed at ${percent}% against ${usedConfiguredKeywords ? "configured required keywords" : "extracted posting keywords"}.`
       : `Keyword match is ${percent}% against ${usedConfiguredKeywords ? "configured required keywords" : "extracted posting keywords"}; missing: ${filtered.filter((keyword) => !matched.includes(keyword)).join(", ")}.`
+  ));
+}
+
+function addEvidenceAnchors(results, gate, resumeText) {
+  if (!gate?.enabled) return;
+
+  const supportedStatuses = new Set((gate.supportedStatuses || ["supported"]).map(normalize));
+  const anchorResults = (gate.anchors || []).map((anchor) => {
+    const missingRequired = (anchor.requiredTerms || []).filter((term) => !containsSearchTerm(resumeText, term));
+    const matchedAnyOf = (anchor.anyOfTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+    const minimumAnyOfMatches = anchor.minimumAnyOfMatches ?? (anchor.anyOfTerms?.length ? 1 : 0);
+    const forbiddenMatches = (anchor.forbiddenTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+    const hasSource = (anchor.evidenceRefs || []).some((ref) => String(ref).trim());
+    const statusSupported = supportedStatuses.has(normalize(anchor.evidenceStatus || ""));
+    const passed = missingRequired.length === 0 &&
+      matchedAnyOf.length >= minimumAnyOfMatches &&
+      forbiddenMatches.length === 0 &&
+      hasSource &&
+      statusSupported;
+    const problems = [];
+    if (missingRequired.length > 0) problems.push(`missing required terms: ${missingRequired.join(", ")}`);
+    if (matchedAnyOf.length < minimumAnyOfMatches) {
+      problems.push(`matched ${matchedAnyOf.length} of ${minimumAnyOfMatches} required alternative terms`);
+    }
+    if (forbiddenMatches.length > 0) problems.push(`forbidden weakening or boundary terms matched: ${forbiddenMatches.join(", ")}`);
+    if (!hasSource) problems.push("no evidence reference recorded");
+    if (!statusSupported) problems.push(`evidence status is ${anchor.evidenceStatus}`);
+
+    results.push(result(
+      `evidenceAnchors.${anchor.id}`,
+      gate,
+      passed,
+      problems.length,
+      "source-backed signature evidence preserved with approved public wording",
+      passed
+        ? `Evidence anchor ${anchor.id} preserved with source support.`
+        : `Evidence anchor ${anchor.id} failed: ${problems.join("; ")}.`
+    ));
+    return passed;
+  });
+
+  const passedCount = anchorResults.filter(Boolean).length;
+  results.push(result(
+    "evidenceAnchors",
+    gate,
+    passedCount === anchorResults.length,
+    passedCount,
+    `all ${anchorResults.length} configured evidence anchors preserved`,
+    passedCount === anchorResults.length
+      ? `All ${anchorResults.length} configured evidence anchors were preserved.`
+      : `${passedCount} of ${anchorResults.length} configured evidence anchors passed.`
+  ));
+}
+
+function addArtifactFreshness(results, gate, snapshot) {
+  if (!gate?.enabled) return;
+
+  const missing = [];
+  const stale = [];
+  if (snapshot.sourcePdfModifiedAtMs === undefined) missing.push("finalPdf");
+  for (const artifact of gate.requiredArtifacts || []) {
+    const modifiedAtMs = snapshot.artifactModifiedAtMs?.[artifact];
+    if (modifiedAtMs === undefined) {
+      missing.push(artifact);
+    } else if (snapshot.sourcePdfModifiedAtMs !== undefined && modifiedAtMs < snapshot.sourcePdfModifiedAtMs) {
+      stale.push(artifact);
+    }
+  }
+  const passed = missing.length === 0 && stale.length === 0;
+  const problems = [];
+  if (missing.length > 0) problems.push(`missing freshness measurements: ${missing.join(", ")}`);
+  if (stale.length > 0) problems.push(`older than final PDF: ${stale.join(", ")}`);
+
+  results.push(result(
+    "artifactFreshness",
+    gate,
+    passed,
+    (gate.requiredArtifacts || []).length - missing.length - stale.length,
+    `all ${(gate.requiredArtifacts || []).length} required proof artifacts generated at or after the final PDF`,
+    passed
+      ? `All required proof artifacts are at least as new as the final PDF: ${(gate.requiredArtifacts || []).join(", ")}.`
+      : `Artifact freshness failed: ${problems.join("; ")}.`
   ));
 }
 
@@ -981,6 +1071,15 @@ function artifactNamesFromArgs(parsedArgs) {
     .map((filePath) => path.basename(String(filePath))));
 }
 
+function fileModifiedAtMs(filePath) {
+  if (!filePath) return undefined;
+  try {
+    return fs.statSync(filePath).mtimeMs;
+  } catch {
+    return undefined;
+  }
+}
+
 function describeRange(gate) {
   const parts = [];
   if (gate.minimum !== undefined) parts.push(`minimum ${gate.minimum}`);
@@ -1016,14 +1115,14 @@ function normalize(value) {
 }
 
 function normalizeSearch(value) {
-  return normalize(value).replace(/[^A-Za-z0-9+#.]+/g, " ");
+  return normalize(value).replace(/[^A-Za-z0-9+#.]+/g, " ").trim();
 }
 
 function containsSearchTerm(value, term) {
-  const haystack = ` ${normalizeSearch(value)} `;
+  const haystack = normalizeSearch(value);
   const needle = normalizeSearch(term);
   if (!needle) return false;
-  const pattern = new RegExp(`\\s${escapeRegExp(needle).replace(/\s+/g, "\\s+")}\\s`, "i");
+  const pattern = new RegExp(`(?:^|\\s|[.,;:!?])${escapeRegExp(needle).replace(/\s+/g, "\\s+")}(?=$|\\s|[.,;:!?])`, "i");
   return pattern.test(haystack);
 }
 

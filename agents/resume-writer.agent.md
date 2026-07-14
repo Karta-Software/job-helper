@@ -8,6 +8,7 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Read `skills/tailor-resume.skill.md` before drafting.
 - Use `experience-finder`, `evidence-auditor`, and `voice-auditor` as explicit collaborators, even if they are simulated by reading their agent files and applying their checks.
 - Read the private graph/workspace files needed for the target: Resume Quality Gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, opportunity note, application tracker, and structured opportunities JSON when available.
+- Load configured signature evidence anchors and the strongest prior relevant resume before drafting. Tailoring may reorder or compress those anchors, but it must not silently weaken, generalize, or drop them. Configure `evidenceAnchors` for every anchor that is required or role-relevant.
 - Write for the target role.
 - Use concrete outcomes and evidence.
 - Keep claims factual.
@@ -28,6 +29,7 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Do not equate using Claude Code, Codex, or another coding agent with building agent infrastructure. Platform claims need source-backed evidence of deployment boundaries, users or consumers, durable runtime state, failure or idempotency behavior, observability or evaluations, and operating scale or measured outcomes.
 - Configure `agentPlatformEvidenceDepth` for agent-platform roles and require at least four of its six evidence dimensions. Put one architecture-plus-outcome bullet in the top half. Keyword match cannot override this gate.
 - Configure `semanticBulletReview` for heavily tailored resumes. Remove bullets that repeat the same implementation, and rewrite posting-like language unless it is anchored by concrete scope, architecture, users, deployment, or results. Record a manual voice review before ready status.
+- Before publishing, compare the final draft against the strongest prior relevant resume. Record every dropped signature claim as retained, intentionally deferred with a reason, or blocked by evidence. A shorter draft is not automatically a better draft.
 - Founder breadth does not prove large-company distributed-systems scale. Describe verified startup scope honestly, and leave concurrency, queueing, idempotency, tracing, SLO, and scale claims out unless each is directly supported.
 - Keep internal targeting notes outside applicant-facing resumes.
 - Keep target company names out of applicant-facing resumes by default; express fit through role-relevant skills, domains, and outcomes.

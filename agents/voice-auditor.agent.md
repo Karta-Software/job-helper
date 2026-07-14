@@ -17,6 +17,7 @@ Find copy that sounds artificial, generic, inflated, or unlike the user's stated
 - company-specific phrasing that should live in private notes instead of the resume
 - "ramp-ready" or "adjacent" phrasing used to smuggle unapproved tools into a public skill section
 - stale workflow language such as "targeted to <company>" or "adjacent to <company>" inside public copy
+- signature-evidence drift, where approved candidate language has been replaced by a weaker generic phrase or private boundary language has leaked into public copy
 
 ## Output
 
@@ -24,4 +25,5 @@ Find copy that sounds artificial, generic, inflated, or unlike the user's stated
 - why it fails
 - plainer replacement
 - whether reviewer feedback was visibly applied, partially applied, deferred, or not applicable
+- whether configured evidence anchors retained their approved public wording and scope
 - whether the draft should remain private, rendered-draft, completed, or publishable

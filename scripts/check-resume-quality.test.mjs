@@ -833,6 +833,107 @@ Senior Engineer
   });
 });
 
+test("CLI fails when signature evidence is weakened or boundary language leaks", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Target Role
+
+## Professional Experience
+
+- Built a local Codex workflow with Windmill.
+- Designed Python/C++ microcontroller controls for live physical operations.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { evidenceAnchors: evidenceAnchorsGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors.windmillPlatform").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors.avalancheIot").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors").passed, false);
+  });
+});
+
+test("CLI passes source-backed signature evidence with approved public wording", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Target Role
+
+## Professional Experience
+
+- Built and operated a self-hosted Windmill agent platform for engineering workflows with durable workers and human approval gates.
+- Designed and delivered a Python/C++ microcontroller-based IoT control system for live physical operations.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { evidenceAnchors: evidenceAnchorsGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0, run.stdout);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors.windmillPlatform").passed, true);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors.avalancheIot").passed, true);
+    assert.equal(report.results.find((result) => result.gateId === "evidenceAnchors").passed, true);
+  });
+});
+
+test("CLI fails when the visual proof is older than the final PDF", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { artifactFreshness: artifactFreshnessGate() }
+    );
+    const visualProof = path.join(workspace, "pdf-page-1.png");
+    fs.writeFileSync(visualProof, "visual proof");
+    const oldTime = new Date("2026-01-01T00:00:00Z");
+    const newTime = new Date("2026-01-02T00:00:00Z");
+    fs.utimesSync(visualProof, oldTime, oldTime);
+    fs.utimesSync(paths.pdf, newTime, newTime);
+
+    const run = runChecker(paths, ["--max-pages", "1", "--visual-proof", visualProof]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    const freshness = report.results.find((result) => result.gateId === "artifactFreshness");
+    assert.equal(freshness.passed, false);
+    assert.match(freshness.message, /older than final PDF: visualProof/);
+  });
+});
+
+test("CLI passes when the visual proof was generated after the final PDF", () => {
+  usingTempWorkspace((workspace) => {
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { artifactFreshness: artifactFreshnessGate() }
+    );
+    const visualProof = path.join(workspace, "pdf-page-1.png");
+    fs.writeFileSync(visualProof, "visual proof");
+    const oldTime = new Date("2026-01-01T00:00:00Z");
+    const newTime = new Date("2026-01-02T00:00:00Z");
+    fs.utimesSync(paths.pdf, oldTime, oldTime);
+    fs.utimesSync(visualProof, newTime, newTime);
+
+    const run = runChecker(paths, ["--max-pages", "1", "--visual-proof", visualProof]);
+
+    assert.equal(run.status, 0, run.stdout);
+    const report = JSON.parse(run.stdout);
+    const freshness = report.results.find((result) => result.gateId === "artifactFreshness");
+    assert.equal(freshness.passed, true);
+  });
+});
+
 function runChecker(paths, extraArgs) {
   const run = spawnSync(
     process.execPath,
@@ -853,6 +954,39 @@ function runChecker(paths, extraArgs) {
   );
   assert.equal(run.stderr, "");
   return run;
+}
+
+function evidenceAnchorsGate() {
+  return {
+    enabled: true,
+    supportedStatuses: ["supported"],
+    anchors: [
+      {
+        id: "windmillPlatform",
+        requiredTerms: ["self-hosted Windmill agent platform", "durable workers", "human approval gates"],
+        forbiddenTerms: ["local Codex", "76 merged", "11 scripts", "6 validators"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["evidence/windmill.md"]
+      },
+      {
+        id: "avalancheIot",
+        requiredTerms: ["Python/C++", "microcontroller-based IoT control system", "live physical operations"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["experience/avalanche.md"]
+      }
+    ],
+    severity: "error",
+    reworkAgent: "evidence-auditor"
+  };
+}
+
+function artifactFreshnessGate() {
+  return {
+    enabled: true,
+    requiredArtifacts: ["visualProof"],
+    severity: "error",
+    reworkAgent: "resume-writer"
+  };
 }
 
 function writeQualityInputs(workspace, pdfContent, extraGates = {}, options = {}) {

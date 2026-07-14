@@ -21,4 +21,5 @@ Challenge resume and application claims before they become public.
   Safe scope metrics can include years owned, peak team size, direct commits, multi-author history, PR-numbered work, product surface, module/file scope, customer-facing delivery, or verified program participation.
 - Mark attractive but unsourced numbers as deferred instead of letting them into applicant-facing copy.
 - Prefer precise, defensible wording over impressive wording.
+- Treat evidence loss as a claim failure too. When a current source and prior approved resume support a specific public phrase, do not downgrade it to a vague umbrella term unless the version note records why. Run configured `evidenceAnchors` and fail missing, weakened, unsourced, or boundary-leaking anchors.
 - Add or update private evidence-gap notes when a useful claim should be kept but cannot yet be safely used.

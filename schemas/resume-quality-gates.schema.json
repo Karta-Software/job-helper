@@ -50,6 +50,8 @@
             "reworkAgent": { "type": "string" }
           }
         },
+        "evidenceAnchors": { "$ref": "#/$defs/evidenceAnchorsGate" },
+        "artifactFreshness": { "$ref": "#/$defs/artifactFreshnessGate" },
         "agentPlatformEvidenceDepth": { "$ref": "#/$defs/agentPlatformEvidenceDepthGate" },
         "semanticBulletReview": { "$ref": "#/$defs/semanticBulletReviewGate" },
         "metricSignals": {
@@ -312,6 +314,74 @@
           "minItems": 1,
           "items": { "type": "string" }
         }
+      }
+    },
+    "evidenceAnchorsGate": {
+      "type": "object",
+      "required": ["enabled", "anchors", "severity", "reworkAgent"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidenceAnchor" }
+        },
+        "supportedStatuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
+      }
+    },
+    "evidenceAnchor": {
+      "type": "object",
+      "required": ["id", "evidenceStatus", "evidenceRefs"],
+      "properties": {
+        "id": { "type": "string" },
+        "requiredTerms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "anyOfTerms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "minimumAnyOfMatches": { "type": "integer", "minimum": 1 },
+        "forbiddenTerms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidenceStatus": {
+          "enum": ["supported", "adjacent", "project-only", "do-not-claim"]
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      },
+      "anyOf": [
+        { "required": ["requiredTerms"] },
+        { "required": ["anyOfTerms"] }
+      ]
+    },
+    "artifactFreshnessGate": {
+      "type": "object",
+      "required": ["enabled", "requiredArtifacts", "severity", "reworkAgent"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "requiredArtifacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["visualProof"]
+          }
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
       }
     },
     "agentPlatformEvidenceDepthGate": {

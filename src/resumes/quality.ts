@@ -26,6 +26,31 @@ export type KeywordMatchGateConfig = {
   reworkAgent: string;
 };
 
+export type EvidenceAnchorConfig = {
+  id: string;
+  requiredTerms?: string[];
+  anyOfTerms?: string[];
+  minimumAnyOfMatches?: number;
+  forbiddenTerms?: string[];
+  evidenceStatus: "supported" | "adjacent" | "project-only" | "do-not-claim" | string;
+  evidenceRefs: string[];
+};
+
+export type EvidenceAnchorsGateConfig = {
+  enabled: boolean;
+  anchors: EvidenceAnchorConfig[];
+  supportedStatuses?: string[];
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
+export type ArtifactFreshnessGateConfig = {
+  enabled: boolean;
+  requiredArtifacts: string[];
+  severity: ResumeQualityGateSeverity;
+  reworkAgent: string;
+};
+
 export type AgentPlatformEvidenceDimensionConfig = {
   id: string;
   terms: string[];
@@ -228,6 +253,8 @@ export type ResumeQualityGatesConfig = {
     achievementBullets?: RangeGateConfig;
     requiredSections?: RequiredSectionsGateConfig;
     keywordMatch?: KeywordMatchGateConfig;
+    evidenceAnchors?: EvidenceAnchorsGateConfig;
+    artifactFreshness?: ArtifactFreshnessGateConfig;
     agentPlatformEvidenceDepth?: AgentPlatformEvidenceDepthGateConfig;
     semanticBulletReview?: SemanticBulletReviewGateConfig;
     privateLeak?: PrivateLeakGateConfig;
@@ -267,6 +294,8 @@ export type ResumeQualitySnapshot = {
   postingKeywords?: string[];
   artifactNames?: string[];
   measurementWarnings?: string[];
+  sourcePdfModifiedAtMs?: number;
+  artifactModifiedAtMs?: Record<string, number | undefined>;
 };
 
 export type ResumeQualityGateResult = {
@@ -316,6 +345,8 @@ export function evaluateResumeQuality(
   addRangeGateResult(results, "achievementBullets", config.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);
   addKeywordMatchResult(results, config.gates.keywordMatch, snapshot);
+  addEvidenceAnchorsResult(results, config.gates.evidenceAnchors, snapshot.resumeText);
+  addArtifactFreshnessResult(results, config.gates.artifactFreshness, snapshot);
   addAgentPlatformEvidenceDepthResult(results, config.gates.agentPlatformEvidenceDepth, snapshot);
   addSemanticBulletReviewResult(results, config.gates.semanticBulletReview, snapshot.achievementBullets || []);
   addNumericConsistencyResult(results, config.gates.numericConsistency, snapshot.resumeText);
@@ -499,6 +530,102 @@ function addKeywordMatchResult(
       percent >= gate.minimumPercent
         ? `Keyword match passed at ${percent}% against ${sourceLabel}.`
         : `Keyword match is ${percent}% against ${sourceLabel}; missing: ${keywords.filter((keyword) => !matched.includes(keyword)).join(", ")}.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addEvidenceAnchorsResult(
+  results: ResumeQualityGateResult[],
+  gate: EvidenceAnchorsGateConfig | undefined,
+  resumeText: string
+): void {
+  if (!gate?.enabled) return;
+
+  const supportedStatuses = new Set((gate.supportedStatuses || ["supported"]).map(normalizeTerm));
+  const anchorResults = gate.anchors.map((anchor) => {
+    const missingRequired = (anchor.requiredTerms || []).filter((term) => !containsSearchTerm(resumeText, term));
+    const matchedAnyOf = (anchor.anyOfTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+    const minimumAnyOfMatches = anchor.minimumAnyOfMatches ?? (anchor.anyOfTerms?.length ? 1 : 0);
+    const forbiddenMatches = (anchor.forbiddenTerms || []).filter((term) => containsSearchTerm(resumeText, term));
+    const hasSource = anchor.evidenceRefs.some((ref) => ref.trim().length > 0);
+    const statusSupported = supportedStatuses.has(normalizeTerm(anchor.evidenceStatus));
+    const passed = missingRequired.length === 0 &&
+      matchedAnyOf.length >= minimumAnyOfMatches &&
+      forbiddenMatches.length === 0 &&
+      hasSource &&
+      statusSupported;
+    const problems: string[] = [];
+    if (missingRequired.length > 0) problems.push(`missing required terms: ${missingRequired.join(", ")}`);
+    if (matchedAnyOf.length < minimumAnyOfMatches) {
+      problems.push(`matched ${matchedAnyOf.length} of ${minimumAnyOfMatches} required alternative terms`);
+    }
+    if (forbiddenMatches.length > 0) problems.push(`forbidden weakening or boundary terms matched: ${forbiddenMatches.join(", ")}`);
+    if (!hasSource) problems.push("no evidence reference recorded");
+    if (!statusSupported) problems.push(`evidence status is ${anchor.evidenceStatus}`);
+
+    results.push({
+      gateId: `evidenceAnchors.${anchor.id}`,
+      passed,
+      severity: gate.severity,
+      measured: problems.length,
+      expected: "source-backed signature evidence preserved with approved public wording",
+      message: passed
+        ? `Evidence anchor ${anchor.id} preserved with source support.`
+        : `Evidence anchor ${anchor.id} failed: ${problems.join("; ")}.`,
+      reworkAgent: gate.reworkAgent
+    });
+
+    return passed;
+  });
+
+  const passedCount = anchorResults.filter(Boolean).length;
+  results.push({
+    gateId: "evidenceAnchors",
+    passed: passedCount === anchorResults.length,
+    severity: gate.severity,
+    measured: passedCount,
+    expected: `all ${anchorResults.length} configured evidence anchors preserved`,
+    message: passedCount === anchorResults.length
+      ? `All ${anchorResults.length} configured evidence anchors were preserved.`
+      : `${passedCount} of ${anchorResults.length} configured evidence anchors passed.`,
+    reworkAgent: gate.reworkAgent
+  });
+}
+
+function addArtifactFreshnessResult(
+  results: ResumeQualityGateResult[],
+  gate: ArtifactFreshnessGateConfig | undefined,
+  snapshot: ResumeQualitySnapshot
+): void {
+  if (!gate?.enabled) return;
+
+  const missing: string[] = [];
+  const stale: string[] = [];
+  if (snapshot.sourcePdfModifiedAtMs === undefined) {
+    missing.push("finalPdf");
+  }
+  for (const artifact of gate.requiredArtifacts) {
+    const modifiedAtMs = snapshot.artifactModifiedAtMs?.[artifact];
+    if (modifiedAtMs === undefined) {
+      missing.push(artifact);
+    } else if (snapshot.sourcePdfModifiedAtMs !== undefined && modifiedAtMs < snapshot.sourcePdfModifiedAtMs) {
+      stale.push(artifact);
+    }
+  }
+  const passed = missing.length === 0 && stale.length === 0;
+  const problems: string[] = [];
+  if (missing.length > 0) problems.push(`missing freshness measurements: ${missing.join(", ")}`);
+  if (stale.length > 0) problems.push(`older than final PDF: ${stale.join(", ")}`);
+
+  results.push({
+    gateId: "artifactFreshness",
+    passed,
+    severity: gate.severity,
+    measured: gate.requiredArtifacts.length - missing.length - stale.length,
+    expected: `all ${gate.requiredArtifacts.length} required proof artifacts generated at or after the final PDF`,
+    message: passed
+      ? `All required proof artifacts are at least as new as the final PDF: ${gate.requiredArtifacts.join(", ")}.`
+      : `Artifact freshness failed: ${problems.join("; ")}.`,
     reworkAgent: gate.reworkAgent
   });
 }
@@ -1285,14 +1412,14 @@ function normalizeTerm(term: string): string {
 }
 
 function normalizeSearchText(text: string): string {
-  return normalizeTerm(text.replace(/[^A-Za-z0-9+#.]+/g, " "));
+  return normalizeTerm(text.replace(/[^A-Za-z0-9+#.]+/g, " ")).trim();
 }
 
 function containsSearchTerm(value: string, term: string): boolean {
-  const haystack = ` ${normalizeSearchText(value)} `;
+  const haystack = normalizeSearchText(value);
   const needle = normalizeSearchText(term);
   if (!needle) return false;
-  const pattern = new RegExp(`\\s${escapeRegExp(needle).replace(/\s+/g, "\\s+")}\\s`, "i");
+  const pattern = new RegExp(`(?:^|\\s|[.,;:!?])${escapeRegExp(needle).replace(/\s+/g, "\\s+")}(?=$|\\s|[.,;:!?])`, "i");
   return pattern.test(haystack);
 }
 

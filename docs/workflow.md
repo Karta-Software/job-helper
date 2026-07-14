@@ -162,6 +162,7 @@ Use when there is a target role, company, or posting.
    Split each major employer/project into responsibility buckets, product/domain buckets, and proof-point buckets so the resume can target the role from the right angle instead of reusing the same anecdotes.
 7. Build a claim/evidence mix before drafting: durable skills, role-fit experience, scope, and outcomes come first; anecdotes are supporting citations, not the resume backbone.
    Classify required and preferred skills as `supported`, `adjacent`, `project-only`, or `do-not-claim`, with evidence references. Keywords do not change claim status.
+   Load the candidate's configured signature evidence anchors and the strongest prior relevant resume. Record whether each anchor will be retained, retargeted, deliberately deferred, or is not relevant. Configure `evidenceAnchors` for every retained or retargeted item.
 8. When founder/operator experience is the primary recent role, apply founder scope density before drafting.
    Translate the title into verified tenure, hands-on ownership, team scope, at least three target-relevant responsibility dimensions, and one safe scale or business signal when available. Build the draft to pass all six `founderSignalBalance` results. For established employers, record a positive transition rationale outside the resume.
 9. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
@@ -174,6 +175,7 @@ Use when there is a target role, company, or posting.
    Emphasize the candidate's matching domains, systems, language, and proof points; do not say "strong fit for <company>" or put the target company name in the applicant-facing resume by default.
 11. Rewrite the resume structure around the target role when needed.
    Strong tailoring means changing the headline, summary, skill groupings, bullet selection, bullet order, and domain emphasis. It is not enough to preserve the old resume and sprinkle in keywords.
+   Tailoring must not silently weaken approved evidence. If a prior specific claim becomes a generic phrase or disappears, the version note must explain why and the configured evidence anchor must still pass.
 12. Draft against section and length constraints.
 13. Audit evidence and voice.
    Configure `semanticBulletReview` when the resume is heavily tailored: detect bullets that repeat the same implementation, detect posting echoes without proof, and require a manual semantic/voice pass with notes.
@@ -185,6 +187,7 @@ Use when there is a target role, company, or posting.
 18. Run resume quality gates.
 19. Configure and run `educationWording` when candidate defaults require exact education wording or stale degree labels must be blocked.
 20. Verify the rendered PDF text for target-specific must-have and must-not-have phrases such as education wording, target-branding removal, and forbidden stale terms.
+   Regenerate page images and visual-inspection artifacts from that same final PDF. Enable `artifactFreshness` for packaged visual proof. A package with a current PDF and stale screenshots is not verified.
 21. Notify mapped agents for failed gates and rework until gates pass or the iteration limit is reached.
 22. Save completed artifact only after approval.
 23. Publish only through the configured portfolio handoff.
@@ -214,28 +217,30 @@ Use after rendering a resume draft.
    Keyword match cannot compensate for failed evidence-depth or claim-support gates.
 4. For agent-platform roles, check configured `agentPlatformEvidenceDepth`.
    Count only dimensions with matching resume language, `supported` evidence status, and source references. Require platform-building signals beyond Claude Code, Codex, or other agent-tool usage, plus a top-half architecture bullet and top-half measured outcome.
-5. Check configured `semanticBulletReview` when tailoring is substantial.
+5. Check configured `evidenceAnchors` for signature evidence that should survive tailoring.
+   Require source references, supported evidence status, approved public terms, and the absence of configured weakening or private-boundary terms. Failing to preserve a supported specific claim is a blocking evidence failure even when the new wording is technically true.
+6. Check configured `semanticBulletReview` when tailoring is substantial.
    Mechanically flag duplicate concepts and posting echoes without proof. Require `manualReviewStatus: pass` with notes because semantic duplication and AI-sounding mimicry still need judgment.
-6. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
+7. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
    This gate counts configured proof patterns, such as years owned, peak team size, direct commits, verified programs, sourced business metrics, or other safe metric phrases.
-7. Check configured `numericConsistency` when a resume has multiple related numbers or reviewer-sensitive metrics.
+8. Check configured `numericConsistency` when a resume has multiple related numbers or reviewer-sensitive metrics.
    This gate extracts named numeric claims, checks relationships such as totals, ratios, or minimum ordering, and blocks ambiguous wording where a true number is attached to the wrong label.
    Use it to keep counts like commits, reviewed PRs, revenue, retention, defect rates, and cost reductions internally consistent across the document.
-8. Check for unsupported technology or experience terms that are not backed by the graph.
+9. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
-9. Check approved skill claims against the configured skill inventory.
+10. Check approved skill claims against the configured skill inventory.
    A role keyword should not appear in applicant-facing resume text just because the posting asks for it. If the candidate has not approved the skill as resume-claimable, remove it or move it to private interview/prep notes.
-10. Check for private paths, internal notes, and application-only commentary.
-11. Check target branding.
+11. Check for private paths, internal notes, and application-only commentary.
+12. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-12. Check configured `reviewerPrinciples`.
+13. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
    When founder/operator experience is central, enable `founderSignalBalance`; all six named founder results must pass. Configure existing leadership, top-half proof, team-led wording, and `metricSignals` as supporting checks. A title-only founder mention should fail review.
-13. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
+14. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
-14. Treat `error` gate failures like CI failures.
-15. Route failures to the configured rework agent.
-16. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
+15. Treat `error` gate failures like CI failures.
+16. Route failures to the configured rework agent.
+17. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
 
 ### Score A Resume
 
