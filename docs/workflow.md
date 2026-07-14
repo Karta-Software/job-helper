@@ -262,6 +262,44 @@ Proof points should be selected like evidence in a sales pipeline. A memorable a
 
 Quantified anecdotes should pass a relevance test: the metric needs to prove a role-critical capability, clarify scope, show a repeatable operating pattern, or differentiate the candidate. A metric that is true but disconnected from the target role should move to interview prep or a proof bank.
 
+### Write And Grade A Cover Letter
+
+Use `skills/write-cover-letter.skill.md`, then `skills/run-cover-letter-quality-gates.skill.md`.
+
+A cover letter exists to show why this candidate is useful for this exact employer problem now. It should add motivation, interpretation, and a memorable proof story that the resume does not communicate efficiently. It should not restate the resume in paragraphs.
+
+Required workflow:
+
+1. Verify the company, role, requisition, recipient, posting, and current application context.
+2. Write explicit private answers for why company, why role, and why now.
+3. Map at least two employer needs to source-backed candidate evidence.
+4. Draft a one-page letter in the candidate's voice.
+5. Run `cover-letter-critic`, `evidence-auditor`, and `voice-auditor` independently.
+6. Run the company-swap test. If a competitor name can replace the employer without substantive changes, rewrite the letter.
+7. Record what the letter adds beyond the resume.
+8. Render the PDF and run `scripts/check-cover-letter-quality.mjs` with a private target-specific gate config.
+9. Promote the artifact only when the score is at least 85 and every blocking gate passes.
+
+Weighted rubric:
+
+- correct target and audience: 10
+- why this company, role, and moment: 15
+- understanding of the employer's problem: 15
+- evidence connected to role needs: 20
+- narrative added beyond the resume: 15
+- authentic and memorable voice: 10
+- evidence accuracy and boundaries: 10
+- structure and rendering: 5
+
+Decision thresholds:
+
+- `SEND`: 85-100 and all error gates pass.
+- `REVISE`: 75-84 and all error gates pass.
+- `REWRITE`: below 75 and all error gates pass.
+- `DO NOT SEND`: any error gate fails, regardless of score.
+
+Blocking gates cover target identity, one-page rendering, word count, source-backed evidence, two need-to-evidence bridges, direct motivation, company specificity, the company-swap test, resume complement, voice review, configured generic phrases, and verified referral use when applicable. Manual review notes are required because keyword matching cannot prove motivation, specificity, or authentic voice.
+
 ### Build An Experience Surface Map
 
 Use when a large role, employer, project, or consulting engagement is too broad to fit cleanly into one job description.

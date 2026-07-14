@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "thresholds": {
+    "send": 85,
+    "revise": 75
+  },
+  "gates": {
+    "wordCount": {
+      "minimum": 250,
+      "maximum": 450,
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "pages": {
+      "maximum": 1,
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "targetIdentity": {
+      "requiredTerms": ["Example Systems", "Senior Platform Engineer", "REQ-42", "Hiring Team"],
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "evidenceAnchors": {
+      "minimum": 2,
+      "supportedStatuses": ["supported"],
+      "anchors": [
+        {
+          "id": "durable-platform",
+          "requiredTerms": ["PostgreSQL-backed task state", "duplicate protection", "recovery"],
+          "evidenceStatus": "supported",
+          "evidenceRefs": ["private/evidence/platform.md"]
+        },
+        {
+          "id": "production-ownership",
+          "requiredTerms": ["AWS", "20 million requests", "deployment quality"],
+          "evidenceStatus": "supported",
+          "evidenceRefs": ["private/evidence/production.md"]
+        }
+      ],
+      "severity": "error",
+      "reworkAgent": "evidence-auditor"
+    },
+    "needEvidenceBridges": {
+      "minimum": 2,
+      "bridges": [
+        {
+          "id": "reliable-workflows",
+          "needTerms": ["reliable long-running workflows"],
+          "evidenceTerms": ["PostgreSQL-backed task state", "recovery"],
+          "evidenceRefs": ["private/evidence/platform.md"]
+        },
+        {
+          "id": "production-scale",
+          "needTerms": ["production ownership"],
+          "evidenceTerms": ["AWS", "20 million requests"],
+          "evidenceRefs": ["private/evidence/production.md"]
+        }
+      ],
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "companySpecificity": {
+      "requiredFacts": [
+        { "id": "mission", "terms": ["field technicians", "safety"] },
+        { "id": "platform", "terms": ["internal engineering teams", "long-running workflows"] }
+      ],
+      "minimumFacts": 2,
+      "companySwapStatus": "pass",
+      "companySwapNotes": "The mission and internal platform problem are specific to the verified Example Systems posting.",
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "motivationReview": {
+      "whyCompany": true,
+      "whyRole": true,
+      "whyNow": true,
+      "manualReviewStatus": "pass",
+      "manualReviewNotes": "The opening states the employer mission, target work, and current career transition directly.",
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "resumeComplement": {
+      "manualReviewStatus": "pass",
+      "manualReviewNotes": "The letter adds the operating lesson and motivation that the resume cannot show efficiently.",
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "voiceReview": {
+      "manualReviewStatus": "pass",
+      "manualReviewNotes": "The language is direct, candidate-owned, specific, and free of hype or posting mimicry.",
+      "severity": "error",
+      "reworkAgent": "voice-auditor"
+    },
+    "referral": {
+      "enabled": true,
+      "requiredTerms": ["former colleague referred me"],
+      "evidenceStatus": "supported",
+      "evidenceRefs": ["private/evidence/referral.md"],
+      "severity": "error",
+      "reworkAgent": "cover-letter-critic"
+    },
+    "forbiddenPhrases": {
+      "terms": ["thrilled to apply", "perfect fit", "believe I would be an asset", "passionate about leveraging"],
+      "severity": "error",
+      "reworkAgent": "voice-auditor"
+    }
+  },
+  "rubric": {
+    "manualReviewStatus": "pass",
+    "manualReviewNotes": "An independent reviewer scored the rendered letter against the posting and evidence map.",
+    "criteria": [
+      { "id": "targetAudience", "label": "Correct target and audience", "maximum": 10, "score": 10, "notes": "Company, role, requisition, and audience are correct." },
+      { "id": "whyCompanyRoleNow", "label": "Why this company, role, and moment", "maximum": 15, "score": 13, "notes": "The motivation is direct and specific to the current move." },
+      { "id": "employerProblem", "label": "Understanding of the employer's problem", "maximum": 15, "score": 14, "notes": "The letter identifies the exact platform problem without copying the posting." },
+      { "id": "evidenceConnection", "label": "Evidence connected to role needs", "maximum": 20, "score": 18, "notes": "Two clear need-to-proof bridges use sourced candidate evidence." },
+      { "id": "resumeComplement", "label": "Narrative added beyond the resume", "maximum": 15, "score": 13, "notes": "The letter adds motivation and one operating lesson beyond bullet repetition." },
+      { "id": "voice", "label": "Authentic and memorable voice", "maximum": 10, "score": 9, "notes": "The voice is plain, confident, and specific without inflated claims." },
+      { "id": "evidenceAccuracy", "label": "Evidence accuracy and boundaries", "maximum": 10, "score": 10, "notes": "Every public claim maps to a private evidence reference." },
+      { "id": "structure", "label": "Structure and rendering", "maximum": 5, "score": 5, "notes": "The final PDF is one page, readable, and free of clipping or browser furniture." }
+    ]
+  }
+}

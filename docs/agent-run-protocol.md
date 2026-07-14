@@ -73,6 +73,14 @@ Canonical resume workflow files:
 - `agents/evidence-auditor.agent.md`
 - `agents/voice-auditor.agent.md`
 
+Canonical cover-letter workflow files:
+
+- `skills/write-cover-letter.skill.md`
+- `skills/run-cover-letter-quality-gates.skill.md`
+- `agents/cover-letter-critic.agent.md`
+- `agents/evidence-auditor.agent.md`
+- `agents/voice-auditor.agent.md`
+
 Canonical workflow-critique file:
 
 - `skills/evolve-workflow.skill.md`
@@ -86,6 +94,14 @@ For resume tailoring:
 - Use `audit-resume`, `evidence-auditor`, and `voice-auditor` before treating copy as send-ready.
 - Use `run-resume-quality-gates` on the rendered artifact.
 - Use `publish-resume` only after completion approval.
+
+For cover letters:
+
+- Use `write-cover-letter` as the drafting workflow.
+- Use `cover-letter-critic`, `evidence-auditor`, and `voice-auditor` as independent review stances.
+- Use `run-cover-letter-quality-gates` on the rendered artifact.
+- Require a score of at least 85 and every blocking gate to pass before send-ready status.
+- Treat company specificity, motivation, resume complement, and voice as recorded manual reviews. Keyword checks cannot prove them.
 
 For opportunity work:
 

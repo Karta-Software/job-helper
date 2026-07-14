@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/job-helper/cover-letter-quality-gates.schema.json",
+  "title": "Cover Letter Quality Gates",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "thresholds", "gates", "rubric"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["send", "revise"],
+      "properties": {
+        "send": { "type": "number", "minimum": 0, "maximum": 100 },
+        "revise": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wordCount",
+        "pages",
+        "targetIdentity",
+        "evidenceAnchors",
+        "needEvidenceBridges",
+        "companySpecificity",
+        "motivationReview",
+        "resumeComplement",
+        "voiceReview",
+        "forbiddenPhrases"
+      ],
+      "properties": {
+        "wordCount": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["minimum", "maximum"],
+              "properties": {
+                "minimum": { "type": "integer", "minimum": 1 },
+                "maximum": { "type": "integer", "minimum": 1 }
+              }
+            }
+          ]
+        },
+        "pages": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["maximum"],
+              "properties": { "maximum": { "type": "integer", "minimum": 1 } }
+            }
+          ]
+        },
+        "targetIdentity": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["requiredTerms"],
+              "properties": { "requiredTerms": { "$ref": "#/$defs/nonEmptyStrings" } }
+            }
+          ]
+        },
+        "evidenceAnchors": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["minimum", "anchors"],
+              "properties": {
+                "minimum": { "type": "integer", "minimum": 1 },
+                "supportedStatuses": { "$ref": "#/$defs/nonEmptyStrings" },
+                "anchors": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "$ref": "#/$defs/evidenceAnchor" }
+                }
+              }
+            }
+          ]
+        },
+        "needEvidenceBridges": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["minimum", "bridges"],
+              "properties": {
+                "minimum": { "type": "integer", "minimum": 2 },
+                "bridges": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": { "$ref": "#/$defs/evidenceBridge" }
+                }
+              }
+            }
+          ]
+        },
+        "companySpecificity": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["requiredFacts", "minimumFacts", "companySwapStatus", "companySwapNotes"],
+              "properties": {
+                "requiredFacts": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "$ref": "#/$defs/companyFact" }
+                },
+                "minimumFacts": { "type": "integer", "minimum": 1 },
+                "companySwapStatus": { "$ref": "#/$defs/reviewStatus" },
+                "companySwapNotes": { "$ref": "#/$defs/reviewNotes" }
+              }
+            }
+          ]
+        },
+        "motivationReview": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["whyCompany", "whyRole", "whyNow", "manualReviewStatus", "manualReviewNotes"],
+              "properties": {
+                "whyCompany": { "type": "boolean" },
+                "whyRole": { "type": "boolean" },
+                "whyNow": { "type": "boolean" },
+                "manualReviewStatus": { "$ref": "#/$defs/reviewStatus" },
+                "manualReviewNotes": { "$ref": "#/$defs/reviewNotes" }
+              }
+            }
+          ]
+        },
+        "resumeComplement": { "$ref": "#/$defs/manualGate" },
+        "voiceReview": { "$ref": "#/$defs/manualGate" },
+        "referral": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["enabled"],
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "requiredTerms": { "$ref": "#/$defs/nonEmptyStrings" },
+                "evidenceStatus": { "type": "string", "minLength": 1 },
+                "evidenceRefs": { "$ref": "#/$defs/nonEmptyStrings" }
+              }
+            }
+          ]
+        },
+        "forbiddenPhrases": {
+          "allOf": [
+            { "$ref": "#/$defs/gateMetadata" },
+            {
+              "type": "object",
+              "required": ["terms"],
+              "properties": { "terms": { "$ref": "#/$defs/nonEmptyStrings" } }
+            }
+          ]
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manualReviewStatus", "manualReviewNotes", "criteria"],
+      "properties": {
+        "manualReviewStatus": { "$ref": "#/$defs/reviewStatus" },
+        "manualReviewNotes": { "$ref": "#/$defs/reviewNotes" },
+        "criteria": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/rubricCriterion" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "gateMetadata": {
+      "type": "object",
+      "required": ["severity", "reworkAgent"],
+      "properties": {
+        "severity": { "enum": ["error", "warning"] },
+        "reworkAgent": { "type": "string", "minLength": 1 }
+      }
+    },
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "reviewStatus": { "enum": ["pass", "fail", "pending"] },
+    "reviewNotes": { "type": "string", "minLength": 10 },
+    "manualGate": {
+      "allOf": [
+        { "$ref": "#/$defs/gateMetadata" },
+        {
+          "type": "object",
+          "required": ["manualReviewStatus", "manualReviewNotes"],
+          "properties": {
+            "manualReviewStatus": { "$ref": "#/$defs/reviewStatus" },
+            "manualReviewNotes": { "$ref": "#/$defs/reviewNotes" }
+          }
+        }
+      ]
+    },
+    "evidenceAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "requiredTerms", "evidenceStatus", "evidenceRefs"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "requiredTerms": { "$ref": "#/$defs/nonEmptyStrings" },
+        "evidenceStatus": { "type": "string", "minLength": 1 },
+        "evidenceRefs": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "evidenceBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "needTerms", "evidenceTerms", "evidenceRefs"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "needTerms": { "$ref": "#/$defs/nonEmptyStrings" },
+        "evidenceTerms": { "$ref": "#/$defs/nonEmptyStrings" },
+        "evidenceRefs": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "companyFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "terms"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "terms": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "rubricCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "maximum", "score", "notes"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "maximum": { "type": "number", "minimum": 1, "maximum": 100 },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "notes": { "$ref": "#/$defs/reviewNotes" }
+      }
+    }
+  }
+}
