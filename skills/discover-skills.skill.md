@@ -1,6 +1,6 @@
 # discover-skills
 
-Use when the user wants to uncover professional skills that are not yet in the career graph or resume.
+Use when the user wants to uncover professional skills that are not yet in the career graph or resume. For a specific posting or role-description Q/A, load `skills/audit-role-skills.skill.md` first and use this as its discovery stage.
 
 ## Rating Scale
 

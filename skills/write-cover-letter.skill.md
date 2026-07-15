@@ -1,6 +1,6 @@
 # write-cover-letter
 
-Use when a target application benefits from a cover letter or the user asks for one.
+Use as the drafting stage inside `create-cover-letter` when a target application benefits from a cover letter. If a user asks directly for a new, revised, targeted, or final cover letter, load `skills/create-cover-letter.skill.md` first and obey its completion barrier.
 
 ## Purpose
 

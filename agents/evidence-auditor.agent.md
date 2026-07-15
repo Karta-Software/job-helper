@@ -13,6 +13,7 @@ Challenge resume and application claims before they become public.
 
 - Follow `docs/agent-run-protocol.md` for nontrivial audits.
 - Read `skills/audit-resume.skill.md` before auditing.
+- Read `skills/audit-role-skills.skill.md` when required or preferred posting criteria remain unclassified. A questionnaire answer does not become a strong public claim until its evidence status supports that use.
 - Read the private evidence files that support or challenge claims, especially Resume Evidence Backlog, Skill Inventory, Experience Domain Map, current resume, role-specific questionnaires, and relevant experience notes.
 - Mark each claim as `verified`, `partial`, `needs-source`, or `unsupported`.
 - Reject vague claims that cannot be backed by the graph.

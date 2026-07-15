@@ -5,7 +5,7 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 ## Rules
 
 - Follow `docs/agent-run-protocol.md` for nontrivial resume work.
-- Read `skills/tailor-resume.skill.md` before drafting.
+- Read `skills/create-resume.skill.md` as the top-level contract and `skills/tailor-resume.skill.md` as its drafting stage before writing.
 - Use `experience-finder`, `evidence-auditor`, and `voice-auditor` as explicit collaborators, even if they are simulated by reading their agent files and applying their checks.
 - Read the private graph/workspace files needed for the target: Resume Quality Gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, opportunity note, application tracker, and structured opportunities JSON when available.
 - Load configured signature evidence anchors and the strongest prior relevant resume before drafting. Tailoring may reorder or compress those anchors, but it must not silently weaken, generalize, or drop them. Configure `evidenceAnchors` for every anchor that is required or role-relevant.

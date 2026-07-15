@@ -50,6 +50,8 @@ See `docs/workflow.md` for the critique-driven operating process.
 
 See `docs/agent-run-protocol.md` for the required run loop. Nontrivial runs should report the skills used, agents consulted, private graph/workspace files read or changed, quality gates, validation commands, commit SHA, and push status.
 
+Top-level career artifact workflows route automatically: `create-resume` for resume packages, `create-cover-letter` for cover-letter packages, and `audit-role-skills` for posting-driven skill Q/A. Their evidence, rubric, rendered-artifact, and blocking-gate requirements cannot be skipped by invoking only a lower-level drafting skill.
+
 ## Private Workspace
 
 Create a private workspace outside git or in a gitignored `.career-toolkit/` folder:

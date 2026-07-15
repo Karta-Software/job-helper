@@ -19,10 +19,10 @@ Use when starting or refreshing a job search.
 4. Deduplicate by company, role, location, and URL.
 5. Run link review for likely targets.
 6. Extract listed and implied skills.
-7. Compare skill requirements to the candidate graph.
+7. Compare skill requirements to the candidate graph. Run `audit-role-skills` when material required or preferred items remain unclassified.
 8. Score roles using fit, interest, salary, location, experience, domain requirements, and link confidence.
 9. Save a ranked tracker update in the private workspace.
-10. Choose resume versions only after links and dealbreakers are reviewed.
+10. Choose resume versions only after links and dealbreakers are reviewed. Use `create-resume` for each new targeted package.
 
 ## Rules
 

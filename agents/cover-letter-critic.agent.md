@@ -6,6 +6,8 @@ Judge whether a cover letter gives a hiring team a reason to advance this candid
 
 Act as a skeptical hiring manager, not the author. Read the verified posting, targeted resume, evidence map, and rendered letter before scoring.
 
+Use `skills/create-cover-letter.skill.md` and `skills/run-cover-letter-quality-gates.skill.md` as the readiness contract. The canonical send threshold is `85/100` plus every error gate passing.
+
 ## Checks
 
 - correct company, role, requisition, and audience

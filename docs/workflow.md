@@ -149,9 +149,19 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
    Use `resume-writer` for structure, hierarchy, whitespace, bullet length, and summary choices; `experience-finder` for missing proof; `evidence-auditor` for metrics and claims; and `voice-auditor` for tone, hype, and consistency.
 10. Record deferred principles in the resume version note so a human can see what was intentionally left out and why.
 
-### Tailor A Resume
+### Automatic Artifact Routing
 
-Use when there is a target role, company, or posting.
+The user should not need to remember workflow skill names.
+
+- Resume creation, rewriting, targeting, revision, finalization, or readiness requests automatically invoke `skills/create-resume.skill.md`. Evidence discovery, independent reviews, rendering, quality gates, and the stop-rule decision are mandatory.
+- Cover-letter creation, rewriting, targeting, revision, finalization, or readiness requests automatically invoke `skills/create-cover-letter.skill.md`. The 100-point rubric, canonical `85/100` threshold, manual reviews, blocking gates, and rendered-PDF verification are mandatory.
+- Role-fit or skill-gap requests automatically invoke `skills/audit-role-skills.skill.md` when required or preferred criteria remain unclassified. Returned answers must update the private evidence graph before they can become public claims.
+
+`tailor-resume`, `write-cover-letter`, and `discover-skills` remain lower-level workflow stages. Running one lower-level stage does not satisfy the top-level completion barrier.
+
+### Create And Tailor A Resume
+
+Use `skills/create-resume.skill.md` when there is a target role, company, posting, or request for a new or revised resume. The user does not need to invoke it by name.
 
 1. Read resume standards.
 2. Read resume quality gates.
@@ -262,9 +272,9 @@ Proof points should be selected like evidence in a sales pipeline. A memorable a
 
 Quantified anecdotes should pass a relevance test: the metric needs to prove a role-critical capability, clarify scope, show a repeatable operating pattern, or differentiate the candidate. A metric that is true but disconnected from the target role should move to interview prep or a proof bank.
 
-### Write And Grade A Cover Letter
+### Create, Write, And Grade A Cover Letter
 
-Use `skills/write-cover-letter.skill.md`, then `skills/run-cover-letter-quality-gates.skill.md`.
+Use `skills/create-cover-letter.skill.md` as the top-level workflow. It must run `skills/write-cover-letter.skill.md`, then `skills/run-cover-letter-quality-gates.skill.md`.
 
 A cover letter exists to show why this candidate is useful for this exact employer problem now. It should add motivation, interpretation, and a memorable proof story that the resume does not communicate efficiently. It should not restate the resume in paragraphs.
 
@@ -327,6 +337,16 @@ Use when the user wants to uncover skills that are missing from the graph or res
 7. Treat `3` as self-confirmed but still needing sourceable examples for strong resume claims.
 8. Treat `2` as interview/story material or light positioning unless stronger evidence is added.
 9. Treat `1` as an unsupported/do-not-claim guardrail.
+
+For a specific posting, use `skills/audit-role-skills.skill.md` as the top-level role intake:
+
+1. Extract every required and preferred criterion and split compound criteria into atomic items.
+2. Assign stable `REQ-##` and `PREF-##` IDs and preserve the original posting text.
+3. Classify known items as confirmed, partial-adjacent, unconfirmed, or do-not-claim before asking questions.
+4. Ask unresolved items through a standalone private HTML page with neutral `Yes`, `Some / adjacent`, `No`, and `Unsure` controls.
+5. Include local draft persistence and complete `Copy all results` / download export. The export must include every ID, including unchanged known items and blank fields.
+6. Write pasted answers back to the private Skill Inventory, evidence backlog, experience notes, and role matrix.
+7. Treat `Yes` without evidence details as self-confirmed with an evidence gap, not automatic support for a strong public claim.
 
 ### Rank Claim Significance
 

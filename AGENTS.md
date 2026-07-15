@@ -27,6 +27,16 @@ Before using local candidate paths, load the configured private workspace map. T
 
 Before drafting, scoring, tracking, or publishing, load the relevant skill file from `skills/` and the relevant role agent files from `agents/`. Treat those files as operating contracts, not background reading.
 
+## Automatic Career Artifact Routing
+
+The user does not need to invoke these skills by name:
+
+- Any request to create, write, rebuild, revise, target, finalize, or make a resume application-ready must start with `skills/create-resume.skill.md`. Its evidence search, reviewer passes, rendered-artifact checks, quality gates, and stop rule are mandatory.
+- Any request to create, write, rebuild, revise, target, finalize, or make a cover letter send-ready must start with `skills/create-cover-letter.skill.md`. Its 100-point rubric, `85/100` threshold, blocking gates, manual reviews, and rendered-PDF check are mandatory.
+- Any role with materially unclassified required or preferred criteria, or any request to ask the user which role skills they do or do not have, must use `skills/audit-role-skills.skill.md`. Generate the private copy-pasteable HTML intake and update the private graph before converting answers into public claims.
+
+Lower-level skills such as `tailor-resume`, `write-cover-letter`, and `discover-skills` remain required implementation steps inside these top-level workflows. Do not bypass the top-level completion barriers by invoking only a lower-level skill.
+
 When the run touches resume or application work, read and update the configured private career graph/workspace files needed for the task, including private equivalents of Resume Quality Gates, Resume Claim Weighting, Resume Evidence Backlog, Resume Finalization notes, Skill Inventory, Experience Domain Map, current resume/version notes, opportunity notes, application tracker, and structured opportunities JSON when available.
 
 When the run discovers reusable workflow learning, update the repo and make a small commit. Push when credentials allow. If push is blocked, leave the commit ready and report the blocker.
@@ -46,7 +56,9 @@ When rendering or publishing a resume, fail fast on native command errors and ve
 
 - Opportunity tracking: update `skills/track-opportunity.skill.md`, `schemas/opportunity.schema.json`, `src/jobs/tracker.ts`, and `docs/workflow.md`.
 - Resume standards: update `skills/research-resume-standards.skill.md`, `schemas/resume-standards.schema.json`, `src/resumes/standards.ts`, and `docs/workflow.md`.
-- Resume drafting: update `skills/tailor-resume.skill.md`, resume schemas, and renderer contracts.
+- Resume creation: update `skills/create-resume.skill.md`, `skills/tailor-resume.skill.md`, resume schemas, and renderer contracts.
+- Cover-letter creation: update `skills/create-cover-letter.skill.md`, `skills/write-cover-letter.skill.md`, the rubric, and renderer contracts.
+- Role skill intake: update `skills/audit-role-skills.skill.md`, `skills/discover-skills.skill.md`, and the private graph handoff contract.
 - Publishing: update `skills/publish-resume.skill.md`, `src/resumes/publish.ts`, and config examples.
 - Agent behavior: update the relevant `agents/*.agent.md` file and add a skill if the behavior is a repeatable workflow.
 - Agent underutilization: update `docs/agent-run-protocol.md`, `skills/evolve-workflow.skill.md`, the affected task skill, and the affected `agents/*.agent.md` files.

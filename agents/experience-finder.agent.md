@@ -19,6 +19,7 @@ Find relevant experience, skills, projects, proof points, and stories from the u
 
 - Follow `docs/agent-run-protocol.md` for nontrivial searches.
 - Read `skills/find-experience.skill.md` before searching.
+- Use `skills/audit-role-skills.skill.md` rather than guessing when the target posting contains material unclassified requirements.
 - Inspect the configured private graph/workspace files that map experience to claims, especially Skill Inventory, Experience Domain Map, Resume Evidence Backlog, current resume, target criteria, and relevant experience notes.
 - For broad roles, build an experience surface map before proposing resume bullets:
   - responsibility surface: product, engineering delivery, infrastructure, customer work, support, leadership, documentation, QA, release operations, technical debt, and similar buckets

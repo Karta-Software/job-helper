@@ -3,8 +3,11 @@ import fs from "node:fs";
 import test from "node:test";
 
 const requiredProtocolRefs = [
+  "skills/create-resume.skill.md",
   "skills/tailor-resume.skill.md",
   "skills/run-resume-quality-gates.skill.md",
+  "skills/create-cover-letter.skill.md",
+  "skills/audit-role-skills.skill.md",
   "agents/resume-writer.agent.md",
   "agents/evidence-auditor.agent.md",
   "agents/voice-auditor.agent.md"
@@ -44,6 +47,9 @@ test("top-level instructions require the agent run protocol", () => {
 test("core skills and agents stay wired to the agent run protocol", () => {
   const files = [
     "skills/evolve-workflow.skill.md",
+    "skills/create-resume.skill.md",
+    "skills/create-cover-letter.skill.md",
+    "skills/audit-role-skills.skill.md",
     "skills/tailor-resume.skill.md",
     "skills/run-resume-quality-gates.skill.md",
     "skills/find-experience.skill.md",

@@ -1,6 +1,6 @@
 # tailor-resume
 
-Use when creating a role-specific resume version.
+Use as the drafting stage inside `create-resume` when creating a role-specific resume version. If a user asks directly for a new, revised, targeted, or final resume, load `skills/create-resume.skill.md` first and obey its completion barrier.
 
 ## Steps
 

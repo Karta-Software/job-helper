@@ -61,6 +61,7 @@ Skills are workflow contracts. Agents are judgment roles. A run should not merel
 
 Canonical resume workflow files:
 
+- `skills/create-resume.skill.md`
 - `skills/tailor-resume.skill.md`
 - `skills/find-experience.skill.md`
 - `skills/build-skill-inventory.skill.md`
@@ -69,17 +70,28 @@ Canonical resume workflow files:
 - `skills/run-resume-quality-gates.skill.md`
 - `skills/publish-resume.skill.md`
 - `agents/resume-writer.agent.md`
+- `agents/resume-critic.agent.md`
+- `agents/resume-ship-decision.agent.md`
 - `agents/experience-finder.agent.md`
 - `agents/evidence-auditor.agent.md`
 - `agents/voice-auditor.agent.md`
 
 Canonical cover-letter workflow files:
 
+- `skills/create-cover-letter.skill.md`
 - `skills/write-cover-letter.skill.md`
 - `skills/run-cover-letter-quality-gates.skill.md`
 - `agents/cover-letter-critic.agent.md`
 - `agents/evidence-auditor.agent.md`
 - `agents/voice-auditor.agent.md`
+
+Canonical role skill Q/A workflow files:
+
+- `skills/audit-role-skills.skill.md`
+- `skills/discover-skills.skill.md`
+- `skills/build-skill-inventory.skill.md`
+- `agents/experience-finder.agent.md`
+- `agents/evidence-auditor.agent.md`
 
 Canonical workflow-critique file:
 
@@ -87,7 +99,8 @@ Canonical workflow-critique file:
 
 For resume tailoring:
 
-- Use `tailor-resume` as the top-level workflow.
+- Use `create-resume` as the top-level workflow whenever the user asks to create, revise, target, finalize, or approve a resume. The user does not need to invoke it by name.
+- Use `tailor-resume` as a required drafting stage inside `create-resume`, not as a bypass around evidence, review, rendering, and quality gates.
 - Use `find-experience` before drafting.
 - Use `build-skill-inventory` or a saved inventory before deciding keywords and adjacent claims.
 - Use `rank-claim-significance` when too many true claims compete for one-page space.
@@ -97,11 +110,20 @@ For resume tailoring:
 
 For cover letters:
 
-- Use `write-cover-letter` as the drafting workflow.
+- Use `create-cover-letter` as the top-level workflow whenever the user asks to create, revise, target, finalize, or approve a cover letter. The user does not need to invoke it by name.
+- Use `write-cover-letter` as a required drafting stage inside `create-cover-letter`.
 - Use `cover-letter-critic`, `evidence-auditor`, and `voice-auditor` as independent review stances.
 - Use `run-cover-letter-quality-gates` on the rendered artifact.
 - Require a score of at least 85 and every blocking gate to pass before send-ready status.
 - Treat company specificity, motivation, resume complement, and voice as recorded manual reviews. Keyword checks cannot prove them.
+
+For role skill Q/A:
+
+- Use `audit-role-skills` before resume or cover-letter drafting when material posting requirements remain unclassified.
+- Generate a private standalone HTML intake with stable requirement IDs, neutral answer choices, local draft persistence, and complete copy/download export.
+- Preserve known evidence, ask only unresolved or ambiguous questions by default, and keep all requirements visible for correction.
+- Write returned answers to the private Skill Inventory, evidence backlog, experience notes, and role matrix before using them in public copy.
+- A `Yes` button is candidate attestation, not automatic proof for a strong public claim.
 
 For opportunity work:
 
