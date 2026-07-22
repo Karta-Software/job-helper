@@ -42,6 +42,24 @@ test("resume creation cannot claim readiness without evidence, rendering, gates,
   assert.match(skill, /agents\/resume-ship-decision\.agent\.md/);
 });
 
+test("scale-sensitive resume work requires the production scale narrative contract", () => {
+  const agents = read("AGENTS.md");
+  const createResume = read("skills/create-resume.skill.md");
+  const tailorResume = read("skills/tailor-resume.skill.md");
+  const qualityGates = read("skills/run-resume-quality-gates.skill.md");
+  const critic = read("agents/resume-critic.agent.md");
+
+  for (const content of [agents, createResume, tailorResume, qualityGates]) {
+    assert.match(content, /productionScaleNarrative/);
+  }
+  assert.match(createResume, /private production scale surface/);
+  assert.match(tailorResume, /conservative floors or rounded bands/);
+  assert.match(qualityGates, /operations or reliability signal/);
+  assert.match(qualityGates, /timeframe/);
+  assert.match(critic, /isolated scale metrics/);
+  assert.match(critic, /disguises a real stage\/scale gap/);
+});
+
 test("cover-letter creation enforces the canonical rubric threshold and error gates", () => {
   const skill = read("skills/create-cover-letter.skill.md");
 

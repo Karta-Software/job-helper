@@ -141,6 +141,8 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
 5. During drafting, keep a principle application table with `applied`, `partial`, `deferred`, or `not applicable`.
 6. When a requested metric is useful but not sourced, use a safer scope metric instead.
    Examples: years owned, peak team size, direct commits, multi-author commit history, PR-numbered work, file/module scope, product surface, customer-facing delivery, or verified program participation.
+   When production scale is the concern, do not substitute one exact traffic number. Build a private scale surface across tenure, customers/users, data/storage/records, traffic, reliability, and operating ownership. Public copy should normally use at least three role-relevant dimensions plus one reliability or operations signal.
+   Exact source values, dates, definitions, and commands remain private. Public rounding must be conservative, reproducible, and noun-preserving. It cannot turn registered accounts into active users, stored objects into customer assets, or a target 5XX rate into uptime.
 7. Reframe team-led work honestly.
    If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
 8. Translate founder/operator scope when it is the candidate's primary recent experience.
@@ -175,6 +177,7 @@ Use `skills/create-resume.skill.md` when there is a target role, company, postin
    Load the candidate's configured signature evidence anchors and the strongest prior relevant resume. Record whether each anchor will be retained, retargeted, deliberately deferred, or is not relevant. Configure `evidenceAnchors` for every retained or retargeted item.
 8. When founder/operator experience is the primary recent role, apply founder scope density before drafting.
    Translate the title into verified tenure, hands-on ownership, team scope, at least three target-relevant responsibility dimensions, and one safe scale or business signal when available. Build the draft to pass all six `founderSignalBalance` results. For established employers, record a positive transition rationale outside the resume.
+   If the posting uses production traffic, adoption, data volume, or reliability as a seniority bar, configure `productionScaleNarrative`. The gate must require source-backed dimensions, an operations/reliability signal, approved public scale phrases, a timeframe, and the absence of configured private exact values. It cannot turn a wording improvement into evidence of a scale tier the candidate has not operated.
 9. For technical roles, include at least one evidence-backed AI-native development signal when the candidate graph supports it.
    Acceptable signals include coding-agent orchestration, AI-assisted testing/review, agent workflow design, human-in-the-loop guardrails, prompt/workflow standards, or named tools such as Claude Code, Codex, and Cursor when they are tied to engineering outcomes.
    Omit or de-emphasize this only when the target role makes AI tooling irrelevant, distracting, or risky.
@@ -227,30 +230,32 @@ Use after rendering a resume draft.
    Keyword match cannot compensate for failed evidence-depth or claim-support gates.
 4. For agent-platform roles, check configured `agentPlatformEvidenceDepth`.
    Count only dimensions with matching resume language, `supported` evidence status, and source references. Require platform-building signals beyond Claude Code, Codex, or other agent-tool usage, plus a top-half architecture bullet and top-half measured outcome.
-5. Check configured `evidenceAnchors` for signature evidence that should survive tailoring.
+5. For scale-sensitive roles, check configured `productionScaleNarrative`.
+   Require multiple source-backed production dimensions, an operations or reliability signal, a timeframe, approved conservative public phrasing, and no configured private exact leakage. Reject isolated telemetry and vague `large-scale` claims even when the numbers are true.
+6. Check configured `evidenceAnchors` for signature evidence that should survive tailoring.
    Require source references, supported evidence status, approved public terms, and the absence of configured weakening or private-boundary terms. Failing to preserve a supported specific claim is a blocking evidence failure even when the new wording is technically true.
-6. Check configured `semanticBulletReview` when tailoring is substantial.
+7. Check configured `semanticBulletReview` when tailoring is substantial.
    Mechanically flag duplicate concepts and posting echoes without proof. Require `manualReviewStatus: pass` with notes because semantic duplication and AI-sounding mimicry still need judgment.
-7. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
+8. Check configured `metricSignals` when reviewer feedback or role standards require visible numbers.
    This gate counts configured proof patterns, such as years owned, peak team size, direct commits, verified programs, sourced business metrics, or other safe metric phrases.
-8. Check configured `numericConsistency` when a resume has multiple related numbers or reviewer-sensitive metrics.
+9. Check configured `numericConsistency` when a resume has multiple related numbers or reviewer-sensitive metrics.
    This gate extracts named numeric claims, checks relationships such as totals, ratios, or minimum ordering, and blocks ambiguous wording where a true number is attached to the wrong label.
    Use it to keep counts like commits, reviewed PRs, revenue, retention, defect rates, and cost reductions internally consistent across the document.
-9. Check for unsupported technology or experience terms that are not backed by the graph.
+10. Check for unsupported technology or experience terms that are not backed by the graph.
    Unsupported-term matching is a denylist guardrail; it does not replace graph-backed claim evidence review.
-10. Check approved skill claims against the configured skill inventory.
+11. Check approved skill claims against the configured skill inventory.
    A role keyword should not appear in applicant-facing resume text just because the posting asks for it. If the candidate has not approved the skill as resume-claimable, remove it or move it to private interview/prep notes.
-11. Check for private paths, internal notes, and application-only commentary.
-12. Check target branding.
+12. Check for private paths, internal notes, and application-only commentary.
+13. Check target branding.
    Applicant-facing resumes and artifact filenames should not include the target company name by default; company-specific strategy belongs in the private tracker, graph note, or application plan.
-13. Check configured `reviewerPrinciples`.
+14. Check configured `reviewerPrinciples`.
    Required reviewer principles should emit one result per principle, such as top-half leadership, supportable `Led a team of X engineers` wording, top-half proof terms, consistent emphasis, and team-led work not being flattened into lone-IC wording.
    When founder/operator experience is central, enable `founderSignalBalance`; all six named founder results must pass. Configure existing leadership, top-half proof, team-led wording, and `metricSignals` as supporting checks. A title-only founder mention should fail review.
-14. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
+15. Treat reviewer-related warning failures as not ready when the warning is the concrete thing the reviewer asked to fix.
    Either tune the target-specific ideal range, raise the gate to `error`, rework the resume, or record a human override.
-15. Treat `error` gate failures like CI failures.
-16. Route failures to the configured rework agent.
-17. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
+16. Treat `error` gate failures like CI failures.
+17. Route failures to the configured rework agent.
+18. Keep the resume in rendered drafts until all `error` gates pass and reviewer-related warnings are resolved or a human override is recorded.
 
 ### Score A Resume
 

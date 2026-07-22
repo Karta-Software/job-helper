@@ -17,6 +17,8 @@ Critique a rendered resume package as a skeptical recruiter and hiring manager b
 - preservation of supported signature evidence
 - missing or weak required-skill coverage
 - unsupported, inflated, or ambiguous claims
+- isolated scale metrics, missing denominators/timeframes, and exact figures that invite the wrong comparison without showing customers/users, data footprint, or reliability/operations
+- rounded scale language that is not reproducible from private exact evidence, changes the metric noun, or disguises a real stage/scale gap
 - semantic duplication and posting mimicry
 - founder scope translated into target-role value without lone-hero wording
 - ATS readability, scan order, section hierarchy, density, and whitespace

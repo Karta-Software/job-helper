@@ -45,6 +45,8 @@ When a configured support folder is marked agent-managed, do not ask the user to
 
 When rendering or publishing a resume, fail fast on native command errors and verify the rendered artifact itself. Source Markdown/HTML checks do not prove that a PDF copy is current.
 
+For roles where production scale or reliability is a material hiring bar, build a private production scale surface before drafting. Keep exact measurements, definitions, dates, and source references private; select conservative, reproducible public wording across multiple dimensions such as tenure, customers/users, data footprint, traffic, and reliability/operations. Enable `productionScaleNarrative` for the target version. Do not let one isolated traffic number, vague `large-scale` language, or rounded wording conceal a real stage or scale gap.
+
 ## Boundaries
 
 - Do not commit private career data, application notes, generated resumes, relationship details, or graph contents.

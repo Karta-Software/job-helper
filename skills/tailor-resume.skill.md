@@ -25,6 +25,8 @@ Use as the drafting stage inside `create-resume` when creating a role-specific r
    Treat founder experience as a conditional signal, not an automatic advantage. When founder/operator experience is the primary recent role, configure `founderSignalBalance` for the resume version and build the draft to pass `founderTargetRoleTranslation`, `founderOperatingProof`, `founderCollaboration`, `founderTechnicalDepth`, `founderRiskLanguage`, and `founderAttributionBoundaries`.
    For narrow specialist roles, lead with the specialty and keep founder scope as supporting evidence. Use founder-forward positioning for roles that reward ownership, personnel responsibility, ambiguity, client responsibility, product influence, or platform scope.
    For a current or former founder, record a positive `founderCommitmentBridge` in the private application/interview plan: why now, why this role, and why this organization. Do not add defensive transition prose to the resume.
+   When production scale is part of the hiring bar, build a private scale surface across deployment tenure, customers/users, data/storage/record footprint, traffic, reliability, and operating ownership. Prefer at least three role-relevant dimensions plus one reliability or operations signal in public copy. An isolated exact request count is not a scale narrative.
+   Keep exact values, source commands, capture dates, and definitions in private evidence. Public wording may use conservative floors or rounded bands only when the private math supports them. Preserve the measurement window and noun: do not turn registered accounts into active users, database rows into assets, target 5XX rate into uptime, or company customers into platform users.
 11. Read any available claim-significance ranking.
    Use it to decide which true claims deserve limited resume space after target-role relevance and claim confidence are considered.
    Also load configured signature evidence anchors and the strongest prior relevant resume. Build a preservation table before drafting: `retain`, `retarget`, `defer with reason`, or `not relevant`. Enable `evidenceAnchors` for every retained or retargeted anchor. Do not let brevity, keyword optimization, or caution silently replace a supported specific claim with a generic one.
@@ -41,6 +43,7 @@ Use as the drafting stage inside `create-resume` when creating a role-specific r
 16. Draft resume JSON or Markdown against the page, word, character, line, bullet, section, and style targets.
 17. Apply `ResumeConstraints`.
 18. When outcome metrics are not sourced, prefer verified scope metrics such as years owned, peak team size, direct commit count, multi-author history, product surface, module/file scope, customer-facing delivery, or program participation.
+   For scale-sensitive targets, configure `productionScaleNarrative` with source-backed dimensions, approved public phrases, private exact patterns that should not appear publicly, and required timeframe plus operations/reliability signals. Conservative rounding is not permission to hide a true stage, traffic, concurrency, or organizational-scale gap.
 19. Word team-led work as leadership when the candidate owned direction, scoping, review, mentoring, delivery, standards, or cross-functional coordination.
 20. Run `evidence-auditor`.
 21. Run `voice-auditor`.
@@ -82,6 +85,7 @@ Use as the drafting stage inside `create-resume` when creating a role-specific r
 - Do not present AI tooling as a generic buzzword list; connect Claude Code, Codex, Cursor, or agent workflows to delivery, quality, review, testing, or developer productivity outcomes.
 - Do not present coding-agent usage as proof that the candidate built a multi-user agent platform.
 - Do not let founder breadth stand in for unsupported distributed-systems scale. State verified scope and users; omit concurrency, queueing, idempotency, tracing, SLO, and production-scale claims unless the evidence map supports them.
+- Do not make one exact telemetry number carry the production story. When scale matters, pair defensible dimensions such as tenure, customers/users, data footprint, traffic, and reliability/operations. Use rounded public wording only when it is traceable to exact private evidence and does not imply a larger tier.
 - Respect max page count.
 - Prefer ATS-safe formatting unless the target role calls for a designed resume.
 - The final report must name the skill files, agent files, graph/workspace files, quality gates, and validation commands used.

@@ -177,6 +177,7 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addEvidenceAnchors(results, gates.gates.evidenceAnchors, snapshot.resumeText);
   addArtifactFreshness(results, gates.gates.artifactFreshness, snapshot);
   addAgentPlatformEvidenceDepth(results, gates.gates.agentPlatformEvidenceDepth, snapshot);
+  addProductionScaleNarrative(results, gates.gates.productionScaleNarrative, snapshot.resumeText);
   addSemanticBulletReview(results, gates.gates.semanticBulletReview, snapshot.achievementBullets);
   addMetricSignals(results, gates.gates.metricSignals, snapshot.resumeText);
   addNumericConsistency(results, gates.gates.numericConsistency, snapshot.resumeText);
@@ -454,6 +455,91 @@ function addAgentPlatformEvidenceDepth(results, gate, snapshot) {
     matchedOutcomes.length >= minimumOutcomeMatches
       ? `Top-half measured outcomes matched: ${matchedOutcomes.join(", ")}.`
       : `No configured measured agent-platform outcome appears in the top ${topTextPercent}% of resume text.`
+  ));
+}
+
+function addProductionScaleNarrative(results, gate, resumeText) {
+  if (!gate?.enabled) return;
+
+  const dimensions = gate.dimensions || [];
+  const supportedStatuses = new Set((gate.supportedStatuses || ["supported"]).map(normalize));
+  const supportedDimensions = dimensions.filter((dimension) => {
+    const termMatches = (dimension.terms || []).filter((term) => matchesPatternOrTerm(resumeText, term));
+    const hasSource = (dimension.evidenceRefs || []).some((ref) => String(ref).trim());
+    return hasSource &&
+      supportedStatuses.has(normalize(dimension.evidenceStatus || "")) &&
+      termMatches.length >= (dimension.minimumTermMatches ?? 1);
+  });
+  const minimumDimensions = gate.minimumDimensions ?? 3;
+  const missingDimensions = dimensions.filter((dimension) => !supportedDimensions.includes(dimension));
+  results.push(result(
+    "productionScaleNarrative.dimensions",
+    gate,
+    supportedDimensions.length >= minimumDimensions,
+    supportedDimensions.length,
+    `at least ${minimumDimensions} source-backed production-scale dimensions`,
+    supportedDimensions.length >= minimumDimensions
+      ? `Production scale covers: ${supportedDimensions.map((dimension) => dimension.id).join(", ")}.`
+      : `Only ${supportedDimensions.length} source-backed scale dimensions passed; expected ${minimumDimensions}. Missing or weak: ${missingDimensions.map((dimension) => dimension.id).join(", ")}.`
+  ));
+
+  const operationsMatches = (gate.operationsOrReliabilityPatterns || []).filter((pattern) =>
+    matchesPatternOrTerm(resumeText, pattern)
+  );
+  const minimumOperationsMatches = gate.minimumOperationsOrReliabilityMatches ?? 1;
+  results.push(result(
+    "productionScaleNarrative.operationsOrReliability",
+    gate,
+    operationsMatches.length >= minimumOperationsMatches,
+    operationsMatches.length,
+    `at least ${minimumOperationsMatches} operations or reliability signal`,
+    operationsMatches.length >= minimumOperationsMatches
+      ? `Operations/reliability signals matched: ${operationsMatches.join(", ")}.`
+      : "Production scale needs a supported operating or reliability signal, not volume alone."
+  ));
+
+  const publicScaleMatches = (gate.approvedPublicScalePatterns || []).filter((pattern) =>
+    matchesPatternOrTerm(resumeText, pattern)
+  );
+  const minimumPublicScaleMatches = gate.minimumApprovedPublicScaleMatches ?? 1;
+  results.push(result(
+    "productionScaleNarrative.publicScaleLanguage",
+    gate,
+    publicScaleMatches.length >= minimumPublicScaleMatches,
+    publicScaleMatches.length,
+    `at least ${minimumPublicScaleMatches} approved conservative public scale phrase`,
+    publicScaleMatches.length >= minimumPublicScaleMatches
+      ? `Approved public scale language matched: ${publicScaleMatches.join(", ")}.`
+      : "No configured conservative public scale phrase matched. Use wording derived from the private exact evidence surface."
+  ));
+
+  const leakedExactPatterns = (gate.forbiddenExactPatterns || []).filter((pattern) =>
+    matchesPatternOrTerm(resumeText, pattern)
+  );
+  results.push(result(
+    "productionScaleNarrative.privateExactLeak",
+    gate,
+    leakedExactPatterns.length === 0,
+    leakedExactPatterns.length,
+    "no configured private exact measurements in applicant-facing text",
+    leakedExactPatterns.length === 0
+      ? "No configured private exact scale measurements leaked into public copy."
+      : `Private exact scale measurements appeared in public copy: ${leakedExactPatterns.join(", ")}. Replace them with an approved conservative public phrase.`
+  ));
+
+  const timeframeMatches = (gate.timeframePatterns || []).filter((pattern) =>
+    matchesPatternOrTerm(resumeText, pattern)
+  );
+  const minimumTimeframeMatches = gate.minimumTimeframeMatches ?? 1;
+  results.push(result(
+    "productionScaleNarrative.timeframe",
+    gate,
+    timeframeMatches.length >= minimumTimeframeMatches,
+    timeframeMatches.length,
+    `at least ${minimumTimeframeMatches} timeframe or measurement-window signal`,
+    timeframeMatches.length >= minimumTimeframeMatches
+      ? `Scale timeframe matched: ${timeframeMatches.join(", ")}.`
+      : "Scale language is missing a timeframe or current-snapshot boundary."
   ));
 }
 

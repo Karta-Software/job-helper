@@ -53,6 +53,7 @@
         "evidenceAnchors": { "$ref": "#/$defs/evidenceAnchorsGate" },
         "artifactFreshness": { "$ref": "#/$defs/artifactFreshnessGate" },
         "agentPlatformEvidenceDepth": { "$ref": "#/$defs/agentPlatformEvidenceDepthGate" },
+        "productionScaleNarrative": { "$ref": "#/$defs/productionScaleNarrativeGate" },
         "semanticBulletReview": { "$ref": "#/$defs/semanticBulletReviewGate" },
         "metricSignals": {
           "type": "object",
@@ -458,6 +459,58 @@
           "type": "array",
           "items": { "type": "string" }
         }
+      }
+    },
+    "productionScaleNarrativeGate": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "minimumDimensions",
+        "dimensions",
+        "operationsOrReliabilityPatterns",
+        "approvedPublicScalePatterns",
+        "forbiddenExactPatterns",
+        "timeframePatterns",
+        "severity",
+        "reworkAgent"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minimumDimensions": { "type": "integer", "minimum": 2 },
+        "dimensions": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/agentPlatformEvidenceDimension" }
+        },
+        "supportedStatuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "operationsOrReliabilityPatterns": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "minimumOperationsOrReliabilityMatches": { "type": "integer", "minimum": 1 },
+        "approvedPublicScalePatterns": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "minimumApprovedPublicScaleMatches": { "type": "integer", "minimum": 1 },
+        "forbiddenExactPatterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "timeframePatterns": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "minimumTimeframeMatches": { "type": "integer", "minimum": 1 },
+        "severity": { "$ref": "#/$defs/severity" },
+        "reworkAgent": { "type": "string" }
       }
     },
     "semanticBulletReviewGate": {

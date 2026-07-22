@@ -615,6 +615,61 @@ Designed and operated an internal Windmill control plane with Postgres-backed du
   });
 });
 
+test("CLI blocks an isolated exact traffic metric from standing in for production scale", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Platform Engineer
+
+## Professional Experience
+
+- Operated a production platform that processed 12,345,678 requests and 234,567,890,123 bytes over 90 days.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { productionScaleNarrative: productionScaleNarrativeGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 1);
+    const report = JSON.parse(run.stdout);
+    assert.equal(report.results.find((result) => result.gateId === "productionScaleNarrative.dimensions").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "productionScaleNarrative.operationsOrReliability").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "productionScaleNarrative.publicScaleLanguage").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "productionScaleNarrative.privateExactLeak").passed, false);
+    assert.equal(report.results.find((result) => result.gateId === "productionScaleNarrative.timeframe").passed, true);
+  });
+});
+
+test("CLI passes a rounded, source-backed production scale surface with timeframe and reliability", () => {
+  usingTempWorkspace((workspace) => {
+    const resumeContent = `# Test Person
+
+Senior Platform Engineer
+
+## Professional Experience
+
+- Operated a multi-tenant production platform since 2021, supporting 200+ registered accounts across 20+ organizations and more than 100,000 workflow records.
+- Served more than 10 million requests per quarter while keeping target 5XX responses below 0.01% and owning incident response and recovery.
+`;
+    const paths = writeQualityInputs(
+      workspace,
+      minimalPdf({ pageCount: 1 }),
+      { productionScaleNarrative: productionScaleNarrativeGate() },
+      { resumeContent }
+    );
+    const run = runChecker(paths, ["--max-pages", "1"]);
+
+    assert.equal(run.status, 0);
+    const report = JSON.parse(run.stdout);
+    const scaleGates = report.results.filter((result) => result.gateId.startsWith("productionScaleNarrative"));
+    assert.equal(scaleGates.length, 5);
+    assert.equal(scaleGates.every((gate) => gate.passed), true);
+  });
+});
+
 test("CLI flags duplicate platform bullets and posting echo without concrete proof", () => {
   usingTempWorkspace((workspace) => {
     const resumeContent = `# Test Person
@@ -1208,6 +1263,53 @@ function semanticBulletReviewGate(manualReviewStatus) {
     manualReviewNotes: manualReviewStatus === "pass" ? "Reviewed by evidence and voice auditors." : "",
     severity: "error",
     reworkAgent: "voice-auditor"
+  };
+}
+
+function productionScaleNarrativeGate() {
+  return {
+    enabled: true,
+    minimumDimensions: 3,
+    dimensions: [
+      {
+        id: "deploymentTenure",
+        terms: ["since 2021", "multi-tenant production platform"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["deployment-evidence"]
+      },
+      {
+        id: "usersAndOrganizations",
+        terms: ["200\\+ registered accounts", "20\\+ organizations"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["account-evidence"]
+      },
+      {
+        id: "productData",
+        terms: ["more than 100,000 workflow records"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["database-evidence"]
+      },
+      {
+        id: "traffic",
+        terms: ["more than 10 million requests per quarter"],
+        evidenceStatus: "supported",
+        evidenceRefs: ["traffic-evidence"]
+      }
+    ],
+    operationsOrReliabilityPatterns: ["target 5XX responses below 0.01%", "incident response", "recovery"],
+    minimumOperationsOrReliabilityMatches: 1,
+    approvedPublicScalePatterns: [
+      "200\\+ registered accounts",
+      "20\\+ organizations",
+      "more than 100,000 workflow records",
+      "more than 10 million requests per quarter"
+    ],
+    minimumApprovedPublicScaleMatches: 2,
+    forbiddenExactPatterns: ["12,345,678", "234,567,890,123"],
+    timeframePatterns: ["since 2021", "per quarter", "over 90 days", "current production"],
+    minimumTimeframeMatches: 1,
+    severity: "error",
+    reworkAgent: "evidence-auditor"
   };
 }
 
