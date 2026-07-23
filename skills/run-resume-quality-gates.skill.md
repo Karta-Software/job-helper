@@ -15,6 +15,8 @@ Use after rendering a resume draft and before moving it to completed resumes.
 
 - page count
 - page utilization / bottom whitespace
+- meaningful-content bottom whitespace that ignores decorative horizontal rules
+- rendered education line count when configured
 - word count
 - character count including spaces
 - rendered text-line count
@@ -46,6 +48,8 @@ Use after rendering a resume draft and before moving it to completed resumes.
    Page utilization must come from rendered HTML layout measurement, not eyeballing.
    For one-page resumes, bottom whitespace should roughly match the page margins, usually around 3% to 3.5% of printable content height.
    Also measure the final PDF visually when possible: render page 1 to pixels, find the non-white content bounding box, and compare bottom gap against the top/side reference margin.
+   Separately locate the last meaningful text row while ignoring full-width decorative rules. A border or footer rule cannot count as page-filling content. Configure `visualMeaningfulBottomToReferenceMarginRatio` as an error gate for dense one-page resumes.
+   Measure education from the rendered HTML, not the Markdown source. When a degree and certificate can each fit on one readable line, configure `educationRenderedLines` with a maximum of two.
    Rendered text-line count must be measured from the final artifact or reported as unmeasured; do not substitute source Markdown line count.
    When visual proof is part of the package, pass the final page image through `artifactFreshness`. The proof image must exist and its modification time must be at or after the final PDF.
 3. Compare measurements to configured gates.
@@ -102,6 +106,8 @@ Use after rendering a resume draft and before moving it to completed resumes.
 - Never treat a browser-printed PDF with local file URL/date/page-number headers or footers as a completed resume.
 - Never accept a visual-inspection screenshot that predates the final PDF. Enable `artifactFreshness` and regenerate proof from the final PDF after the last content or layout change.
 - Do not pass one-page resumes that leave excessive bottom whitespace; route underfilled pages to `resume-writer`. A one-page resume with bottom whitespace much larger than the side and top margins is underfilled even when the page-utilization percentage passes a loose gate.
+- Do not let borders, horizontal rules, transparent elements, or padding satisfy the utilization gate. Use the meaningful-content measurement to detect decorative false positives.
+- Do not spread compact education entries over extra rendered lines unless readability or unusually long institution text requires it and the version note records the exception.
 - Prefer `visualBottomToReferenceMarginRatio` over the older `bottomWhitespacePercent` proxy when the user is reacting to what the PDF actually looks like.
 - Manual page or rendered-line counts require an explicit human override flag and must be called out in the report.
 - Bullet character gates apply to achievement bullets, not compact skill-list bullets.

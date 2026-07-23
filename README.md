@@ -125,7 +125,7 @@ node scripts/render-resume-pdf.mjs --html <resume.html> --pdf <resume.pdf>
 Run the page-count regression tests with:
 
 ```bash
-node --test scripts/check-resume-quality.test.mjs scripts/render-resume-pdf.test.mjs scripts/measure-resume-layout.test.mjs
+node --test scripts/*.test.mjs
 ```
 
 Run the agent/skill utilization contract test with:

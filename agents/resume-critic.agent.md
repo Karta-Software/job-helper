@@ -22,6 +22,9 @@ Critique a rendered resume package as a skeptical recruiter and hiring manager b
 - semantic duplication and posting mimicry
 - founder scope translated into target-role value without lone-hero wording
 - ATS readability, scan order, section hierarchy, density, and whitespace
+- decorative lines or padding that make the page look full while meaningful text ends early
+- education entries using more rendered lines than their content requires
+- missing product-portfolio breadth for product-heavy roles when the evidence graph supports multiple distinct products
 - rendered-PDF correctness and consistency with the source revision
 
 ## Output

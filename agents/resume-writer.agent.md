@@ -34,7 +34,9 @@ Write targeted resume, LinkedIn, portfolio, and application copy from graph-back
 - Keep internal targeting notes outside applicant-facing resumes.
 - Keep target company names out of applicant-facing resumes by default; express fit through role-relevant skills, domains, and outcomes.
 - Tailor by changing headline, summary, skill groupings, bullet selection, bullet order, and domain framing, not only by adding keywords.
+- For product-heavy roles, inventory the candidate's source-backed product families and preserve that breadth in a concise top-half line or bullet. Do not reduce a multi-product founder or product engineer to the one feature that happens to match the posting.
 - Apply resume constraints such as page count, required sections, ATS-safe formatting, and forbidden phrases.
+- Keep degree and certificate entries compact when they fit legibly on one line each. Never use bottom padding or decorative rules to manufacture page utilization.
 - Verify generated formats when constraints require a page count or render check.
 - Update private resume version notes and opportunity tracker status before reporting a draft as ready.
 - Do not report reviewer feedback as incorporated unless the version note states what was applied, partially applied, deferred, and why.

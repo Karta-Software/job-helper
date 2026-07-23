@@ -265,6 +265,9 @@ export type ResumeQualityGatesConfig = {
     pageUtilizationPercent?: RangeGateConfig;
     visualBottomGapPercent?: RangeGateConfig;
     visualBottomToReferenceMarginRatio?: RangeGateConfig;
+    visualMeaningfulBottomGapPercent?: RangeGateConfig;
+    visualMeaningfulBottomToReferenceMarginRatio?: RangeGateConfig;
+    educationRenderedLines?: RangeGateConfig;
     bulletCharacters?: RangeGateConfig;
     achievementBullets?: RangeGateConfig;
     requiredSections?: RequiredSectionsGateConfig;
@@ -302,6 +305,9 @@ export type ResumeQualitySnapshot = {
   bottomWhitespacePercent?: number;
   visualBottomGapPercent?: number;
   visualBottomToReferenceMarginRatio?: number;
+  visualMeaningfulBottomGapPercent?: number;
+  visualMeaningfulBottomToReferenceMarginRatio?: number;
+  educationRenderedLineCount?: number;
   sourceTextLineCount?: number;
   achievementBullets?: string[];
   bulletCharacterCounts: number[];
@@ -358,6 +364,9 @@ export function evaluateResumeQuality(
   addRangeGateResult(results, "pageUtilizationPercent", config.gates.pageUtilizationPercent, snapshot.pageUtilizationPercent);
   addRangeGateResult(results, "visualBottomGapPercent", config.gates.visualBottomGapPercent, snapshot.visualBottomGapPercent);
   addRangeGateResult(results, "visualBottomToReferenceMarginRatio", config.gates.visualBottomToReferenceMarginRatio, snapshot.visualBottomToReferenceMarginRatio);
+  addRangeGateResult(results, "visualMeaningfulBottomGapPercent", config.gates.visualMeaningfulBottomGapPercent, snapshot.visualMeaningfulBottomGapPercent);
+  addRangeGateResult(results, "visualMeaningfulBottomToReferenceMarginRatio", config.gates.visualMeaningfulBottomToReferenceMarginRatio, snapshot.visualMeaningfulBottomToReferenceMarginRatio);
+  addRangeGateResult(results, "educationRenderedLines", config.gates.educationRenderedLines, snapshot.educationRenderedLineCount);
   addBulletRangeResults(results, config.gates.bulletCharacters, snapshot.bulletCharacterCounts);
   addRangeGateResult(results, "achievementBullets", config.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSectionsResult(results, config.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);

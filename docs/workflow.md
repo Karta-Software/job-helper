@@ -195,7 +195,7 @@ Use `skills/create-resume.skill.md` when there is a target role, company, postin
 14. Render privately from HTML to PDF with the helper's PDF renderer.
    Browser print headers and footers must be disabled; raw `resume.html` is a source artifact, not the sendable artifact.
 15. Treat render command failure as fatal before copying or promoting any PDF.
-16. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled.
+16. Apply scanability styling: strong section anchors, clear role blocks, selective bolding for proof points, readable leading, and enough whitespace for parsing without leaving the page underfilled. Do not use empty padding or decorative rules to simulate page utilization.
 17. Name completed artifacts by candidate and role, not target company, unless a human explicitly overrides for a specific application system.
 18. Run resume quality gates.
 19. Configure and run `educationWording` when candidate defaults require exact education wording or stale degree labels must be blocked.
@@ -210,6 +210,7 @@ Use `skills/create-resume.skill.md` when there is a target role, company, postin
 - For senior, staff, principal, product-owner, or founder/operator resumes, omit `Relevant coursework` by default.
 - Include coursework only when the posting explicitly asks for coursework, the candidate lacks stronger role evidence for a required education keyword, or the user records a deliberate override.
 - If coursework is included, record the reason in the private resume version note. Do not let copied old artifacts reintroduce stale degree labels or entry-level education filler.
+- Keep education compact. A degree and a certificate should normally render as one line each when the text fits at a readable size. Use `educationRenderedLines` to block unnecessary display-block details or blank rows.
 
 ### Run Resume Quality Gates
 
@@ -220,6 +221,7 @@ Use after rendering a resume draft.
    Page utilization should measure rendered HTML content height against the printable one-page area so one-page resumes do not leave excessive bottom whitespace.
    For one-page resumes, bottom whitespace should visually approximate the page margins, usually around 3% to 3.5% of the printable page content height.
    The visual bottom-gap gate must inspect the final PDF, not only the source HTML. Render the first PDF page to pixels and compare the bottom non-white gap against the top and side gaps.
+   Also measure the last meaningful text row after excluding page-width decorative rules. Configure `visualMeaningfulBottomToReferenceMarginRatio` so a bottom border cannot hide an underfilled page.
    Reject PDFs that contain browser print headers or footers such as file URLs, local paths, dates, or page numbers from the print dialog.
    Manual page or rendered-line counts require explicit override flags and must be disclosed in the report.
    Source Markdown line count is useful context, but it is not rendered text-line count.
@@ -420,6 +422,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - Do not infer degree type from old artifacts. Education wording must come from configured candidate facts or application defaults, and target-specific gates should block stale degree labels when the configured wording is generic.
 - Use the `educationWording` quality gate for exact education defaults, including generic degree wording and forbidden stale labels such as `Bachelor of Science` or `Bachelor of Arts` when those are not the configured public standard.
 - `2` skill ratings should include an adjacency rationale before being used for resume positioning.
+- For product-heavy roles, build a source-backed product-portfolio map and preserve several distinct product families in a concise top-half line or bullet. Add a target-specific evidence anchor so later shortening cannot silently erase that breadth.
 - Interactive skill-gap forms should favor toggleable adjacency reasons over requiring the user to copy or retype suggested rationale.
 - Rendered line-count gates must use a rendered-artifact measurement or report unmeasured; source Markdown lines are a separate diagnostic.
 - Keyword match percentages must disclose their keyword source.

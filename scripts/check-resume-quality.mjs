@@ -147,6 +147,9 @@ function buildSnapshot(raw, text, parsedArgs) {
     layoutMeasurement: pageUtilization,
     visualBottomGapPercent: pdfVisualWhitespace?.visualBottomGapPercent,
     visualBottomToReferenceMarginRatio: pdfVisualWhitespace?.visualBottomToReferenceMarginRatio,
+    visualMeaningfulBottomGapPercent: pdfVisualWhitespace?.visualMeaningfulBottomGapPercent,
+    visualMeaningfulBottomToReferenceMarginRatio: pdfVisualWhitespace?.visualMeaningfulBottomToReferenceMarginRatio,
+    educationRenderedLineCount: pageUtilization?.educationRenderedLineCount,
     pdfVisualWhitespace,
     sourceTextLineCount: nonEmpty.length,
     achievementBullets,
@@ -170,6 +173,9 @@ function evaluate(gates, snapshot, postingText, parsedArgs) {
   addRange(results, "pageUtilizationPercent", gates.gates.pageUtilizationPercent, snapshot.pageUtilizationPercent);
   addRange(results, "visualBottomGapPercent", gates.gates.visualBottomGapPercent, snapshot.visualBottomGapPercent);
   addRange(results, "visualBottomToReferenceMarginRatio", gates.gates.visualBottomToReferenceMarginRatio, snapshot.visualBottomToReferenceMarginRatio);
+  addRange(results, "visualMeaningfulBottomGapPercent", gates.gates.visualMeaningfulBottomGapPercent, snapshot.visualMeaningfulBottomGapPercent);
+  addRange(results, "visualMeaningfulBottomToReferenceMarginRatio", gates.gates.visualMeaningfulBottomToReferenceMarginRatio, snapshot.visualMeaningfulBottomToReferenceMarginRatio);
+  addRange(results, "educationRenderedLines", gates.gates.educationRenderedLines, snapshot.educationRenderedLineCount);
   addBulletCharacters(results, gates.gates.bulletCharacters, snapshot.bulletCharacterCounts);
   addRange(results, "achievementBullets", gates.gates.achievementBullets, snapshot.achievementBulletCount);
   addRequiredSections(results, gates.gates.requiredSections, snapshot.sectionNames, snapshot.inferredSections);

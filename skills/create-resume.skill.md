@@ -24,7 +24,7 @@ Produce a source-backed resume package, not chat-only copy. A resume is not appl
    - `agents/voice-auditor.agent.md`
 11. Run `skills/audit-resume.skill.md` and resolve unsupported claims, omitted signature evidence, reviewer-principle failures, posting mimicry, semantic duplication, lone-hero language, isolated scale metrics, and weak top-half proof.
 12. Save the complete version package in the configured private resume-version workspace. Include the posting snapshot, claim-status matrix, evidence references, source resume, rendered HTML, target-specific gates, quality report, review notes, readiness note, and visual proof.
-13. Render the PDF without browser headers or footers. Verify the final PDF text and page image from the same source revision.
+13. Render the PDF without browser headers or footers. Verify the final PDF text and page image from the same source revision. Measure the last meaningful text independently from decorative rules or container padding, and measure rendered education lines when education is present.
 14. Run `skills/run-resume-quality-gates.skill.md` against the rendered PDF. Rework and rerun until all `error` gates pass or the iteration limit is reached.
 15. Run `agents/resume-ship-decision.agent.md` as the final stop-rule judge. It may approve only the exact PDF covered by the current passing report.
 16. Run `skills/publish-resume.skill.md` only after the version is approved. Update the private resume index, opportunity note, application tracker, and run record.
@@ -50,6 +50,7 @@ Do not use `application-ready`, `send-ready`, `final`, `approved`, or equivalent
 - all public claims have an allowed evidence status
 - required manual reviewer notes are recorded
 - the final PDF was rendered and visually inspected
+- decorative rules, padding, or empty education rows do not create false page-utilization proof
 - rendered-text verification passed
 - every configured `error` gate passed on that exact PDF revision
 - the stop-rule judge approved the exact artifact

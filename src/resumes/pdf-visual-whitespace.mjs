@@ -46,19 +46,26 @@ export function measurePdfVisualWhitespace({
 
 export function calculatePdfVisualWhitespace(ppmBuffer, { threshold = DEFAULT_THRESHOLD } = {}) {
   const ppm = parsePpm(ppmBuffer);
+  const rowLongestNonWhiteRuns = new Uint32Array(ppm.height);
   let minX = ppm.width;
   let minY = ppm.height;
   let maxX = -1;
   let maxY = -1;
 
   for (let y = 0; y < ppm.height; y += 1) {
+    let currentNonWhiteRun = 0;
     for (let x = 0; x < ppm.width; x += 1) {
       const offset = ppm.dataOffset + ((y * ppm.width + x) * 3);
       const r = ppmBuffer[offset];
       const g = ppmBuffer[offset + 1];
       const b = ppmBuffer[offset + 2];
-      if (Math.min(r, g, b) >= threshold) continue;
+      if (Math.min(r, g, b) >= threshold) {
+        currentNonWhiteRun = 0;
+        continue;
+      }
 
+      currentNonWhiteRun += 1;
+      rowLongestNonWhiteRuns[y] = Math.max(rowLongestNonWhiteRuns[y], currentNonWhiteRun);
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
       maxX = Math.max(maxX, x);
@@ -77,6 +84,18 @@ export function calculatePdfVisualWhitespace(ppmBuffer, { threshold = DEFAULT_TH
     bottom: ppm.height - 1 - maxY
   };
   const referenceMarginPx = median([gaps.left, gaps.top, gaps.right]);
+  const ignoredHorizontalRuleRows = [];
+  let meaningfulMaxY = -1;
+  for (let y = 0; y < ppm.height; y += 1) {
+    if (rowLongestNonWhiteRuns[y] === 0) continue;
+    if (rowLongestNonWhiteRuns[y] / ppm.width >= 0.5) {
+      ignoredHorizontalRuleRows.push(y);
+      continue;
+    }
+    meaningfulMaxY = y;
+  }
+  if (meaningfulMaxY === -1) meaningfulMaxY = maxY;
+  const meaningfulBottomGapPx = ppm.height - 1 - meaningfulMaxY;
 
   return {
     visualPageWidthPx: ppm.width,
@@ -93,7 +112,11 @@ export function calculatePdfVisualWhitespace(ppmBuffer, { threshold = DEFAULT_TH
     visualLeftGapPx: gaps.left,
     visualReferenceMarginPx: round(referenceMarginPx),
     visualBottomGapPercent: round((gaps.bottom / ppm.height) * 100),
-    visualBottomToReferenceMarginRatio: round(gaps.bottom / referenceMarginPx)
+    visualBottomToReferenceMarginRatio: round(gaps.bottom / referenceMarginPx),
+    visualMeaningfulBottomGapPx: meaningfulBottomGapPx,
+    visualMeaningfulBottomGapPercent: round((meaningfulBottomGapPx / ppm.height) * 100),
+    visualMeaningfulBottomToReferenceMarginRatio: round(meaningfulBottomGapPx / referenceMarginPx),
+    ignoredHorizontalRuleRows
   };
 }
 

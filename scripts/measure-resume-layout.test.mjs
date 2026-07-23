@@ -37,3 +37,15 @@ test("reports overflow when content exceeds printable height", () => {
   assert.equal(result.bottomWhitespacePercent, 0);
   assert.equal(result.overflowPercent, 9.13);
 });
+
+test("preserves rendered education line count from browser measurement", () => {
+  const result = calculatePageUtilization({
+    contentHeightPx: 940,
+    pageHeightPx: 1056,
+    marginTopPx: 24,
+    marginBottomPx: 24,
+    educationRenderedLineCount: 2
+  });
+
+  assert.equal(result.educationRenderedLineCount, 2);
+});

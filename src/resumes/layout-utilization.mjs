@@ -20,7 +20,13 @@ export function measureResumeHtmlLayout({ htmlPath, browserPath }) {
   });
 }
 
-export function calculatePageUtilization({ contentHeightPx, pageHeightPx, marginTopPx, marginBottomPx }) {
+export function calculatePageUtilization({
+  contentHeightPx,
+  pageHeightPx,
+  marginTopPx,
+  marginBottomPx,
+  educationRenderedLineCount
+}) {
   const pageContentHeightPx = pageHeightPx - marginTopPx - marginBottomPx;
   const pageUtilizationPercent = (contentHeightPx / pageContentHeightPx) * 100;
   return {
@@ -31,7 +37,8 @@ export function calculatePageUtilization({ contentHeightPx, pageHeightPx, margin
     pageContentHeightPx: round(pageContentHeightPx),
     pageUtilizationPercent: round(pageUtilizationPercent),
     bottomWhitespacePercent: round(Math.max(0, 100 - pageUtilizationPercent)),
-    overflowPercent: round(Math.max(0, pageUtilizationPercent - 100))
+    overflowPercent: round(Math.max(0, pageUtilizationPercent - 100)),
+    educationRenderedLineCount
   };
 }
 
@@ -103,12 +110,39 @@ function injectMeasurementScript(html) {
     }
     const pre = document.createElement("pre");
     pre.id = "__resume_layout_metrics__";
+    const education = document.querySelector("section.education, [data-resume-section='education'], #education");
     pre.textContent = JSON.stringify({
       contentHeightPx: bottom,
       bodyScrollHeightPx: document.body.scrollHeight,
-      viewportHeightPx: window.innerHeight
+      viewportHeightPx: window.innerHeight,
+      educationRenderedLineCount: countRenderedLines(education)
     });
     document.body.appendChild(pre);
+  };
+  const countRenderedLines = (section) => {
+    if (!section) return undefined;
+    const tops = [];
+    const blocks = section.querySelectorAll("p, li, dd, dt");
+    for (const block of blocks) {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode();
+      while (node) {
+        if (node.textContent.trim()) {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          for (const rect of range.getClientRects()) {
+            if (rect.width > 0 && rect.height > 0) tops.push(rect.top);
+          }
+        }
+        node = walker.nextNode();
+      }
+    }
+    tops.sort((a, b) => a - b);
+    const lines = [];
+    for (const top of tops) {
+      if (lines.length === 0 || Math.abs(top - lines[lines.length - 1]) > 1.5) lines.push(top);
+    }
+    return lines.length;
   };
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", measure);

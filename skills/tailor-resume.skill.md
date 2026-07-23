@@ -40,6 +40,7 @@ Use as the drafting stage inside `create-resume` when creating a role-specific r
    Do not put the target company name in the resume body by default; say what the candidate has done that maps to the role.
 15. Retarget the structure, not only the keywords.
    Change headline, summary, skill groups, bullet selection, bullet order, and domain framing when the target role calls for it.
+   For product-heavy roles, build a source-backed product-portfolio map before drafting. Preserve the candidate's breadth across distinct product families in one concise top-half context line or achievement bullet, then use the remaining bullets for depth, outcomes, and operating proof. Configure an `evidenceAnchors` entry so later brevity edits cannot silently collapse the portfolio to one feature.
 16. Draft resume JSON or Markdown against the page, word, character, line, bullet, section, and style targets.
 17. Apply `ResumeConstraints`.
 18. When outcome metrics are not sourced, prefer verified scope metrics such as years owned, peak team size, direct commit count, multi-author history, product surface, module/file scope, customer-facing delivery, or program participation.
@@ -55,6 +56,7 @@ Use as the drafting stage inside `create-resume` when creating a role-specific r
 25. Render the resume to the configured private rendered-resume output with `render-resume-pdf`.
     Do not rely on the browser print dialog; it can add file URLs, dates, and page numbers as headers/footers.
 26. Improve scanability with section contrast, role-block separation, selective proof-point bolding, and readable leading.
+    Keep education compact. When a degree and certificate each fit on one readable line, render one line per entry. Do not use display-block details, blank rows, decorative bottom rules, or padding to make the page appear full. Configure `educationRenderedLines` and `visualMeaningfulBottomToReferenceMarginRatio` for one-page resumes when rendered measurement is available.
 27. Name the final artifact by candidate and role, not target company, unless there is an explicit human override.
 28. Run `run-resume-quality-gates`.
     Confirm the rendered PDF, rendered-text verification, and saved page images were all produced from the same final source revision. Regenerate stale visual proof instead of carrying it forward from an earlier PDF.

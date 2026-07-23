@@ -17,6 +17,9 @@
         "pageUtilizationPercent": { "$ref": "#/$defs/rangeGate" },
         "visualBottomGapPercent": { "$ref": "#/$defs/rangeGate" },
         "visualBottomToReferenceMarginRatio": { "$ref": "#/$defs/rangeGate" },
+        "visualMeaningfulBottomGapPercent": { "$ref": "#/$defs/rangeGate" },
+        "visualMeaningfulBottomToReferenceMarginRatio": { "$ref": "#/$defs/rangeGate" },
+        "educationRenderedLines": { "$ref": "#/$defs/rangeGate" },
         "bulletCharacters": { "$ref": "#/$defs/rangeGate" },
         "achievementBullets": { "$ref": "#/$defs/rangeGate" },
         "requiredSections": {
