@@ -143,6 +143,7 @@ Use when a reviewer, recruiter, hiring manager, trusted peer, or prior workflow 
    Examples: years owned, peak team size, direct commits, multi-author commit history, PR-numbered work, file/module scope, product surface, customer-facing delivery, or verified program participation.
    When production scale is the concern, do not substitute one exact traffic number. Build a private scale surface across tenure, customers/users, data/storage/records, traffic, reliability, and operating ownership. Public copy should normally use at least three role-relevant dimensions plus one reliability or operations signal.
    Exact source values, dates, definitions, and commands remain private. Public rounding must be conservative, reproducible, and noun-preserving. It cannot turn registered accounts into active users, stored objects into customer assets, or a target 5XX rate into uptime.
+   Duration claims are recomputed from exact source dates for every artifact. Use the completed-year floor as of the artifact date, not the weakest historical phrase or the minimum threshold from an older posting. When tenure is material, configure `numericConsistency` to block stale understatement and unsupported rounding up.
 7. Reframe team-led work honestly.
    If the candidate led direction, reviewed PRs, scoped work, mentored engineers, or owned delivery without writing every line, say that directly instead of using lone-hero wording.
 8. Translate founder/operator scope when it is the candidate's primary recent experience.
@@ -411,6 +412,7 @@ Use when the user says the process, data model, agent behavior, or handoff feels
 - When outcome metrics are not sourced, use verified scope metrics instead of inventing or weakening the resume with unsupported numbers.
 - Use `metricSignals` to prove safe numbers are visible when a reviewer asks for metrics. Do not use it as permission to add unsourced outcome metrics.
 - Use `numericConsistency` to prove important numbers are internally coherent and clearly labeled. Do not let a true number pass when the surrounding noun makes it look like a different metric.
+- Treat materially stale duration floors as evidence loss even when they remain technically true. Record the evidence start date and artifact as-of date, use the strongest truthful completed-year floor, and gate the exact target claim.
 - Team-led project work should be worded as leadership when the candidate owned direction, review, scope, delivery, mentoring, or standards, even when other engineers wrote part of the code.
 - Founder/operator experience should be translated into visible scope density when it is central: tenure, hands-on ownership, team scope, cross-functional responsibility, and safe scale/business proof. Treat it as a conditional hiring signal, orient the opening around the target role, and show collaboration and repeatable delivery to reduce fit and commitment concerns. Do not claim startup years count double or treat a founder title as self-proving.
   Use the target company in private opportunity notes, quality-gate config, source maps, and application plans instead.

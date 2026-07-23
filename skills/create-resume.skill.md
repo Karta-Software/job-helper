@@ -16,6 +16,7 @@ Produce a source-backed resume package, not chat-only copy. A resume is not appl
 6. Run `skills/build-skill-inventory.skill.md` or load a current role-specific inventory. Classify every posting requirement as `supported`, `adjacent`, `project-only`, or `do-not-claim`, with evidence references.
 7. Run `skills/rank-claim-significance.skill.md` when supported claims compete for limited space.
 8. If production scale, customer adoption, data volume, traffic, or reliability is a material hiring bar, build or refresh a private production scale surface before drafting. Record exact measurements, definitions, capture dates, evidence references, and honest boundaries. Choose conservative public rounding that remains reproducible from the private evidence, and configure `productionScaleNarrative` for the target version.
+   For duration claims, calculate the completed-year floor from the exact evidence start date and the artifact's as-of date. Use the strongest truthful floor, not an older role threshold or copied wording. Configure `numericConsistency` to reject both stale understatement and unsupported rounding up when duration materially affects fit.
 9. Run `skills/tailor-resume.skill.md` to build the target-specific structure, evidence-preservation table, and draft.
 10. Review the draft using these independent stances:
    - `agents/resume-writer.agent.md`
@@ -63,6 +64,7 @@ If any item is missing, label the package `draft` or `not application-ready` and
 - Tailor structure and proof selection, not just keywords.
 - Keep target-company names out of applicant-facing resume text and filenames unless a human override says otherwise.
 - Do not infer skills, scale, dates, degree labels, or metrics from old resume wording.
+- Do not preserve a stale duration floor merely because it remains technically true. Recalculate dated tenure for each new artifact and record the start date, as-of date, completed years, and approved public wording in the private package.
 - Rounded public scale language must be derived from exact private evidence, preserve its timeframe and definition, and never cross an unsupported threshold. `Registered accounts` cannot silently become `active users`; stored objects cannot become customer assets; a target 5XX response rate cannot become uptime or availability.
 - Keep company outcomes and team-led work distinct from lone-person attribution.
 - Do not promote or submit an artifact. Submission always requires a separate explicit user instruction.

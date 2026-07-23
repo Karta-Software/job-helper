@@ -15,6 +15,7 @@ Use when tailoring to a job, preparing for an interview, or building resume copy
 6. Return strong matches, weak matches, and evidence gaps.
 7. Suggest stories or bullets to reuse only after the surface map shows why they matter for the target role.
 8. Update evidence-gap notes when the search discovers missing sources or risky claims.
+9. For any years-of-experience or years-operated claim, capture the exact supported start date and the artifact as-of date, then calculate the completed-year floor. Flag copied duration language that is lower than the supported floor or rounds above it.
 
 ## Rules
 

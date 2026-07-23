@@ -75,6 +75,18 @@ test("protocol makes delegated work durable", () => {
   assert.match(evolveWorkflow, /delegated agent work fails or disappears/);
 });
 
+test("resume duration claims are recomputed from dated evidence", () => {
+  const createResume = read("skills/create-resume.skill.md");
+  const findExperience = read("skills/find-experience.skill.md");
+  const evidenceAuditor = read("agents/evidence-auditor.agent.md");
+  const workflow = read("docs/workflow.md");
+
+  assert.match(createResume, /completed-year floor/);
+  assert.match(findExperience, /artifact as-of date/);
+  assert.match(evidenceAuditor, /reject stale understatement/);
+  assert.match(workflow, /weakest historical phrase/);
+});
+
 function read(filePath) {
   return fs.readFileSync(new URL(`../${filePath}`, import.meta.url), "utf8");
 }
